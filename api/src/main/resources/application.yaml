@@ -1,1 +1,29 @@
+spring:
+  profiles:
+    active: local   # 기본 환경
 
+# local
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+# prod
+---
+spring:
+  config:
+    activate:
+      on-profile: prod1
+
+server:
+  port: 8081
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod2
+
+server:
+  port: 8082

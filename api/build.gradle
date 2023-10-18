@@ -50,3 +50,7 @@ task copyAsciidoc(type: Copy) {
 build {
     dependsOn copyAsciidoc
 }
+
+version '1.0.1-SNAPSHOT-'+new Date().format("yyyyMMddHHmmss")
+
+jar.enabled=false
