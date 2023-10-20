@@ -1,5 +1,6 @@
 package com.lovely4k.backend.diary;
 
+import com.lovely4k.backend.common.jpa.BaseTimeEntity;
 import com.lovely4k.backend.location.Location;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Diary {
+public class Diary extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
