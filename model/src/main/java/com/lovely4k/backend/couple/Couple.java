@@ -1,0 +1,35 @@
+package com.lovely4k.backend.couple;
+
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+public class Couple {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "boy_id")
+    private Long boyId;
+
+    @Column(name = "girl_id")
+    private Long girlId;
+
+    @Column(name = "meet_day")
+    private LocalDate meetDay;
+
+    @Builder
+    private Couple(Long boyId, Long girlId, LocalDate meetDay) {
+        this.boyId = boyId;
+        this.girlId = girlId;
+        this.meetDay = meetDay;
+    }
+}
