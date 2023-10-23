@@ -16,8 +16,9 @@ public record ApiResponse<T>(
             .body(new ApiResponse<>(HttpStatus.CREATED.value(), null));
     }
 
-    public static <T> ResponseEntity<ApiResponse<T>> ok(T body) {
-        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), body));
+    public static <T> ResponseEntity<ApiResponse<T>> created(String requestURI, Long resourceId, T body) {
+        return ResponseEntity.created(URI.create(requestURI + "/" + resourceId))
+                .body(new ApiResponse<>(HttpStatus.CREATED.value(), body));
     }
 
     public static <T> ResponseEntity<ApiResponse<T>> fail(HttpStatus httpStatus, T body) {
@@ -26,5 +27,9 @@ public record ApiResponse<T>(
 
     public static <T> ResponseEntity<ApiResponse<T>> ok(T body) {
         return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), body), HttpStatus.OK);
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> ok() {
+        return new ResponseEntity<>(new ApiResponse<>(200, null), HttpStatus.OK);
     }
 }
