@@ -1,13 +1,13 @@
 -- Drop tables if they exist
-DROP TABLE IF EXISTS QuestionForm;
-DROP TABLE IF EXISTS Question;
-DROP TABLE IF EXISTS Member;
-DROP TABLE IF EXISTS Location;
-DROP TABLE IF EXISTS Diary;
-DROP TABLE IF EXISTS Couple;
+DROP TABLE IF EXISTS question_form;
+DROP TABLE IF EXISTS question;
+DROP TABLE IF EXISTS member;
+DROP TABLE IF EXISTS location;
+DROP TABLE IF EXISTS diary;
+DROP TABLE IF EXISTS couple;
 
 -- Couple 테이블
-CREATE TABLE Couple (
+CREATE TABLE couple (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     boy_id BIGINT,
     girl_id BIGINT,
@@ -19,7 +19,7 @@ CREATE TABLE Couple (
 );
 
 -- Diary 테이블
-CREATE TABLE Diary (
+CREATE TABLE diary (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     location_id BIGINT,
     couple_id BIGINT,
@@ -34,7 +34,7 @@ CREATE TABLE Diary (
 );
 
 -- Location 테이블
-CREATE TABLE Location (
+CREATE TABLE location (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     kakao_id BIGINT,
     category VARCHAR(50),
@@ -44,7 +44,7 @@ CREATE TABLE Location (
 );
 
 -- Member 테이블
-CREATE TABLE Member (
+CREATE TABLE member (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     couple_id BIGINT,
     sex VARCHAR(7),
@@ -59,12 +59,13 @@ CREATE TABLE Member (
 );
 
 -- Question 테이블
-CREATE TABLE Question (
+CREATE TABLE question (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     couple_id BIGINT,
     question_form_id BIGINT,
     boy_answer TEXT,
     girl_answer TEXT,
+    question_day int,
     created_at TIMESTAMP NOT NULL,
     updated_at DATE NOT NULL,
     INDEX idx_question_couple_id (couple_id),
@@ -72,7 +73,7 @@ CREATE TABLE Question (
 );
 
 -- QuestionForm 테이블
-CREATE TABLE QuestionForm (
+CREATE TABLE question_form (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     member_id BIGINT,
     questionContent TEXT,

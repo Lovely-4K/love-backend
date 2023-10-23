@@ -1,11 +1,28 @@
 package com.lovely4k.backend.question.service.response;
 
-import java.util.List;
+import com.lovely4k.backend.question.Question;
+import com.lovely4k.backend.question.QuestionChoices;
+import com.lovely4k.backend.question.QuestionForm;
 
 public record CreateQuestionFormResponse(
         long questionId,
         String questionContent,
-        List<QuestionChoiceResponse> questionChoices
+        String firstChoice,
+        String secondChoice,
+        String thirdChoice,
+        String fourthChoice
 ) {
-    public record QuestionChoiceResponse(String choice) {}
+    public static CreateQuestionFormResponse from(Question question) {
+        QuestionForm questionForm = question.getQuestionForm();
+        QuestionChoices questionChoices = questionForm.getQuestionChoices();
+
+        return new CreateQuestionFormResponse(
+                question.getId(),
+                questionForm.getQuestionContent(),
+                questionChoices.getFirstChoice(),
+                questionChoices.getSecondChoice(),
+                questionChoices.getThirdChoice(),
+                questionChoices.getFourthChoice()
+        );
+    }
 }
