@@ -20,10 +20,16 @@ public class QuestionForm extends BaseTimeEntity {
     @Column(name = "member_id")
     private Long memberId;
 
-    @Column
+    @Column(name = "question_content")
     private String questionContent;
 
     @Embedded
     private QuestionChoices questionChoices;
+
+    public QuestionForm(Long memberId, String questionContent, QuestionChoices questionChoices) {
+        this.memberId = memberId;
+        this.questionContent = questionContent;
+        this.questionChoices = questionChoices;
+    }
 
 }

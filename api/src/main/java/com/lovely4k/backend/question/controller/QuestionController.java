@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 
 @RequestMapping("/v1/questions")
 @RequiredArgsConstructor
@@ -23,28 +21,26 @@ public class QuestionController {
 
     @GetMapping("/daily")
     public ResponseEntity<ApiResponse<DailyQuestionResponse>> getDailyQuestion(@RequestParam("userId") Long userId) {
-        return ApiResponse.ok(new DailyQuestionResponse(1L,
-                "테스트",
-                List.of(new DailyQuestionResponse.QuestionChoiceResponse("선택지1"))));
+        return ApiResponse.ok(questionService.findDailyQuestion(userId));
     }
 
     @PostMapping("/question-forms")
     public ResponseEntity<ApiResponse<CreateQuestionFormResponse>> createQuestionForm(@RequestBody CreateQuestionFormRequest request, @RequestParam("userId") Long userId, @RequestParam("coupleId") Long coupleId) {
-        return ApiResponse.created("/v1/questions/question-forms", 1L,new CreateQuestionFormResponse(1L,
-                "테스트",
-                List.of(new CreateQuestionFormResponse.QuestionChoiceResponse("선택지 1"))));
+        return ApiResponse.created("/v1/questions/question-forms",
+                1L,
+                questionService.createQuestionForm(request.toServiceDto(), coupleId, userId));
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<CreateQuestionResponse>> createQuestion(@RequestParam("coupleId") Long coupleId) {
-        return ApiResponse.created("/v1/questions/question-forms", 1L,
-                new CreateQuestionResponse(1L,
-                "테스트",
-                List.of(new CreateQuestionResponse.QuestionChoiceResponse("선택지1"))));
+        return ApiResponse.created("/v1/questions/question-forms",
+                1L,
+                questionService.createQuestion(coupleId));
     }
 
     @PatchMapping("/{id}/answers")
     public ResponseEntity<ApiResponse<Void>> answerQuestion(@PathVariable("id") Long id) {
+        questionService.updateQuestionAnswer();
         return ApiResponse.ok();
     }
 
@@ -52,7 +48,7 @@ public class QuestionController {
 
     @GetMapping("/details/{id}")
     public ResponseEntity<ApiResponse<QuestionDetailsResponse>> getQuestionDetails(@PathVariable("id") Long id) {
-        return ApiResponse.ok(new QuestionDetailsResponse("테스트 질문 내용", "답변 1", "답변 2"));
+        return ApiResponse.ok(questionService.findQuestionDetails(id));
     }
 
 }

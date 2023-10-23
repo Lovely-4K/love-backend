@@ -1,10 +1,30 @@
 package com.lovely4k.backend.question.controller.request;
 
-import java.util.List;
+import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
+import jakarta.validation.constraints.NotBlank;
 
 public record CreateQuestionFormRequest(
+        @NotBlank
         String questionContent,
-        List<QuestionChoiceRequest> choices
+
+        @NotBlank
+        String firstChoice,
+
+        @NotBlank
+        String secondChoice,
+
+        String thirdChoice,
+        String fourthChoice
 ) {
-    public record QuestionChoiceRequest(String choice) {}
+
+    public CreateQuestionFormServiceRequest toServiceDto() {
+
+        return new CreateQuestionFormServiceRequest(
+                this.questionContent,
+                this.firstChoice,
+                this.secondChoice,
+                this.thirdChoice,
+                this.fourthChoice
+        );
+    }
 }
