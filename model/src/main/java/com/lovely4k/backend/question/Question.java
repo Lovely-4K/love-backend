@@ -62,7 +62,4 @@ public class Question extends BaseTimeEntity {
         this.girlAnswer = girlAnswer;
     }
 
-    private boolean isNotEmpty(String answer) {
-        return answer != null && !answer.isEmpty();
-    }
 }

@@ -25,6 +25,7 @@ public class QuestionService {
         questionValidator.validateCreateQuestion(coupleId, questionDay);
 
         Question question = Question.create(coupleId, request.toEntity(userId, questionDay), questionDay);
+
         Question savedQuestion = questionRepository.save(question);
 
         return CreateQuestionFormResponse.from(savedQuestion);
