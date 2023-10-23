@@ -1,6 +1,8 @@
 package com.lovely4k.backend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.lovely4k.backend.diary.controller.DiaryController;
+//import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.diary.controller.DiaryController;
 import com.lovely4k.backend.diary.service.DiaryService;
 import org.springframework.beans.factory.annotation.Autowired;
