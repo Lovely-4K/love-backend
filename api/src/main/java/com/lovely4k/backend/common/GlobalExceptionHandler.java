@@ -18,14 +18,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DateTimeParseException.class)
     public ResponseEntity<ApiResponse<ProblemDetail>> handleValidation(DateTimeParseException e, HttpServletRequest request) {
-        ProblemDetail problemDetail = ProblemDetailCreator.create(e, request, HttpStatus.BAD_REQUEST, "DateTimeParseException");
+        ProblemDetail problemDetail = ProblemDetailCreator.create(e, request, HttpStatus.BAD_REQUEST);
 
         return ApiResponse.fail(HttpStatus.BAD_REQUEST, problemDetail);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<ProblemDetail>> handleValidation(MethodArgumentNotValidException e, HttpServletRequest request) {
-        ProblemDetail problemDetail = ProblemDetailCreator.createValidationDetails(e, request, HttpStatus.BAD_REQUEST, "MethodArgumentNotValidException");
+        ProblemDetail problemDetail = ProblemDetailCreator.createValidationDetails(e, request, HttpStatus.BAD_REQUEST);
 
         return ApiResponse.fail(HttpStatus.BAD_REQUEST, problemDetail);
     }

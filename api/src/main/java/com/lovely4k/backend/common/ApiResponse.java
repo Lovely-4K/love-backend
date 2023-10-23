@@ -12,7 +12,7 @@ public record ApiResponse<T> (
 ) {
 
     public static <T> ResponseEntity<ApiResponse<T>> created(String requestURI, Long resourceId) {
-        return ResponseEntity.created(URI.create(requestURI + resourceId))
+        return ResponseEntity.created(URI.create(requestURI + "/" + resourceId))
                 .body(new ApiResponse<>(HttpStatus.CREATED.value(), null));
     }
 

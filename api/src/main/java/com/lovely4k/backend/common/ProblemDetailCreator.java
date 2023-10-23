@@ -12,17 +12,17 @@ public class ProblemDetailCreator {
     private ProblemDetailCreator() {
     }
 
-    public static ProblemDetail create(Exception e, HttpServletRequest request, HttpStatus status, String title) {
+    public static ProblemDetail create(Exception e, HttpServletRequest request, HttpStatus status) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, e.getMessage());
         problemDetail.setInstance(URI.create(request.getRequestURI()));
-        problemDetail.setTitle(title);
+        problemDetail.setTitle(e.getClass().getSimpleName());
         return problemDetail;
     }
 
-    public static ProblemDetail createValidationDetails(MethodArgumentNotValidException e, HttpServletRequest request, HttpStatus status, String title) {
+    public static ProblemDetail createValidationDetails(MethodArgumentNotValidException e, HttpServletRequest request, HttpStatus status) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, e.getMessage());
         problemDetail.setInstance(URI.create(request.getRequestURI()));
-        problemDetail.setTitle(title);
+        problemDetail.setTitle(e.getClass().getSimpleName());
 
         problemDetail.setProperty("validationError", e.getBindingResult()
                 .getFieldErrors()
