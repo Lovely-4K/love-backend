@@ -12,6 +12,8 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import java.time.LocalDate;
 
 import static org.mockito.Mockito.mock;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -44,21 +46,23 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andDo(document("diary-create",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("kakaoId").type(JsonFieldType.STRING).description("카카오 장소 id"),
-                                fieldWithPath("location").type(JsonFieldType.STRING).description("장소 주소"),
-                                fieldWithPath("score").type(JsonFieldType.NUMBER).description("장소에 대한 평점"),
-                                fieldWithPath("datingDay").type(JsonFieldType.STRING).description("데이트 한 날짜"),
-                                fieldWithPath("category").type(JsonFieldType.STRING).description("장소 카테고리"),
-                                fieldWithPath("text").type(JsonFieldType.STRING).description("다이어리 내용")
-                        ),
-                        responseFields(
-                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
-                                fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디")
-
-                        )
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestFields(
+                                        fieldWithPath("kakaoId").type(JsonFieldType.STRING).description("카카오 장소 id"),
+                                        fieldWithPath("location").type(JsonFieldType.STRING).description("장소 주소"),
+                                        fieldWithPath("score").type(JsonFieldType.NUMBER).description("장소에 대한 평점"),
+                                        fieldWithPath("datingDay").type(JsonFieldType.STRING).description("데이트 한 날짜"),
+                                        fieldWithPath("category").type(JsonFieldType.STRING).description("장소 카테고리"),
+                                        fieldWithPath("text").type(JsonFieldType.STRING).description("다이어리 내용")
+                                ),
+                                responseHeaders(
+                                        headerWithName("Location").description("created resource uri")
+                                ),
+                                responseFields(
+                                        fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
+                                        fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디")
+                                )
                         )
 
 

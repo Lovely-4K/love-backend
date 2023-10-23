@@ -3,6 +3,8 @@ package com.lovely4k.backend.common.enumvalidator;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+import java.util.Arrays;
+
 public class ValueOfEnumValidator implements ConstraintValidator<EnumValue, String> {
 
     private EnumValue enumValue;
@@ -14,17 +16,15 @@ public class ValueOfEnumValidator implements ConstraintValidator<EnumValue, Stri
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        boolean result = false;
         Enum<?>[] enumValues = this.enumValue.enumClass().getEnumConstants();
-        if (enumValues != null) {
-            for (Object eVal : enumValues) {
-                if (value.equals(eVal.toString())
-                        || this.enumValue.ignoreCase() && value.equalsIgnoreCase(eVal.toString())) {
-                    result = true;
-                    break;
-                }
-            }
-        }
-        return result;
+
+        if (enumValues == null) return false;
+
+        return Arrays.stream(enumValues).anyMatch(eVal -> isValueValid(value, eVal));
+    }
+
+    private boolean isValueValid(String value, Enum<?> eVal) {
+        return value.equals(eVal.toString())
+                || (this.enumValue.ignoreCase() && value.equalsIgnoreCase(eVal.toString()));
     }
 }
