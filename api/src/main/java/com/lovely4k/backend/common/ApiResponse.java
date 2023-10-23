@@ -16,6 +16,10 @@ public record ApiResponse<T> (
                 .body(new ApiResponse<>(HttpStatus.CREATED.value(), null));
     }
 
+    public static <T> ResponseEntity<ApiResponse<T>> ok(T body) {
+        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), body));
+    }
+
     public static <T> ResponseEntity<ApiResponse<T>> fail(HttpStatus httpStatus, T body) {
         return new ResponseEntity<>(new ApiResponse<>(httpStatus.value(), body), httpStatus);
     }
