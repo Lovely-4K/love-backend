@@ -51,7 +51,7 @@ public class Question extends BaseTimeEntity {
     }
 
     private boolean isAnswerComplete() {
-        return StringUtils.isNotEmpty(boyAnswer) && StringUtils.isNotEmpty(girlAnswer);
+        return isNotEmpty(boyAnswer) && isNotEmpty(girlAnswer);
     }
 
     public void updateBoyAnswer(String boyAnswer) {
@@ -60,5 +60,9 @@ public class Question extends BaseTimeEntity {
 
     public void updateGirlAnswer(String girlAnswer) {
         this.girlAnswer = girlAnswer;
+    }
+
+    private boolean isNotEmpty(String answer) {
+        return answer != null && !answer.isEmpty();
     }
 }

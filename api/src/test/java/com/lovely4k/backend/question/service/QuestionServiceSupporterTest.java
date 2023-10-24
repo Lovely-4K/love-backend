@@ -19,7 +19,6 @@ import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class QuestionServiceSupporterTest {
-
     @Mock
     private CoupleRepository coupleRepository;
 
