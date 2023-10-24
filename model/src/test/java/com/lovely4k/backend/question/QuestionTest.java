@@ -16,6 +16,7 @@ class QuestionTest {
         Question question = Question.create(1L, questionForm, 1L);
         question.updateBoyAnswer("");
         question.updateGirlAnswer("");
+
         Question question = Question.builder()
             .boyAnswer("")
             .girlAnswer("")
@@ -40,6 +41,7 @@ class QuestionTest {
         Question question1 = Question.create(1L, questionForm, 1L);
         question1.updateBoyAnswer("answer");
         question1.updateGirlAnswer("");
+
         Question question1 = Question.builder()
             .boyAnswer("answer")
             .girlAnswer("")
