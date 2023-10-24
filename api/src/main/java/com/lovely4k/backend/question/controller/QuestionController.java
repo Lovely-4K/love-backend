@@ -7,6 +7,7 @@ import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse
 import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
 import com.lovely4k.backend.question.service.response.DailyQuestionResponse;
 import com.lovely4k.backend.question.service.response.QuestionDetailsResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class QuestionController {
     }
 
     @PostMapping("/question-forms")
-    public ResponseEntity<ApiResponse<CreateQuestionFormResponse>> createQuestionForm(@RequestBody CreateQuestionFormRequest request, @RequestParam("userId") Long userId, @RequestParam("coupleId") Long coupleId) {
+    public ResponseEntity<ApiResponse<CreateQuestionFormResponse>> createQuestionForm(@RequestBody @Valid CreateQuestionFormRequest request, @RequestParam("userId") Long userId, @RequestParam("coupleId") Long coupleId) {
         return ApiResponse.created("/v1/questions/question-forms",
                 1L,
                 questionService.createQuestionForm(request.toServiceDto(), coupleId, userId));

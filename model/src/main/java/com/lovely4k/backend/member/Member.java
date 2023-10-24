@@ -53,4 +53,5 @@ public class Member extends BaseTimeEntity {
         this.calendarColor = calendarColor;
         this.imageUrl = imageUrl;
     }
+
 }
