@@ -4,7 +4,7 @@ import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
 import com.lovely4k.backend.member.Member;
-import com.lovely4k.backend.member.MemberRepository;
+import com.lovely4k.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

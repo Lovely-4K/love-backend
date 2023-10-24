@@ -7,7 +7,7 @@ import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
 import com.lovely4k.backend.location.Location;
 import com.lovely4k.backend.location.LocationRepository;
 import com.lovely4k.backend.member.Member;
-import com.lovely4k.backend.member.MemberRepository;
+import com.lovely4k.backend.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
