@@ -2,6 +2,7 @@ package com.lovely4k.backend.question.service;
 
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.repository.QuestionRepository;
+import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
 import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
 import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
 import com.lovely4k.backend.question.service.response.DailyQuestionResponse;
@@ -18,7 +19,7 @@ public class QuestionService {
     private final QuestionValidator questionValidator;
     private final QuestionServiceSupporter questionServiceSupporter;
 
-    @Transactional
+    @Transactional(timeout = 3)
     public CreateQuestionFormResponse createQuestionForm(CreateQuestionFormServiceRequest request, Long coupleId, Long userId) {
         long questionDay = questionServiceSupporter.getQuestionDay(coupleId);
         questionValidator.validateCreateQuestion(coupleId, questionDay);

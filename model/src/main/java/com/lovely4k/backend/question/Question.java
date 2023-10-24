@@ -48,7 +48,12 @@ public class Question extends BaseTimeEntity {
     }
 
     private boolean isAnswerComplete() {
-        return !boyAnswer.isEmpty() && !girlAnswer.isEmpty();
+        return isNotEmpty(boyAnswer) && isNotEmpty(girlAnswer);
     }
+
+    private boolean isNotEmpty(String answer) {
+        return answer != null && !answer.isEmpty();
+    }
+
 
 }

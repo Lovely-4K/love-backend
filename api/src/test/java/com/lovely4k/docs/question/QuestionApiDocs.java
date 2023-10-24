@@ -52,8 +52,6 @@ class QuestionApiDocs extends RestDocsSupport {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(document("get-daily-question",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
                         queryParameters(
                                 parameterWithName("userId").description("사용자 ID")
                         ),
@@ -94,8 +92,6 @@ class QuestionApiDocs extends RestDocsSupport {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andDo(document("create-question-form-and-question-by-user",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
                         responseHeaders(
                                 headerWithName("Location").description("리소스 저장 경로")
                         ),
@@ -138,8 +134,6 @@ class QuestionApiDocs extends RestDocsSupport {
                 .andExpect(status().isCreated())
                 .andDo(print())
                 .andDo(document("create-question",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
                         responseHeaders(
                                 headerWithName("Location").description("리소스 저장 경로")
                         ),
@@ -169,8 +163,6 @@ class QuestionApiDocs extends RestDocsSupport {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(document("answer-question",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
                         pathParameters(
                                 parameterWithName("id").description("질문 ID")
                         ),
@@ -193,8 +185,6 @@ class QuestionApiDocs extends RestDocsSupport {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(document("get-question-details",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
                         pathParameters(
                                 parameterWithName("id").description("질문 ID")
                         ),
