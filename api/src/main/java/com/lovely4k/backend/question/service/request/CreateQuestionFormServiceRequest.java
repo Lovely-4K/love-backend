@@ -15,4 +15,15 @@ public record CreateQuestionFormServiceRequest(
 
         return QuestionForm.create(memberId, questionContent, questionChoices, questionDay);
     }
+
+    public QuestionForm toEntity(Long memberId) {
+        QuestionChoices questionChoices = QuestionChoices.builder()
+            .firstChoice(this.firstChoice)
+            .secondChoice(this.secondChoice)
+            .thirdChoice(this.thirdChoice)
+            .fourthChoice(this.fourthChoice)
+            .build();
+
+        return new QuestionForm(memberId, questionContent, questionChoices);
+    }
 }
