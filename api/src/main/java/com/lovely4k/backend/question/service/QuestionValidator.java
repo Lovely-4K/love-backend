@@ -15,8 +15,8 @@ public class QuestionValidator {
     private final QuestionRepository questionRepository;
 
     @Transactional(readOnly = true)
-    public void validateCreateQuestion(Long coupleId, long questionDay) {
-        List<Question> questions = questionRepository.findQuestionByCoupleIdAndQuestionDayWithLock(coupleId, questionDay);
+    public void validateCreateQuestionForm(Long coupleId, long questionDay) {
+        List<Question> questions = findQuestionWithLock(coupleId, questionDay);
         validateDailyQuestionLimitAndAnswerCompletion(questions);
     }
 
@@ -26,6 +26,17 @@ public class QuestionValidator {
         }
         Question question = questions.get(0);
         question.validateAnswer();
+    }
+
+    private List<Question> findQuestionWithLock(Long coupleId, Long questionDay) {
+        return questionRepository.findQuestionByCoupleIdAndQuestionDayWithLock(coupleId, questionDay);
+    }
+
+    public void validateCreateQuestion(Long coupleId, Long questionDay) {
+        List<Question> questions = findQuestionWithLock(coupleId, questionDay);
+        if (!questions.isEmpty()) {
+            throw new IllegalStateException("이미 우이삭에서 제공해주는 오늘의 질문을 받았습니다.");
+        }
     }
 
 }

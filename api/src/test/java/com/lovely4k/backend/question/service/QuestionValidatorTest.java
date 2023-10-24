@@ -28,7 +28,7 @@ class QuestionValidatorTest {
 
     @DisplayName("질문 생성 유효성 검사")
     @Test
-    void validateCreateQuestion_ValidCase() {
+    void validateCreateQuestionFormValidCase() {
         // Given
         Long coupleId = 1L;
         long questionDay = 1L;
@@ -38,13 +38,13 @@ class QuestionValidatorTest {
                 .willReturn(List.of(mockQuestion));
 
         // When
-        Assertions.assertThatCode(() -> questionValidator.validateCreateQuestion(coupleId, questionDay))
+        Assertions.assertThatCode(() -> questionValidator.validateCreateQuestionForm(coupleId, questionDay))
                 .doesNotThrowAnyException();
     }
 
     @DisplayName("질문 생성 유효성 검사 - 질문이 2개 이상일 때")
     @Test
-    void validateCreateQuestion_MoreThanTwoQuestions() {
+    void validateCreateQuestionFormMoreThanTwoQuestions() {
         // Given
         Long coupleId = 1L;
         long questionDay = 1L;
@@ -57,13 +57,13 @@ class QuestionValidatorTest {
                 .willReturn(List.of(mockQuestion1, mockQuestion2));
 
         // When & Then
-        Assertions.assertThatThrownBy(() -> questionValidator.validateCreateQuestion(coupleId, questionDay))
+        Assertions.assertThatThrownBy(() -> questionValidator.validateCreateQuestionForm(coupleId, questionDay))
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @DisplayName("질문 생성 유효성 검사 - 답변이 완료되지 않았을 때")
     @Test
-    void validateCreateQuestion_AnswerIncomplete() {
+    void validateCreateQuestionFormAnswerIncomplete() {
         // Given
         Long coupleId = 1L;
         long questionDay = 1L;
@@ -75,7 +75,39 @@ class QuestionValidatorTest {
                 .willReturn(List.of(mockQuestion));
 
         // When & Then
-        Assertions.assertThatThrownBy(() -> questionValidator.validateCreateQuestion(coupleId, questionDay))
+        Assertions.assertThatThrownBy(() -> questionValidator.validateCreateQuestionForm(coupleId, questionDay))
                 .isInstanceOf(IllegalStateException.class);
+    }
+
+    @DisplayName("validateCreateQuestion 메서드 테스트 - 정상 케이스")
+    @Test
+    void validateCreateQuestionValidCase() {
+        // Given
+        Long coupleId = 1L;
+        long questionDay = 1L;
+
+        given(questionRepository.findQuestionByCoupleIdAndQuestionDayWithLock(coupleId, questionDay))
+                .willReturn(List.of());
+
+        // When & Then
+        Assertions.assertThatCode(() -> questionValidator.validateCreateQuestion(coupleId, questionDay))
+                .doesNotThrowAnyException();
+    }
+
+    @DisplayName("validateCreateQuestion 메서드 테스트 - 이미 질문이 생성된 경우")
+    @Test
+    void validateCreateQuestionQuestionAlreadyCreated() {
+        // Given
+        Long coupleId = 1L;
+        long questionDay = 1L;
+        Question mockQuestion = mock(Question.class);
+
+        given(questionRepository.findQuestionByCoupleIdAndQuestionDayWithLock(coupleId, questionDay))
+                .willReturn(List.of(mockQuestion));
+
+        // When & Then
+        Assertions.assertThatThrownBy(() -> questionValidator.validateCreateQuestion(coupleId, questionDay))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("이미 우이삭에서 제공해주는 오늘의 질문을 받았습니다.");
     }
 }

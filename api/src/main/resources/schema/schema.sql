@@ -76,7 +76,8 @@ CREATE TABLE question (
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_question_couple_id (couple_id),
-    INDEX idx_question_question_form_id (question_form_id)
+    INDEX idx_question_question_form_id (question_form_id),
+    INDEX idx_question_day (question_day)
 );
 
 -- QuestionForm 테이블
@@ -88,7 +89,9 @@ CREATE TABLE question_form (
     second_choice VARCHAR(255),
     third_choice VARCHAR(255),
     fourth_choice VARCHAR(255),
+    question_day BIGINT,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_question_form_member_id (member_id)
+    INDEX idx_question_form_member_id (member_id),
+    INDEX idx_question_form_question_day (question_day)
 );
