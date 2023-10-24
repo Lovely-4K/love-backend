@@ -11,6 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import static com.lovely4k.backend.common.ExceptionMessage.notFoundEntityMessage;
+
 @RequiredArgsConstructor
 @Service
 public class QuestionService {
@@ -31,9 +36,15 @@ public class QuestionService {
     }
 
 
-    public DailyQuestionResponse findDailyQuestion(Long userId) {
-
-        return new DailyQuestionResponse(1L, "test", "test1", "test2", null, null);
+    @Transactional(readOnly = true)
+    public DailyQuestionResponse findDailyQuestion(Long coupleId) {
+        long questionDay = questionServiceSupporter.getQuestionDay(coupleId);
+        Question question = questionRepository
+                .findQuestionByCoupleIdAndQuestionDay(coupleId, questionDay)
+                .stream()
+                .reduce((first, second) -> second)
+                .orElseThrow(() -> new NoSuchElementException(notFoundEntityMessage("question", coupleId)));
+        return DailyQuestionResponse.from(question);
     }
 
     public CreateQuestionResponse createQuestion(Long coupleId) {

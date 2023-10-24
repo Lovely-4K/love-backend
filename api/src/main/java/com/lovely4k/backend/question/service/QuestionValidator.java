@@ -16,7 +16,7 @@ public class QuestionValidator {
 
     @Transactional(readOnly = true)
     public void validateCreateQuestion(Long coupleId, long questionDay) {
-        List<Question> questions = questionRepository.findQuestionByCoupleIdAndQuestionDay(coupleId, questionDay);
+        List<Question> questions = questionRepository.findQuestionByCoupleIdAndQuestionDayWithLock(coupleId, questionDay);
         validateDailyQuestionLimitAndAnswerCompletion(questions);
     }
 

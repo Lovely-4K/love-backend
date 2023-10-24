@@ -21,8 +21,8 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @GetMapping("/daily")
-    public ResponseEntity<ApiResponse<DailyQuestionResponse>> getDailyQuestion(@RequestParam("userId") Long userId) {
-        return ApiResponse.ok(questionService.findDailyQuestion(userId));
+    public ResponseEntity<ApiResponse<DailyQuestionResponse>> getDailyQuestion(@RequestParam("coupleId") Long coupleId) {
+        return ApiResponse.ok(questionService.findDailyQuestion(coupleId));
     }
 
     @PostMapping("/question-forms")

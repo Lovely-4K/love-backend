@@ -21,7 +21,7 @@ public class Question extends BaseTimeEntity {
     @Column(name = "couple_id")
     private Long coupleId;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "question_form_id")
     private QuestionForm questionForm;
 

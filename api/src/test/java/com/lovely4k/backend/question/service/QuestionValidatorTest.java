@@ -34,7 +34,7 @@ class QuestionValidatorTest {
         long questionDay = 1L;
         Question mockQuestion = mock(Question.class);
 
-        given(questionRepository.findQuestionByCoupleIdAndQuestionDay(coupleId, questionDay))
+        given(questionRepository.findQuestionByCoupleIdAndQuestionDayWithLock(coupleId, questionDay))
                 .willReturn(List.of(mockQuestion));
 
         // When
@@ -53,7 +53,7 @@ class QuestionValidatorTest {
         Question mockQuestion1 = TestData.question(questionForm, coupleId, "test", "test");
         Question mockQuestion2 = TestData.question(questionForm, coupleId, "test", "tes");
 
-        given(questionRepository.findQuestionByCoupleIdAndQuestionDay(coupleId, questionDay))
+        given(questionRepository.findQuestionByCoupleIdAndQuestionDayWithLock(coupleId, questionDay))
                 .willReturn(List.of(mockQuestion1, mockQuestion2));
 
         // When & Then
@@ -71,7 +71,7 @@ class QuestionValidatorTest {
         QuestionForm questionForm = TestData.questionForm(userId);
         Question mockQuestion = TestData.question(questionForm, coupleId, null, null);
 
-        given(questionRepository.findQuestionByCoupleIdAndQuestionDay(coupleId, questionDay))
+        given(questionRepository.findQuestionByCoupleIdAndQuestionDayWithLock(coupleId, questionDay))
                 .willReturn(List.of(mockQuestion));
 
         // When & Then

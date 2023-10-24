@@ -23,7 +23,6 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -48,12 +47,12 @@ class QuestionApiDocs extends RestDocsSupport {
         given(questionService.findDailyQuestion(1L)).willReturn(mockResponse);
 
         mockMvc.perform(get("/v1/questions/daily")
-                        .param("userId", "1")
+                        .param("coupleId", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(document("get-daily-question",
                         queryParameters(
-                                parameterWithName("userId").description("사용자 ID")
+                                parameterWithName("coupleId").description("커플 ID")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),

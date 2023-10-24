@@ -6,6 +6,7 @@ import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.repository.QuestionRepository;
 import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
 import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
+import com.lovely4k.backend.question.service.response.DailyQuestionResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Arrays;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -59,5 +62,27 @@ class QuestionServiceTest {
 
         // Then
         Assertions.assertThat(expectedResponse).isEqualTo(actualResponse);
+    }
+
+    @Test
+    @DisplayName("findDailyQuestion 메서드 테스트")
+    public void testFindDailyQuestion() {
+        // Given
+        Long coupleId = 1L;
+        long questionDay = 1L;
+        Question mockQuestion = mock(Question.class);
+        QuestionForm questionForm = TestData.questionForm(1L);
+        given(questionServiceSupporter.getQuestionDay(coupleId)).willReturn(questionDay);
+        given(questionRepository.findQuestionByCoupleIdAndQuestionDay(coupleId, questionDay))
+                .willReturn(Arrays.asList(mockQuestion));
+        given(mockQuestion.getQuestionForm()).willReturn(questionForm);
+        given(mockQuestion.getId()).willReturn(1L);
+
+        // When
+        DailyQuestionResponse result = questionService.findDailyQuestion(coupleId);
+
+        // Then
+        Assertions.assertThat(result).isNotNull();
+        Assertions.assertThat(result).isEqualTo(DailyQuestionResponse.from(mockQuestion));
     }
 }
