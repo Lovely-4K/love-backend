@@ -59,6 +59,12 @@ subprojects {
         reports {
             xml.required = true
         }
+
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: ['**/*Request.class', '**/*Response.class'])
+            }))
+        }
     }
 
     configurations {

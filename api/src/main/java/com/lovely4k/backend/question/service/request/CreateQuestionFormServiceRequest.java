@@ -10,14 +10,9 @@ public record CreateQuestionFormServiceRequest(
         String thirdChoice,
         String fourthChoice
 ) {
-    public QuestionForm toEntity(Long memberId) {
-        QuestionChoices questionChoices = QuestionChoices.builder()
-                .firstChoice(this.firstChoice)
-                .secondChoice(this.secondChoice)
-                .thirdChoice(this.thirdChoice)
-                .fourthChoice(this.fourthChoice)
-                .build();
+    public QuestionForm toEntity(Long memberId, Long questionDay) {
+        QuestionChoices questionChoices = QuestionChoices.create(firstChoice, secondChoice, thirdChoice, fourthChoice);
 
-        return new QuestionForm(memberId, questionContent, questionChoices);
+        return QuestionForm.create(memberId, questionContent, questionChoices, questionDay);
     }
 }

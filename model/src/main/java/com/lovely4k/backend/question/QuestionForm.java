@@ -3,12 +3,12 @@ package com.lovely4k.backend.question;
 import com.lovely4k.backend.common.jpa.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class QuestionForm extends BaseTimeEntity {
@@ -26,10 +26,18 @@ public class QuestionForm extends BaseTimeEntity {
     @Embedded
     private QuestionChoices questionChoices;
 
-    public QuestionForm(Long memberId, String questionContent, QuestionChoices questionChoices) {
+    @Column(name = "question_day")
+    private Long questionDay;
+
+    private QuestionForm(Long memberId, String questionContent, QuestionChoices questionChoices, Long questionDay) {
         this.memberId = memberId;
-        this.questionContent = questionContent;
-        this.questionChoices = questionChoices;
+        this.questionContent = Objects.requireNonNull(questionContent);
+        this.questionChoices = Objects.requireNonNull(questionChoices);
+        this.questionDay = Objects.requireNonNull(questionDay);
+    }
+
+    public static QuestionForm create(Long memberId, String questionContent, QuestionChoices questionChoices, Long questionDay) {
+        return new QuestionForm(memberId, questionContent, questionChoices, questionDay);
     }
 
 }
