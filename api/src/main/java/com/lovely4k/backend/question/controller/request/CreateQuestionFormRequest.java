@@ -4,13 +4,13 @@ import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRe
 import jakarta.validation.constraints.NotBlank;
 
 public record CreateQuestionFormRequest(
-        @NotBlank
+        @NotBlank(message = "질문 내용은 비어 있을 수 없습니다.")
         String questionContent,
 
-        @NotBlank
+        @NotBlank(message = "첫 번째 선택지는 비어 있을 수 없습니다.")
         String firstChoice,
 
-        @NotBlank
+        @NotBlank(message = "두 번째 선택지는 비어 있을 수 없습니다.")
         String secondChoice,
 
         String thirdChoice,

@@ -1,5 +1,6 @@
 dependencies {
     api 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
 }

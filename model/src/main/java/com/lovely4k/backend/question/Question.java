@@ -3,9 +3,11 @@ package com.lovely4k.backend.question;
 import com.lovely4k.backend.common.jpa.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,13 +34,14 @@ public class Question extends BaseTimeEntity {
     @Column(name = "question_day")
     private long questionDay;
 
-    @Builder
-    private Question(Long coupleId, QuestionForm questionForm, String boyAnswer, String girlAnswer, long questionDay) {
-        this.coupleId = coupleId;
-        this.questionForm = questionForm;
-        this.boyAnswer = boyAnswer;
-        this.girlAnswer = girlAnswer;
-        this.questionDay = questionDay;
+    private Question(Long coupleId, QuestionForm questionForm, Long questionDay) {
+        this.coupleId = Objects.requireNonNull(coupleId, "coupleId는 null값이 될 수 없습니다.");
+        this.questionForm = Objects.requireNonNull(questionForm, "questionForm은 null 값이 될 수 없습니다.");
+        this.questionDay = Objects.requireNonNull(questionDay, "questionDay는 null 값이 될 수 없습니다.");
+    }
+
+    public static Question create(Long coupleId, QuestionForm questionForm, Long questionDay) {
+        return new Question(coupleId, questionForm, questionDay);
     }
 
     public void validateAnswer() {
@@ -48,12 +51,14 @@ public class Question extends BaseTimeEntity {
     }
 
     private boolean isAnswerComplete() {
-        return isNotEmpty(boyAnswer) && isNotEmpty(girlAnswer);
+        return StringUtils.isNotEmpty(boyAnswer) && StringUtils.isNotEmpty(girlAnswer);
     }
 
-    private boolean isNotEmpty(String answer) {
-        return answer != null && !answer.isEmpty();
+    public void updateBoyAnswer(String boyAnswer) {
+        this.boyAnswer = boyAnswer;
     }
 
-
+    public void updateGirlAnswer(String girlAnswer) {
+        this.girlAnswer = girlAnswer;
+    }
 }
