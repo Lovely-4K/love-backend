@@ -9,7 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = {
-        DiaryController.class,
+    DiaryController.class,
 })
 public abstract class ControllerTestSupport {
 

@@ -6,14 +6,14 @@ import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
 
-public record ApiResponse<T> (
-        int code,
-        T body
+public record ApiResponse<T>(
+    int code,
+    T body
 ) {
 
     public static <T> ResponseEntity<ApiResponse<T>> created(String requestURI, Long resourceId) {
         return ResponseEntity.created(URI.create(requestURI + "/" + resourceId))
-                .body(new ApiResponse<>(HttpStatus.CREATED.value(), null));
+            .body(new ApiResponse<>(HttpStatus.CREATED.value(), null));
     }
 
     public static <T> ResponseEntity<ApiResponse<T>> ok(T body) {
@@ -22,5 +22,9 @@ public record ApiResponse<T> (
 
     public static <T> ResponseEntity<ApiResponse<T>> fail(HttpStatus httpStatus, T body) {
         return new ResponseEntity<>(new ApiResponse<>(httpStatus.value(), body), httpStatus);
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> ok(T body) {
+        return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), body), HttpStatus.OK);
     }
 }
