@@ -17,7 +17,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class QuestionControllerTest extends ControllerTestSupport {
-
     @DisplayName("질문지가 null이면 안된다.")
     @Test
     void createQuestionFormWithQuestionContinetIsNull() throws Exception {
@@ -38,8 +37,7 @@ class QuestionControllerTest extends ControllerTestSupport {
             .andDo(print())
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value("400"))
-            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
-        ;
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"));
     }
 
     @DisplayName("첫 번째 선택지가 null이면 안된다.")
@@ -86,55 +84,6 @@ class QuestionControllerTest extends ControllerTestSupport {
             .andDo(print())
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value("400"))
-            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
-        ;
-    }
-
-    @DisplayName("첫 번째 선택지가 null이면 안된다.")
-    @Test
-    void createQuestionFormWithFisrtChoiceIsNull() throws Exception {
-        CreateQuestionFormRequest request = new CreateQuestionFormRequest(
-                "컨텐츠",
-                null,
-                "선택지 2",
-                "선택지 3",
-                "선택지 4");
-
-        mockMvc.perform(
-                        post("/v1/questions/question-forms")
-                                .content(objectMapper.writeValueAsString(request))
-                                .queryParam("userId", "1")
-                                .queryParam("coupleId", "1")
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
-        ;
-    }
-
-    @DisplayName("두 번째 선택지가 null이면 안된다.")
-    @Test
-    void createQuestionFormWithSecondChoiceIsNull() throws Exception {
-        CreateQuestionFormRequest request = new CreateQuestionFormRequest(
-                "컨텐츠",
-                "선택지 1",
-                null,
-                "선택지 3",
-                "선택지 4");
-
-        mockMvc.perform(
-                        post("/v1/questions/question-forms")
-                                .content(objectMapper.writeValueAsString(request))
-                                .queryParam("userId", "1")
-                                .queryParam("coupleId", "1")
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
-        ;
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"));
     }
 }

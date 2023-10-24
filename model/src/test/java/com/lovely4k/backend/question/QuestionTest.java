@@ -16,6 +16,10 @@ class QuestionTest {
         Question question = Question.create(1L, questionForm, 1L);
         question.updateBoyAnswer("");
         question.updateGirlAnswer("");
+        Question question = Question.builder()
+            .boyAnswer("")
+            .girlAnswer("")
+            .build();
 
         Question question = Question.builder()
             .boyAnswer("")
@@ -36,6 +40,10 @@ class QuestionTest {
         Question question1 = Question.create(1L, questionForm, 1L);
         question1.updateBoyAnswer("answer");
         question1.updateGirlAnswer("");
+        Question question1 = Question.builder()
+            .boyAnswer("answer")
+            .girlAnswer("")
+            .build();
 
         Question question1 = Question.builder()
             .boyAnswer("answer")
@@ -58,6 +66,11 @@ class QuestionTest {
         Question question2 = Question.create(1L, questionForm, 1L);
         question2.updateBoyAnswer("");
         question2.updateGirlAnswer("answer");
+
+        Question question2 = Question.builder()
+            .boyAnswer("")
+            .girlAnswer("answer")
+            .build();
 
         assertThatThrownBy(question2::validateAnswer)
             .isInstanceOf(IllegalStateException.class)
