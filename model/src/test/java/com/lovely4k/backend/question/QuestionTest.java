@@ -18,8 +18,8 @@ class QuestionTest {
         question.updateGirlAnswer("");
 
         assertThatThrownBy(question::validateAnswer)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("질문에 답변을 아직 안했습니다.");
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessage("질문에 답변을 아직 안했습니다.");
     }
 
     @DisplayName("답변 유효성 검사 - 하나만 비어있는 경우")
@@ -33,16 +33,16 @@ class QuestionTest {
         question1.updateGirlAnswer("");
 
         assertThatThrownBy(question1::validateAnswer)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("질문에 답변을 아직 안했습니다.");
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessage("질문에 답변을 아직 안했습니다.");
 
         Question question2 = Question.create(1L, questionForm, 1L);
         question2.updateBoyAnswer("");
         question2.updateGirlAnswer("answer");
 
         assertThatThrownBy(question2::validateAnswer)
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("질문에 답변을 아직 안했습니다.");
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessage("질문에 답변을 아직 안했습니다.");
     }
 
     @DisplayName("답변 유효성 검사 - 둘 다 채워져 있는 경우")
