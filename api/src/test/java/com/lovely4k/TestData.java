@@ -1,6 +1,5 @@
 package com.lovely4k;
 
-import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionChoices;
 import com.lovely4k.backend.question.QuestionForm;

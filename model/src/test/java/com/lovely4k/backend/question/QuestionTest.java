@@ -55,6 +55,10 @@ class QuestionTest {
             .girlAnswer("answer")
             .build();
 
+        Question question2 = Question.create(1L, questionForm, 1L);
+        question2.updateBoyAnswer("");
+        question2.updateGirlAnswer("answer");
+
         assertThatThrownBy(question2::validateAnswer)
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("질문에 답변을 아직 안했습니다.");
