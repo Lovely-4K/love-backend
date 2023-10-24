@@ -62,4 +62,5 @@ public class Question extends BaseTimeEntity {
         this.girlAnswer = girlAnswer;
     }
 
+
 }
