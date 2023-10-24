@@ -24,6 +24,6 @@ public record CreateQuestionFormServiceRequest(
             .fourthChoice(this.fourthChoice)
             .build();
 
-        return QuestionForm.create(memberId, questionContent, questionChoices, questionDay);
+        return new QuestionForm(memberId, questionContent, questionChoices);
     }
 }
