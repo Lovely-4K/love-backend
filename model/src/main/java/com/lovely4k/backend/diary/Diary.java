@@ -2,6 +2,7 @@ package com.lovely4k.backend.diary;
 
 import com.lovely4k.backend.common.jpa.BaseTimeEntity;
 import com.lovely4k.backend.location.Location;
+import com.lovely4k.backend.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,7 +20,7 @@ public class Diary extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "location_id")
     private Location location;
 
@@ -52,5 +53,31 @@ public class Diary extends BaseTimeEntity {
         this.score = score;
         this.datingDay = datingDay;
         this.photos = photos;
+    }
+
+    public static Diary create(Integer score, LocalDate localDate, String text, Member member, Location location) {
+        validateScore(score);
+        DiaryBuilder diaryBuilder = Diary.builder()
+                .location(location)
+                .coupleId(member.getCoupleId())
+                .score(score)
+                .datingDay(localDate);
+
+        fillOutText(text, member, diaryBuilder);
+        return diaryBuilder.build();
+    }
+
+    private static void validateScore(Integer score) {
+        if (score < 0 || score > 5) {
+            throw new IllegalArgumentException("score out of range.");
+        }
+    }
+
+    private static void fillOutText(String text, Member member, DiaryBuilder diaryBuilder) {
+        switch (member.getSex()) {
+            case "boy" -> diaryBuilder.boyText(text);
+            case "girl" -> diaryBuilder.girlText(text);
+            default -> throw new IllegalArgumentException("invalid input of sex");
+        }
     }
 }

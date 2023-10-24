@@ -8,11 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
-import java.time.LocalDate;
-
 import static org.mockito.Mockito.mock;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
@@ -40,7 +36,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                         post("/v1/diaries")
                                 .content(objectMapper.writeValueAsString(diaryCreateRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header("memberId", "1")
+                                .param("memberId", "1")
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -48,8 +44,8 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestFields(
-                                        fieldWithPath("kakaoId").type(STRING).description("카카오 장소 id"),
-                                        fieldWithPath("location").type(STRING).description("장소 주소"),
+                                        fieldWithPath("kakaoMapId").type(STRING).description("카카오 장소 id"),
+                                        fieldWithPath("address").type(STRING).description("장소 주소"),
                                         fieldWithPath("score").type(NUMBER).description("장소에 대한 평점"),
                                         fieldWithPath("datingDay").type(STRING).description("데이트 한 날짜"),
                                         fieldWithPath("category").type(STRING).description("장소 카테고리"),
@@ -114,7 +110,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     void editDiary() throws Exception {
 
         MockDiaryEditRequest mockDiaryEditRequest =
-                new MockDiaryEditRequest("1L", "new-location", 5, "2023-10-23", "ACCOMODATION", "오늘 너무 좋았어");
+                new MockDiaryEditRequest("1L", "new-address", 5, "2023-10-23", "ACCOMODATION", "오늘 너무 좋았어");
 
         this.mockMvc.perform(
                         patch("/v1/diaries/{id}", 1L)

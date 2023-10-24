@@ -1,7 +1,7 @@
 package com.lovely4k.backend.diary.controller;
 
 import com.lovely4k.backend.common.ApiResponse;
-import com.lovely4k.backend.diary.controller.request.DiaryCreateRequest;
+import com.lovely4k.backend.diary.controller.request.WebDiaryCreateRequest;
 import com.lovely4k.backend.diary.controller.request.DiaryEditRequest;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/v1/diaries")
@@ -26,13 +25,13 @@ public class DiaryController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> createDiary(
-            @RequestBody @Valid DiaryCreateRequest request,
-            @RequestHeader Long memberId
+            @RequestBody @Valid WebDiaryCreateRequest request,
+            @RequestParam Long memberId
     ) {
-        // TODO : 이미지 업로드 기능 추가
-        Long createdDiaryId = 1L;
+        // 이미지 업로드 기능 추가 예정
+        Long diaryId = diaryService.createDiary(request.toServiceRequest(), memberId);
 
-        return ApiResponse.created("/v1/diaries", createdDiaryId);
+        return ApiResponse.created("/v1/diaries", diaryId);
     }
 
     @GetMapping("/{id}")
