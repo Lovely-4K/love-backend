@@ -46,12 +46,14 @@ CREATE TABLE Location (
 -- Member 테이블
 CREATE TABLE Member (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    couple_id BIGINT,
     sex VARCHAR(7),
     name VARCHAR(15),
     nick_name VARCHAR(50),
     birthday DATE,
     mbti VARCHAR(7),
     calendar_color VARCHAR(31),
+    image_url VARCHAR,
     created_at TIMESTAMP NOT NULL,
     updated_at DATE NOT NULL
 );

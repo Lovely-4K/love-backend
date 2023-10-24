@@ -26,7 +26,7 @@ public class Member extends BaseTimeEntity {
 
     @Column(length = 15, name = "name")
     private String name;
-    
+
     @Column(name = "nick_name")
     private String nickname;
 
@@ -39,8 +39,11 @@ public class Member extends BaseTimeEntity {
     @Column(length = 31, name = "calendar_color")
     private String calendarColor;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Builder
-    private Member(Long coupleId, String sex, String name, String nickname, LocalDate birthday, String mbti, String calendarColor) {
+    private Member(Long coupleId, String sex, String name, String nickname, LocalDate birthday, String mbti, String calendarColor, String imageUrl) {
         this.coupleId = coupleId;
         this.sex = sex;
         this.name = name;
@@ -48,5 +51,6 @@ public class Member extends BaseTimeEntity {
         this.birthday = birthday;
         this.mbti = mbti;
         this.calendarColor = calendarColor;
+        this.imageUrl = imageUrl;
     }
 }
