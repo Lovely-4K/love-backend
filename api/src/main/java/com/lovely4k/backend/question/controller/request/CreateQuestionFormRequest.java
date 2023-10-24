@@ -4,7 +4,6 @@ import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRe
 import jakarta.validation.constraints.NotBlank;
 
 public record CreateQuestionFormRequest(
-
         @NotBlank(message = "질문 내용은 비어 있을 수 없습니다.")
         String questionContent,
 

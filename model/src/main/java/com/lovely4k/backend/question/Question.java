@@ -61,6 +61,4 @@ public class Question extends BaseTimeEntity {
     public void updateGirlAnswer(String girlAnswer) {
         this.girlAnswer = girlAnswer;
     }
-
-
 }

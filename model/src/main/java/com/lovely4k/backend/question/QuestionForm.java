@@ -38,7 +38,6 @@ public class QuestionForm extends BaseTimeEntity {
 
     public static QuestionForm create(Long memberId, String questionContent, QuestionChoices questionChoices, Long questionDay) {
         return new QuestionForm(memberId, questionContent, questionChoices, questionDay);
-
     }
 
 }

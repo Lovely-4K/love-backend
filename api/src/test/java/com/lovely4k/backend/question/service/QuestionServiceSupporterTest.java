@@ -18,12 +18,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-<<<<<<< HEAD
 class QuestionServiceSupporterTest {
-=======
-public class QuestionServiceSupporterTest {
-
->>>>>>> b55755c (feat : 사용자가 질문지를 작성하는 기능 추가)
     @Mock
     private CoupleRepository coupleRepository;
 
