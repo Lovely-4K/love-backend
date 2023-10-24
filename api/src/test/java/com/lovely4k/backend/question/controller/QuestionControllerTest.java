@@ -44,7 +44,7 @@ class QuestionControllerTest extends ControllerTestSupport {
 
     @DisplayName("첫 번째 선택지가 null이면 안된다.")
     @Test
-        void createQuestionFormWithFisrtChoiceIsNull() throws Exception {
+    void createQuestionFormWithFisrtChoiceIsNull() throws Exception {
         CreateQuestionFormRequest request = new CreateQuestionFormRequest(
             "컨텐츠",
             null,
