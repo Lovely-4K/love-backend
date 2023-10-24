@@ -18,6 +18,9 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "couple_id")
+    private Long coupleId;
+
     @Column(length = 7, name = "sex")
     private String sex;
 
@@ -37,7 +40,8 @@ public class Member extends BaseTimeEntity {
     private String calendarColor;
 
     @Builder
-    private Member(String sex, String name, String nickname, LocalDate birthday, String mbti, String calendarColor) {
+    private Member(Long coupleId, String sex, String name, String nickname, LocalDate birthday, String mbti, String calendarColor) {
+        this.coupleId = coupleId;
         this.sex = sex;
         this.name = name;
         this.nickname = nickname;
@@ -45,5 +49,4 @@ public class Member extends BaseTimeEntity {
         this.mbti = mbti;
         this.calendarColor = calendarColor;
     }
-
 }
