@@ -1,5 +1,6 @@
 package com.lovely4k.backend.common.imageuploader;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class AWSS3Uploader implements ImageUploader {
                         amazonS3.putObject(bucket, DEFAULT_DIRECTORY + directory + originalFilename, multipartFile.getInputStream(), objectMetadata);
                     } catch (IOException e) {
                         log.warn("[Warning] Image Upload to S3 has some exception", e);
+                        throw new AmazonServiceException("Some Error occurred during Upload Image to S3 Server", e);
                     }
                     uploadedImageUrl.add(amazonS3.getUrl(bucket, originalFilename).toString());
                 }

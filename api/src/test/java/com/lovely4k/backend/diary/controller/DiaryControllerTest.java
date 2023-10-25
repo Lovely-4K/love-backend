@@ -8,7 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import java.nio.charset.StandardCharsets;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,21 +20,16 @@ class DiaryControllerTest extends ControllerTestSupport {
     @Test
     void createDiary() throws Exception{
         // given
-        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
-        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-files".getBytes());
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
 
         // when && then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/v1/diaries")
                                 .file(firstImage)
-                                .file(secondImage)
+                                .file(mockMultipartFile)
                                 .param("memberId", "1")
-                                .param("kakaoMapId", "1")
-                                .param("address", "서울 강동구 테헤란로")
-                                .param("score", "5")
-                                .param("datingDay", "2023-10-20")
-                                .param("category", "ACCOMODATION")
-                                .param("text", "여기 숙소 좋았어!")
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -46,17 +42,14 @@ class DiaryControllerTest extends ControllerTestSupport {
     @Test
     void createDiaryWithoutImage() throws Exception{
         // given
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
 
         // when && then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/v1/diaries")
+                                .file(mockMultipartFile)
                                 .param("memberId", "1")
-                                .param("kakaoMapId", "1")
-                                .param("address", "서울 강동구 테헤란로")
-                                .param("score", "5")
-                                .param("datingDay", "2023-10-20")
-                                .param("category", "ACCOMODATION")
-                                .param("text", "여기 숙소 좋았어!")
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -69,20 +62,16 @@ class DiaryControllerTest extends ControllerTestSupport {
     @Test
     void createDiaryWithoutKakaoId() throws Exception {
         // given
-        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
-        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-files".getBytes());
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(null, "서울 강동구 테헤란로", 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
 
         // when && then
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/v1/diaries")
                                 .file(firstImage)
-                                .file(secondImage)
+                                .file(mockMultipartFile)
                                 .param("memberId", "1")
-                                .param("address", "서울 강동구 테헤란로")
-                                .param("score", "5")
-                                .param("datingDay", "2023-10-20")
-                                .param("category", "ACCOMODATION")
-                                .param("text", "여기 숙소 좋았어!")
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -95,20 +84,14 @@ class DiaryControllerTest extends ControllerTestSupport {
     @Test
     void createDiaryWithoutLocation() throws Exception {
         // given
-        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
-        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
-
-        // when && then
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-files".getBytes());
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, null, 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/v1/diaries")
                                 .file(firstImage)
-                                .file(secondImage)
+                                .file(mockMultipartFile)
                                 .param("memberId", "1")
-                                .param("kakaoMapId", "1")
-                                .param("score", "5")
-                                .param("datingDay", "2023-10-20")
-                                .param("category", "ACCOMODATION")
-                                .param("text", "여기 숙소 좋았어!")
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -121,21 +104,14 @@ class DiaryControllerTest extends ControllerTestSupport {
     @Test
     void createDiaryWithMinusScore() throws Exception {
         // given
-        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
-        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
-
-        // when && then
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-files".getBytes());
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", -1, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/v1/diaries")
                                 .file(firstImage)
-                                .file(secondImage)
+                                .file(mockMultipartFile)
                                 .param("memberId", "1")
-                                .param("kakaoMapId", "1")
-                                .param("address", "서울 강동구 테헤란로")
-                                .param("score", "-1")
-                                .param("datingDay", "2023-10-20")
-                                .param("category", "ACCOMODATION")
-                                .param("text", "여기 숙소 좋았어!")
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -147,22 +123,14 @@ class DiaryControllerTest extends ControllerTestSupport {
     @DisplayName("다이어리 작성 시 평점은 0 ~ 5점 사이값 이다.")
     @Test
     void createDiaryWithInvalidScore() throws Exception {
-        // given
-        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
-        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
-
-        // when && then
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-files".getBytes());
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 6, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/v1/diaries")
                                 .file(firstImage)
-                                .file(secondImage)
+                                .file(mockMultipartFile)
                                 .param("memberId", "1")
-                                .param("kakaoMapId", "1")
-                                .param("address", "서울 강동구 테헤란로")
-                                .param("score", "6")
-                                .param("datingDay", "2023-10-20")
-                                .param("category", "ACCOMODATION")
-                                .param("text", "여기 숙소 좋았어!")
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -174,21 +142,14 @@ class DiaryControllerTest extends ControllerTestSupport {
     @DisplayName("다이어리 작성 시 datingDay는 필수값이다.")
     @Test
     void createDiaryWithoutDatingDay() throws Exception {
-        // given
-        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
-        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
-
-        // when && then
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-files".getBytes());
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, null, "ACCOMODATION", "여기 숙소 좋았어..!");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/v1/diaries")
                                 .file(firstImage)
-                                .file(secondImage)
+                                .file(mockMultipartFile)
                                 .param("memberId", "1")
-                                .param("kakaoMapId", "1")
-                                .param("address", "서울 강동구 테헤란로")
-                                .param("score", "5")
-                                .param("category", "ACCOMODATION")
-                                .param("text", "여기 숙소 좋았어!")
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -200,22 +161,14 @@ class DiaryControllerTest extends ControllerTestSupport {
     @DisplayName("다이어리 작성 시 datingDay는 'yyyy-MM-dd' 형식으로 작성 되어야 한다.")
     @Test
     void createDiaryInvalidDatingDay() throws Exception {
-        // given
-        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
-        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
-
-        // when && then
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-files".getBytes());
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-1-2", "ACCOMODATION", "여기 숙소 좋았어..!");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/v1/diaries")
                                 .file(firstImage)
-                                .file(secondImage)
+                                .file(mockMultipartFile)
                                 .param("memberId", "1")
-                                .param("kakaoMapId", "1")
-                                .param("address", "서울 강동구 테헤란로")
-                                .param("score", "5")
-                                .param("datingDay", "2023-1-2")
-                                .param("category", "ACCOMODATION")
-                                .param("text", "여기 숙소 좋았어!")
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -226,22 +179,14 @@ class DiaryControllerTest extends ControllerTestSupport {
     @DisplayName("다이어리 작성 시 카테고리는 CAFE, FOOD, ACCOMODATION, CULTURE, ETC 만 가능하다.")
     @Test
     void createDiaryWithInvalidCategory() throws Exception {
-        // given
-        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
-        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
-
-        // when && then
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-files".getBytes());
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-10-20", "LEISURE", "여기 숙소 좋았어..!");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/v1/diaries")
                                 .file(firstImage)
-                                .file(secondImage)
+                                .file(mockMultipartFile)
                                 .param("memberId", "1")
-                                .param("kakaoMapId", "1")
-                                .param("address", "서울 강동구 테헤란로")
-                                .param("score", "5")
-                                .param("datingDay", "2023-10-20")
-                                .param("category", "LEISURE")
-                                .param("text", "여기 숙소 좋았어!")
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -253,21 +198,14 @@ class DiaryControllerTest extends ControllerTestSupport {
     @DisplayName("다이어리 작성 시 작성자의 text는 필수적으로 적어야 한다.")
     @Test
     void createDiaryWithEmptyText() throws Exception {
-        // given
-        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
-        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
-
-        // when && then
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-files".getBytes());
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-10-20", "ACCOMODATION", null);
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/v1/diaries")
                                 .file(firstImage)
-                                .file(secondImage)
+                                .file(mockMultipartFile)
                                 .param("memberId", "1")
-                                .param("kakaoMapId", "1")
-                                .param("address", "서울 강동구 테헤란로")
-                                .param("score", "5")
-                                .param("datingDay", "2023-10-20")
-                                .param("category", "ACCOMODATION")
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
