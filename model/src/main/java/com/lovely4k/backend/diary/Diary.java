@@ -55,6 +55,10 @@ public class Diary extends BaseTimeEntity {
         this.photos = photos;
     }
 
+    public void addPhoto(Photos photos) {
+        this.photos = photos;
+    }
+
     public static Diary create(Integer score, LocalDate localDate, String text, Member member, Location location) {
         validateScore(score);
         DiaryBuilder diaryBuilder = Diary.builder()

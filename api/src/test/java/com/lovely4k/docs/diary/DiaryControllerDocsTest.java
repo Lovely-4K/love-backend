@@ -5,14 +5,16 @@ import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,28 +31,26 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     @DisplayName("다이어리를 작성하는 API")
     @Test
     void createDiary() throws Exception{
-        MockDiaryCreateRequest diaryCreateRequest =
-                new MockDiaryCreateRequest("1", "서울 강동구 테헤란로", 5, "2023-10-20", "ACCOMODATION", "test Text");
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
 
         mockMvc.perform(
-                        post("/v1/diaries")
-                                .content(objectMapper.writeValueAsString(diaryCreateRequest))
-                                .contentType(MediaType.APPLICATION_JSON)
+                        RestDocumentationRequestBuilders.multipart("/v1/diaries")
+                                .file(firstImage)
+                                .file(secondImage)
                                 .param("memberId", "1")
+                                .param("kakaoMapId", "1")
+                                .param("address", "서울 강동구 테헤란로")
+                                .param("score", "5")
+                                .param("datingDay", "2023-10-20")
+                                .param("category", "ACCOMODATION")
+                                .param("text", "여기 숙소 좋았어!")
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andDo(document("diary-create",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
-                                requestFields(
-                                        fieldWithPath("kakaoMapId").type(STRING).description("카카오 장소 id"),
-                                        fieldWithPath("address").type(STRING).description("장소 주소"),
-                                        fieldWithPath("score").type(NUMBER).description("장소에 대한 평점"),
-                                        fieldWithPath("datingDay").type(STRING).description("데이트 한 날짜"),
-                                        fieldWithPath("category").type(STRING).description("장소 카테고리"),
-                                        fieldWithPath("text").type(STRING).description("다이어리 내용")
-                                ),
                                 responseFields(
                                         fieldWithPath("code").type(NUMBER).description("코드"),
                                         fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디")
