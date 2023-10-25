@@ -54,4 +54,13 @@ public class Member extends BaseTimeEntity {
         this.imageUrl = imageUrl;
     }
 
+    public void updateProfile(String sex, String imageUrl, String name, String nickname, LocalDate birthday, String mbti, String calendarColor) {
+        this.sex = sex;
+        this.name = name;
+        this.nickname = nickname;
+        this.birthday = birthday;
+        this.mbti = mbti;
+        this.calendarColor = calendarColor;
+        this.imageUrl = imageUrl;
+    }
 }
