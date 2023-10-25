@@ -7,6 +7,7 @@ import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.repository.QuestionFormRepository;
 import com.lovely4k.backend.question.repository.QuestionRepository;
 import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
+import com.lovely4k.backend.question.service.response.AnsweredQuestionResponse;
 import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
 import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
 import com.lovely4k.backend.question.service.response.DailyQuestionResponse;
@@ -20,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -158,4 +160,40 @@ class QuestionServiceTest {
         Assertions.assertThatThrownBy(() -> questionService.updateQuestionAnswer(questionId, sex, answer))
                 .isInstanceOf(OptimisticLockException.class);
     }
+
+    @DisplayName("커플 ID로 답변된 모든 질문을 조회한다.")
+    @Test
+    void testFindAllAnsweredQuestionByCoupleId() {
+        // Given
+        Long coupleId = 1L;
+        int limit = 10;
+        long id = 0L;
+
+        Question mockQuestion1 = mock(Question.class);
+        Question mockQuestion2 = mock(Question.class);
+        QuestionForm questionForm1 = TestData.questionForm(1L);
+        QuestionForm questionForm2 = TestData.questionForm(2L);
+
+        // mockQuestion들이 리턴할 데이터 설정
+        given(mockQuestion1.getQuestionForm()).willReturn(questionForm1);
+        given(mockQuestion1.getId()).willReturn(1L);
+        given(mockQuestion2.getQuestionForm()).willReturn(questionForm2);
+        given(mockQuestion2.getId()).willReturn(2L);
+
+        // questionRepository가 리턴할 데이터 설정
+        given(questionRepository.findQuestionsByCoupleIdWithLimit(id, coupleId, limit)).willReturn(Arrays.asList(mockQuestion1, mockQuestion2));
+
+        // When
+        AnsweredQuestionResponse actualResponse = questionService.findAllAnsweredQuestionByCoupleId(id, coupleId, limit);
+
+        // Then
+        List<AnsweredQuestionResponse.QuestionResponse> expectedQuestionResponses = Arrays.asList(
+                AnsweredQuestionResponse.QuestionResponse.from(mockQuestion1),
+                AnsweredQuestionResponse.QuestionResponse.from(mockQuestion2)
+        );
+        AnsweredQuestionResponse expectedResponse = new AnsweredQuestionResponse(expectedQuestionResponses);
+
+        Assertions.assertThat(actualResponse).isEqualTo(expectedResponse);
+    }
+
 }

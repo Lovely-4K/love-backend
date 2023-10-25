@@ -21,8 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//H2 환경에서는 동작하지 않음
-//@Disabled
+
 @SpringBootTest
 @Sql(scripts = "/test.sql")
 class QuestionServiceConcurrencyTest {
@@ -33,6 +32,8 @@ class QuestionServiceConcurrencyTest {
     @Autowired
     QuestionRepository questionRepository;
 
+    //H2 환경에서는 동작하지 않음
+    @Disabled
     @DisplayName("커플이 동시에 질문지를 생성할 때 한 쪽의 질문지만 생성 된다.")
     @Test
     void testConcurrency() throws InterruptedException {
@@ -76,7 +77,7 @@ class QuestionServiceConcurrencyTest {
         final long questionId = 1L;
 
         Question initialQuestion = questionRepository.findById(questionId)
-                .orElseThrow(() -> new NoSuchElementException("Question not found"));
+                .orElseThrow();
         long initialVersion = initialQuestion.getVersion();
 
         for (int i = 0; i < numberOfThreads; i++) {
@@ -95,12 +96,10 @@ class QuestionServiceConcurrencyTest {
         latch.await();
 
         Question updatedQuestion = questionRepository.findById(questionId)
-                .orElseThrow(() -> new NoSuchElementException("Question not found"));
+                .orElseThrow();
         long updatedVersion = updatedQuestion.getVersion();
-        System.out.println("초기 버전" +initialVersion);
-        System.out.println("이후 버전" + updatedVersion);
-        assertThat(successCounter.get()).isGreaterThan(0);
-        assertThat(updatedVersion).isGreaterThan(initialVersion);
+        assertThat(successCounter.get()).isEqualTo(numberOfThreads);
+        assertThat(updatedVersion).isEqualTo(initialVersion + numberOfThreads);
     }
 
 }

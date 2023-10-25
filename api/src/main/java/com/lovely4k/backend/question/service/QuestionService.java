@@ -6,10 +6,7 @@ import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.repository.QuestionFormRepository;
 import com.lovely4k.backend.question.repository.QuestionRepository;
 import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
-import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
-import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
-import com.lovely4k.backend.question.service.response.DailyQuestionResponse;
-import com.lovely4k.backend.question.service.response.QuestionDetailsResponse;
+import com.lovely4k.backend.question.service.response.*;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -18,6 +15,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.lovely4k.backend.common.ExceptionMessage.notFoundEntityMessage;
@@ -81,5 +79,10 @@ public class QuestionService {
     public QuestionDetailsResponse findQuestionDetails(Long id) {
 
         return new QuestionDetailsResponse("test", "boy", "girl");
+    }
+
+    public AnsweredQuestionResponse findAllAnsweredQuestionByCoupleId(Long id, Long coupleId, int limit) {
+        List<Question> questions= questionRepository.findQuestionsByCoupleIdWithLimit(id, coupleId, limit);
+        return AnsweredQuestionResponse.from(questions);
     }
 }

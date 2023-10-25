@@ -1,23 +1,24 @@
 package com.lovely4k.docs.question;
 
 import com.lovely4k.backend.member.Sex;
+import com.lovely4k.backend.question.Question;
+import com.lovely4k.backend.question.QuestionChoices;
+import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.controller.QuestionController;
 import com.lovely4k.backend.question.controller.request.AnswerQuestionRequest;
 import com.lovely4k.backend.question.controller.request.CreateQuestionFormRequest;
 import com.lovely4k.backend.question.service.QuestionService;
 import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
-import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
-import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
-import com.lovely4k.backend.question.service.response.DailyQuestionResponse;
-import com.lovely4k.backend.question.service.response.QuestionDetailsResponse;
+import com.lovely4k.backend.question.service.response.*;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.mock;
@@ -202,6 +203,43 @@ class QuestionApiDocs extends RestDocsSupport {
                                 fieldWithPath("body.boyAnswer").type(JsonFieldType.STRING).description("남자의 답변"),
                                 fieldWithPath("body.girlAnswer").type(JsonFieldType.STRING).description("여자의 답변")
                         )
+                ));
+    }
+
+    @DisplayName("커플이 대답한 질문의 목록을 가져오는 API")
+    @Test
+    void getAnsweredQuestions() throws Exception {
+        QuestionChoices questionChoices = QuestionChoices.create("test1", "test2", null, null);
+        QuestionForm questionForm = QuestionForm.create(1L, "test", questionChoices,0L);
+        Question question = mock(Question.class);
+        given(question.getId()).willReturn(1L);
+        given(question.getQuestionForm()).willReturn(questionForm);
+        List<AnsweredQuestionResponse.QuestionResponse> mockResponse = List.of(
+                AnsweredQuestionResponse.QuestionResponse.from(question)
+        );
+        AnsweredQuestionResponse response = new AnsweredQuestionResponse(mockResponse);
+        given(questionService.findAllAnsweredQuestionByCoupleId(anyLong(), anyLong(), anyInt())).willReturn(response);
+
+        mockMvc.perform(get("/v1/questions")
+                        .param("id", "1")
+                        .param("coupleId", "1")
+                        .param("limit", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("get-answered-questions",
+                        queryParameters(
+                                parameterWithName("id").description("조회를 시작할 id, default: 0").optional(),
+                                parameterWithName("coupleId").description("조회 할 커플의 id"),
+                                parameterWithName("limit").description("조회할 개수 default: 10").optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+                                fieldWithPath("body.answeredQuestions[]").type(JsonFieldType.ARRAY).description("커플이 대답한 질문 목록"),
+                                fieldWithPath("body.answeredQuestions[].questionId").type(JsonFieldType.NUMBER).description("질문의 ID"),
+                                fieldWithPath("body.answeredQuestions[].questionContent").type(JsonFieldType.STRING).description("질문 내용")
+                        )
+
                 ));
     }
 
