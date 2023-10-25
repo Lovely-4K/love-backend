@@ -1,5 +1,6 @@
 package com.lovely4k.backend.question.service;
 
+import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.repository.QuestionFormRepository;
@@ -9,7 +10,11 @@ import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse
 import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
 import com.lovely4k.backend.question.service.response.DailyQuestionResponse;
 import com.lovely4k.backend.question.service.response.QuestionDetailsResponse;
+import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,7 +70,12 @@ public class QuestionService {
         return CreateQuestionResponse.from(savedQuestion);
     }
 
-    public void updateQuestionAnswer() {
+    @Retryable(retryFor = ObjectOptimisticLockingFailureException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    @Transactional
+    public void updateQuestionAnswer(Long id, Sex sex, int answer) {
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException(notFoundEntityMessage("question", id)));
+        question.updateAnswer(answer, sex);
     }
 
     public QuestionDetailsResponse findQuestionDetails(Long id) {

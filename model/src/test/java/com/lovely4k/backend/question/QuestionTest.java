@@ -1,5 +1,6 @@
 package com.lovely4k.backend.question;
 
+import com.lovely4k.backend.member.Sex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +15,6 @@ class QuestionTest {
         QuestionChoices questionChoices = QuestionChoices.create("choice1", "choice2", null, null);
         QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L);
         Question question = Question.create(1L, questionForm, 1L);
-        question.updateBoyAnswer("");
-        question.updateGirlAnswer("");
 
         assertThatThrownBy(question::validateAnswer)
             .isInstanceOf(IllegalStateException.class)
@@ -29,16 +28,13 @@ class QuestionTest {
         QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L);
 
         Question question1 = Question.create(1L, questionForm, 1L);
-        question1.updateBoyAnswer("answer");
-        question1.updateGirlAnswer("");
+        question1.updateAnswer(1, Sex.MALE);
 
         assertThatThrownBy(question1::validateAnswer)
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("질문에 답변을 아직 안했습니다.");
 
         Question question2 = Question.create(1L, questionForm, 1L);
-        question2.updateBoyAnswer("");
-        question2.updateGirlAnswer("answer");
 
         assertThatThrownBy(question2::validateAnswer)
             .isInstanceOf(IllegalStateException.class)
@@ -51,8 +47,8 @@ class QuestionTest {
         QuestionChoices questionChoices = QuestionChoices.create("choice1", "choice2", null, null);
         QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L);
         Question question = Question.create(1L, questionForm, 1L);
-        question.updateBoyAnswer("boy answer");
-        question.updateGirlAnswer("girl answer");
+        question.updateAnswer(1, Sex.MALE);
+        question.updateAnswer(2, Sex.FEMALE);
 
         assertThatCode(question::validateAnswer).doesNotThrowAnyException();
     }

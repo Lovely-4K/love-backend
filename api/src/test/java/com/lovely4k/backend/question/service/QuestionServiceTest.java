@@ -1,6 +1,7 @@
 package com.lovely4k.backend.question.service;
 
 import com.lovely4k.TestData;
+import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.repository.QuestionFormRepository;
@@ -9,6 +10,7 @@ import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRe
 import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
 import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
 import com.lovely4k.backend.question.service.response.DailyQuestionResponse;
+import jakarta.persistence.OptimisticLockException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -43,7 +46,7 @@ class QuestionServiceTest {
     @InjectMocks
     QuestionService questionService;
 
-    @DisplayName("질문 양식 생성 테스트")
+    @DisplayName("질문 양식을 생성한다.")
     @Test
     void createQuestionForm() {
         // Given
@@ -72,7 +75,7 @@ class QuestionServiceTest {
     }
 
     @Test
-    @DisplayName("findDailyQuestion 메서드 테스트")
+    @DisplayName("오늘의 질문을 조회한다.")
     public void testFindDailyQuestion() {
         // Given
         Long coupleId = 1L;
@@ -93,7 +96,7 @@ class QuestionServiceTest {
         Assertions.assertThat(result).isEqualTo(DailyQuestionResponse.from(mockQuestion));
     }
 
-    @DisplayName("createQuestion 메서드 테스트")
+    @DisplayName("질문을 생성한다.")
     @Test
     void testCreateQuestion() {
         // Given
@@ -116,5 +119,43 @@ class QuestionServiceTest {
         // Then
         Assertions.assertThat(actualResponse).isEqualTo(expectedResponse);
         verify(questionValidator, times(1)).validateCreateQuestion(coupleId, questionDay);
+    }
+
+    @DisplayName("질문에 대한 답변을 작성한다.")
+    @Test
+    void testUpdateQuestionAnswer() {
+        // Given
+        Long questionId = 1L;
+        Sex sex = Sex.MALE;
+        int answer = 1;
+        Question mockQuestion = mock(Question.class);
+
+        // 성공적으로 Question을 조회할 수 있다고 가정
+        given(questionRepository.findById(questionId)).willReturn(Optional.of(mockQuestion));
+
+        // When
+        questionService.updateQuestionAnswer(questionId, sex, answer);
+
+        // Then
+        verify(mockQuestion, times(1)).updateAnswer(answer, sex);
+    }
+
+    @DisplayName("updateQuestionAnswer 메서드 실패 (OptimisticLockException) 테스트")
+    @Test
+    void testUpdateQuestionAnswerOptimisticLockException() {
+        // Given
+        Long questionId = 1L;
+        Sex sex = Sex.MALE;
+        int answer = 1;
+        Question mockQuestion = mock(Question.class);
+
+        // 성공적으로 Question을 조회할 수 있다고 가정
+        given(questionRepository.findById(questionId)).willReturn(Optional.of(mockQuestion));
+        // updateAnswer 호출시 OptimisticLockException 발생
+        doThrow(OptimisticLockException.class).when(mockQuestion).updateAnswer(answer, sex);
+
+        // When & Then
+        Assertions.assertThatThrownBy(() -> questionService.updateQuestionAnswer(questionId, sex, answer))
+                .isInstanceOf(OptimisticLockException.class);
     }
 }

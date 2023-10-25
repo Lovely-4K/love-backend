@@ -1,6 +1,8 @@
 package com.lovely4k.backend.question.controller;
 
 import com.lovely4k.backend.common.ApiResponse;
+import com.lovely4k.backend.member.Sex;
+import com.lovely4k.backend.question.controller.request.AnswerQuestionRequest;
 import com.lovely4k.backend.question.controller.request.CreateQuestionFormRequest;
 import com.lovely4k.backend.question.service.QuestionService;
 import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
@@ -40,8 +42,8 @@ public class QuestionController {
     }
 
     @PatchMapping("/{id}/answers")
-    public ResponseEntity<ApiResponse<Void>> answerQuestion(@PathVariable("id") Long id) {
-        questionService.updateQuestionAnswer();
+    public ResponseEntity<ApiResponse<Void>> answerQuestion(@PathVariable("id") Long id, @RequestParam("sex") Sex sex, @RequestBody @Valid AnswerQuestionRequest request) {
+        questionService.updateQuestionAnswer(id, sex, request.choiceNumber());
         return ApiResponse.ok();
     }
 

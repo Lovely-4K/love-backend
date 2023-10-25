@@ -1,6 +1,8 @@
 package com.lovely4k.docs.question;
 
+import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.controller.QuestionController;
+import com.lovely4k.backend.question.controller.request.AnswerQuestionRequest;
 import com.lovely4k.backend.question.controller.request.CreateQuestionFormRequest;
 import com.lovely4k.backend.question.service.QuestionService;
 import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
@@ -156,14 +158,21 @@ class QuestionApiDocs extends RestDocsSupport {
     @Test
     void answerQuestion() throws Exception {
         // questionService.updateQuestionAnswer()가 호출되면 아무런 동작도 하지 않도록 설정
-        willDoNothing().given(questionService).updateQuestionAnswer();
+        willDoNothing().given(questionService).updateQuestionAnswer(1L, Sex.FEMALE, 1);
+        AnswerQuestionRequest request = new AnswerQuestionRequest(1);
 
         mockMvc.perform(patch("/v1/questions/{id}/answers", 1L)
+                        .queryParam("sex", "MALE")
+                        .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("answer-question",
                         pathParameters(
                                 parameterWithName("id").description("질문 ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("choiceNumber").type(JsonFieldType.NUMBER).description("선택한 답변의 번호")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
