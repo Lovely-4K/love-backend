@@ -1,6 +1,7 @@
 package com.lovely4k.backend.common;
 
 
+import com.amazonaws.AmazonClientException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,5 +29,12 @@ public class GlobalExceptionHandler {
         ProblemDetail problemDetail = ProblemDetailCreator.createValidationDetails(e, request, HttpStatus.BAD_REQUEST);
 
         return ApiResponse.fail(HttpStatus.BAD_REQUEST, problemDetail);
+    }
+
+    @ExceptionHandler(AmazonClientException.class)
+    public ResponseEntity<ApiResponse<ProblemDetail>> handleValidation(AmazonClientException e, HttpServletRequest request) {
+        ProblemDetail problemDetail = ProblemDetailCreator.create(e, request, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, problemDetail);
     }
 }

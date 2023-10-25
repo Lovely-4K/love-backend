@@ -39,49 +39,22 @@ public class Photos {
     }
 
     public static Photos create(List<String> uploadedImageUrls) {
-        if (uploadedImageUrls.isEmpty()) {
+        if (uploadedImageUrls == null || uploadedImageUrls.isEmpty()) {
             return Photos.builder().build();
         }
 
-        switch (uploadedImageUrls.size()) {
-            case 1 -> {
-                return Photos.builder()
-                        .firstImage(uploadedImageUrls.get(0))
-                        .build();
-            }
-            case 2 -> {
-                return Photos.builder()
-                        .firstImage(uploadedImageUrls.get(0))
-                        .secondImage(uploadedImageUrls.get(1))
-                        .build();
-            }
-            case 3 -> {
-                return Photos.builder()
-                        .firstImage(uploadedImageUrls.get(0))
-                        .secondImage(uploadedImageUrls.get(1))
-                        .thirdImage(uploadedImageUrls.get(2))
-                        .build();
-            }
-            case 4 -> {
-                return Photos.builder()
-                        .firstImage(uploadedImageUrls.get(0))
-                        .secondImage(uploadedImageUrls.get(1))
-                        .thirdImage(uploadedImageUrls.get(2))
-                        .fourthImage(uploadedImageUrls.get(3))
-                        .build();
-            }
-            case 5 -> {
-                return Photos.builder()
-                        .firstImage(uploadedImageUrls.get(0))
-                        .secondImage(uploadedImageUrls.get(1))
-                        .thirdImage(uploadedImageUrls.get(2))
-                        .fourthImage(uploadedImageUrls.get(3))
-                        .fifthImage(uploadedImageUrls.get(4))
-                        .build();
-            }
-            default -> {
-                return Photos.builder().build();
-            }
-        }
+        PhotosBuilder builder = Photos.builder();
+        setImages(builder, uploadedImageUrls);
+
+        return builder.build();
+    }
+
+    private static void setImages(PhotosBuilder builder, List<String> uploadedImageUrls) {
+        int size = uploadedImageUrls.size();
+        if (size > 0) builder.firstImage(uploadedImageUrls.get(0));
+        if (size > 1) builder.secondImage(uploadedImageUrls.get(1));
+        if (size > 2) builder.thirdImage(uploadedImageUrls.get(2));
+        if (size > 3) builder.fourthImage(uploadedImageUrls.get(3));
+        if (size > 4) builder.fifthImage(uploadedImageUrls.get(4));
     }
 }

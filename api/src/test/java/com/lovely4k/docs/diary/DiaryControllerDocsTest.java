@@ -5,16 +5,20 @@ import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,26 +35,34 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     @DisplayName("다이어리를 작성하는 API")
     @Test
     void createDiary() throws Exception{
-        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
-        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
-
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/v1/diaries")
                                 .file(firstImage)
                                 .file(secondImage)
+                                .file(mockMultipartFile)
                                 .param("memberId", "1")
-                                .param("kakaoMapId", "1")
-                                .param("address", "서울 강동구 테헤란로")
-                                .param("score", "5")
-                                .param("datingDay", "2023-10-20")
-                                .param("category", "ACCOMODATION")
-                                .param("text", "여기 숙소 좋았어!")
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andDo(document("diary-create",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
+                                requestPartFields("texts",
+                                        fieldWithPath("kakaoMapId").type(NUMBER).description("카카오 맵 id"),
+                                        fieldWithPath("address").type(STRING).description("장소에 대한 주소"),
+                                        fieldWithPath("score").type(NUMBER).description("장소에 대한 평점"),
+                                        fieldWithPath("datingDay").type(STRING).description("데이트 한 날짜"),
+                                        fieldWithPath("category").type(STRING).description("장소 카테고리"),
+                                        fieldWithPath("text").type(STRING).description("장소에 대한 일기")
+                                ),
+                                requestParts(
+                                        partWithName("texts").ignored(),
+                                        partWithName("images").description("장소에 대한 이미지").optional()
+                                ),
                                 responseFields(
                                         fieldWithPath("code").type(NUMBER).description("코드"),
                                         fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디")

@@ -25,8 +25,8 @@ public class DiaryController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> createDiary(
-            @RequestParam(value = "images", required = false) List<MultipartFile> multipartFileList,
-            @ModelAttribute @Valid WebDiaryCreateRequest request,
+            @RequestPart(value = "images", required = false) List<MultipartFile> multipartFileList,
+            @RequestPart(value = "texts") @Valid WebDiaryCreateRequest request,
             @RequestParam Long memberId
     ) {
         Long diaryId = diaryService.createDiary(multipartFileList, request.toServiceRequest(), memberId);

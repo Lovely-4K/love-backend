@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -50,10 +50,10 @@ public class DiaryService {
     }
 
     private List<String> uploadImages(List<MultipartFile> multipartFileList) {
-        List<String> uploadedImageUrl = new ArrayList<>();
-        if (!multipartFileList.isEmpty()) {
-            uploadedImageUrl = imageUploader.upload("diary/", multipartFileList);
+        if (multipartFileList.isEmpty()) {
+            return Collections.emptyList();
         }
-        return uploadedImageUrl;
+
+        return imageUploader.upload("diary/", multipartFileList);
     }
 }
