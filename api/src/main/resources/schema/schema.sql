@@ -27,6 +27,11 @@ CREATE TABLE diary (
     girl_text TEXT,
     score INT,
     dating_day DATE,
+    first_image VARCHAR,
+    second_image VARCHAR,
+    third_image VARCHAR,
+    fourth_image VARCHAR,
+    fifth_image VARCHAR,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_diary_location_id (location_id),
@@ -36,11 +41,12 @@ CREATE TABLE diary (
 -- Location 테이블
 CREATE TABLE location (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    kakao_id BIGINT,
+    kakao_map_id BIGINT,
+    address VARCHAR,
     category VARCHAR(50),
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_lacation_kakao_id (kakao_id)
+    INDEX idx_lacation_kakao_map_id (kakao_map_id)
 );
 
 -- Member 테이블
