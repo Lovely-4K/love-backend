@@ -7,7 +7,7 @@ import com.lovely4k.backend.question.repository.QuestionFormRepository;
 import com.lovely4k.backend.question.repository.QuestionRepository;
 import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
 import com.lovely4k.backend.question.service.response.*;
-import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
@@ -49,7 +49,7 @@ public class QuestionService {
                 .findQuestionByCoupleIdAndQuestionDay(coupleId, questionDay)
                 .stream()
                 .reduce((first, second) -> second)
-                .orElseThrow(() -> new NoSuchElementException(notFoundEntityMessage("question", coupleId)));
+                .orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("question", coupleId)));
 
         return DailyQuestionResponse.from(question);
     }
@@ -60,7 +60,7 @@ public class QuestionService {
         questionValidator.validateCreateQuestion(coupleId, questionDay);
 
         QuestionForm questionForm = questionFormRepository.findByQuestionDay(questionDay)
-                .orElseThrow(() -> new NoSuchElementException(notFoundEntityMessage("questionForm", questionDay)));
+                .orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("questionForm", questionDay)));
 
         Question question = Question.create(coupleId, questionForm, questionDay);
         Question savedQuestion = questionRepository.save(question);
@@ -77,8 +77,9 @@ public class QuestionService {
     }
 
     public QuestionDetailsResponse findQuestionDetails(Long id) {
-
-        return new QuestionDetailsResponse("test", "boy", "girl");
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("question", id)));
+        return QuestionDetailsResponse.from(question);
     }
 
     public AnsweredQuestionResponse findAllAnsweredQuestionByCoupleId(Long id, Long coupleId, int limit) {

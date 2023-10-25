@@ -3,11 +3,10 @@ package com.lovely4k.backend.question.service;
 import com.lovely4k.backend.common.utils.DateConverter;
 import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 import static com.lovely4k.backend.common.ExceptionMessage.notFoundEntityMessage;
 
@@ -23,7 +22,7 @@ public class QuestionServiceSupporter {
     @Transactional(readOnly = true)
     public long getQuestionDay(Long coupleId) {
         Couple couple = coupleRepository.findById(coupleId)
-                .orElseThrow(() -> new NoSuchElementException(notFoundEntityMessage("couple", coupleId)));
+                .orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("couple", coupleId)));
         return DateConverter.getDurationOfAppUsage(couple.getLocalDateTime());
     }
 }

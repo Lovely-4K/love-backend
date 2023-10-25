@@ -7,10 +7,7 @@ import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.repository.QuestionFormRepository;
 import com.lovely4k.backend.question.repository.QuestionRepository;
 import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
-import com.lovely4k.backend.question.service.response.AnsweredQuestionResponse;
-import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
-import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
-import com.lovely4k.backend.question.service.response.DailyQuestionResponse;
+import com.lovely4k.backend.question.service.response.*;
 import jakarta.persistence.OptimisticLockException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -193,6 +190,28 @@ class QuestionServiceTest {
         );
         AnsweredQuestionResponse expectedResponse = new AnsweredQuestionResponse(expectedQuestionResponses);
 
+        Assertions.assertThat(actualResponse).isEqualTo(expectedResponse);
+    }
+
+    @DisplayName("질문 상세를 조회한다.")
+    @Test
+    void testFindQuestionDetails() {
+        // Given
+        Long questionId = 1L;
+        Question mockQuestion = mock(Question.class);
+        QuestionForm questionForm = TestData.questionForm(1L);
+
+        given(questionRepository.findById(questionId)).willReturn(Optional.of(mockQuestion));
+        given(mockQuestion.getQuestionForm()).willReturn(questionForm);
+        given(mockQuestion.getBoyChoiceAnswer()).willReturn(questionForm.getQuestionChoices().getFirstChoice());
+        given(mockQuestion.getGirlChoiceAnswer()).willReturn(questionForm.getQuestionChoices().getSecondChoice());
+
+        QuestionDetailsResponse expectedResponse = QuestionDetailsResponse.from(mockQuestion);
+
+        // When
+        QuestionDetailsResponse actualResponse = questionService.findQuestionDetails(questionId);
+
+        // Then
         Assertions.assertThat(actualResponse).isEqualTo(expectedResponse);
     }
 
