@@ -1,10 +1,11 @@
-package com.lovely4k.docs;
+package com.lovely4k.docs.member;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lovely4k.backend.member.controller.MemberController;
 import com.lovely4k.backend.member.controller.request.MemberProfileEditRequest;
 import com.lovely4k.backend.member.service.MemberService;
 import com.lovely4k.backend.member.service.response.MemberProfileGetResponse;
+import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -91,6 +92,7 @@ class MemberControllerDocsTest extends RestDocsSupport {
         mockMvc.perform(
                 patch("/v1/members")
                     .content(objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(request))
+                    .queryParam("userId", "1")
                     .contentType(APPLICATION_JSON)
                     .characterEncoding("utf-8"))
             .andDo(print())
@@ -107,7 +109,7 @@ class MemberControllerDocsTest extends RestDocsSupport {
                             .description("이름"),
                         fieldWithPath("nickname").type(JsonFieldType.STRING)
                             .description("별명"),
-                        fieldWithPath("birthday").type(JsonFieldType.ARRAY)
+                        fieldWithPath("birthday").type(JsonFieldType.STRING)
                             .description("생년월일"),
                         fieldWithPath("mbti").type(JsonFieldType.STRING)
                             .description("MBTI"),

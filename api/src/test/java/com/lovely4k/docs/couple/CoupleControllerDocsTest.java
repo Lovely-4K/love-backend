@@ -1,9 +1,9 @@
-package com.lovely4k.docs;
+package com.lovely4k.docs.couple;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lovely4k.backend.couple.controller.CoupleController;
 import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
-import com.lovely4k.backend.member.controller.request.MemberProfileEditRequest;
+import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
