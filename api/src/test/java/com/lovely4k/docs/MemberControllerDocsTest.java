@@ -3,12 +3,17 @@ package com.lovely4k.docs;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lovely4k.backend.member.controller.MemberController;
 import com.lovely4k.backend.member.controller.request.MemberProfileEditRequest;
+import com.lovely4k.backend.member.service.MemberService;
+import com.lovely4k.backend.member.service.response.MemberProfileGetResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.time.LocalDate;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -18,17 +23,32 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class MemberControllerDocsTest extends RestDocsSupport {
+class MemberControllerDocsTest extends RestDocsSupport {
+
+    private final MemberService memberService = mock(MemberService.class);
+
     @Override
     protected Object initController() {
-        return new MemberController();
+        return new MemberController(memberService);
     }
 
     @Test
     @DisplayName("회원 프로필을 조회하는 API")
     void getProfile() throws Exception {
+        given(memberService.getMemberProfile(any(Long.class)))
+            .willReturn(new MemberProfileGetResponse(
+                "boy",
+                "sampleImageUrl",
+                "김철수",
+                "듬직이",
+                LocalDate.of(1996, 7, 30),
+                "ESFJ",
+                "white"
+            ));
+
         mockMvc.perform(
                 get("/v1/members")
+                    .queryParam("userId", "1")
                     .characterEncoding("utf-8")
             )
             .andDo(print())
