@@ -39,12 +39,19 @@ class DiaryControllerDocsTest extends RestDocsSupport {
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
         MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
+
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/v1/diaries")
                                 .file(firstImage)
                                 .file(secondImage)
                                 .file(mockMultipartFile)
                                 .param("memberId", "1")
+                                .param("kakaoMapId", "1")
+                                .param("address", "서울 강동구 테헤란로")
+                                .param("score", "5")
+                                .param("datingDay", "2023-10-20")
+                                .param("category", "ACCOMODATION")
+                                .param("text", "여기 숙소 좋았어!")
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())

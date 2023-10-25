@@ -58,13 +58,14 @@ class DiaryControllerTest extends ControllerTestSupport {
         ;
     }
 
-    @DisplayName("다이어리 작성 시 kakaoId는 필수 값이다.")
+    @DisplayName("다이어리 작성 시 kakaoMapId는 필수 값이다.")
     @Test
     void createDiaryWithoutKakaoId() throws Exception {
         // given
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-files".getBytes());
         MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(null, "서울 강동구 테헤란로", 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
+
 
         // when && then
         mockMvc.perform(
