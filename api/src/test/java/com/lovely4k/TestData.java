@@ -13,15 +13,5 @@ public class TestData {
 
     public static Question question(QuestionForm questionForm, Long coupleId, String answer1, String answer2) {
         return Question.create(coupleId, questionForm, 1L);
-        return new QuestionForm(memberId,
-                "test",
-                QuestionChoices.builder()
-                        .firstChoice("test1")
-                        .secondChoice("test2")
-                        .build());
-    }
-
-    public static Question question(QuestionForm questionForm, Long coupleId, String answer1, String answer2) {
-        return Question.create(coupleId, questionForm, 1L);
     }
 }

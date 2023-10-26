@@ -17,16 +17,6 @@ class QuestionTest {
         question.updateBoyAnswer("");
         question.updateGirlAnswer("");
 
-        Question question = Question.builder()
-            .boyAnswer("")
-            .girlAnswer("")
-            .build();
-
-        Question question = Question.builder()
-            .boyAnswer("")
-            .girlAnswer("")
-            .build();
-
         assertThatThrownBy(question::validateAnswer)
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("질문에 답변을 아직 안했습니다.");
@@ -42,16 +32,6 @@ class QuestionTest {
         question1.updateBoyAnswer("answer");
         question1.updateGirlAnswer("");
 
-        Question question1 = Question.builder()
-            .boyAnswer("answer")
-            .girlAnswer("")
-            .build();
-
-        Question question1 = Question.builder()
-            .boyAnswer("answer")
-            .girlAnswer("")
-            .build();
-
         assertThatThrownBy(question1::validateAnswer)
             .isInstanceOf(IllegalStateException.class)
             .hasMessage("질문에 답변을 아직 안했습니다.");
@@ -59,20 +39,6 @@ class QuestionTest {
         Question question2 = Question.create(1L, questionForm, 1L);
         question2.updateBoyAnswer("");
         question2.updateGirlAnswer("answer");
-
-        Question question2 = Question.builder()
-            .boyAnswer("")
-            .girlAnswer("answer")
-            .build();
-
-        Question question2 = Question.create(1L, questionForm, 1L);
-        question2.updateBoyAnswer("");
-        question2.updateGirlAnswer("answer");
-
-        Question question2 = Question.builder()
-            .boyAnswer("")
-            .girlAnswer("answer")
-            .build();
 
         assertThatThrownBy(question2::validateAnswer)
             .isInstanceOf(IllegalStateException.class)
@@ -87,11 +53,6 @@ class QuestionTest {
         Question question = Question.create(1L, questionForm, 1L);
         question.updateBoyAnswer("boy answer");
         question.updateGirlAnswer("girl answer");
-
-        Question question = Question.builder()
-            .boyAnswer("boy answer")
-            .girlAnswer("girl answer")
-            .build();
 
         assertThatCode(question::validateAnswer).doesNotThrowAnyException();
     }
