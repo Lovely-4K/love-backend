@@ -7,18 +7,16 @@ import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 
 @Transactional
@@ -37,7 +35,7 @@ class CoupleServiceTest extends IntegrationTestSupport {
     @DisplayName("초대 코드를 발급받을 수 있다.")
     void createInvitationCode() throws Exception {
         //given
-        Member savedMember = memberRepository.save(createMember());
+        Member savedMember = memberRepository.save(createMember("MALE", "김철수"));
 
         //when
         InvitationCodeCreateResponse response = coupleService.createInvitationCode(savedMember.getId());
@@ -52,10 +50,52 @@ class CoupleServiceTest extends IntegrationTestSupport {
         );
     }
 
-    private Member createMember() {
+    @Test
+    @DisplayName("초대코드를 통해 커플을 등록할 수 있다.")
+    void registerCouple() throws Exception {
+        //given
+        Member requestedMember = createMember("MALE", "김철수");
+        Member receivedMember = createMember("FEMALE", "김영희");
+
+        Member savedRequestedMember = memberRepository.save(requestedMember);
+        Member savedReceivedMember = memberRepository.save(receivedMember);
+
+        InvitationCodeCreateResponse response = coupleService.createInvitationCode(savedRequestedMember.getId());
+
+        //when
+        coupleService.registerCouple(response.invitationCode(), savedReceivedMember.getId());
+
+        //then
+        Couple couple = coupleRepository.findById(response.coupleId())
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
+
+        assertAll(
+            () -> assertThat(couple.getBoyId()).isNotNull(),
+            () -> assertThat(couple.getGirlId()).isNotNull()
+        );
+    }
+
+    @Test
+    @DisplayName("잘못된 초대코드를 입력하면 예외가 발생한다.")
+    void registerCoupleWithWrongCode() throws Exception {
+        //given
+        Member requestedMember = createMember("MALE", "김철수");
+        Member receivedMember = createMember("FEMALE", "김영희");
+
+        Member savedRequestedMember = memberRepository.save(requestedMember);
+        Member savedReceivedMember = memberRepository.save(receivedMember);
+
+        InvitationCodeCreateResponse response = coupleService.createInvitationCode(savedRequestedMember.getId());
+
+        //when //then
+        assertThatThrownBy(() -> coupleService.registerCouple("wrongCode", savedReceivedMember.getId()))
+            .isInstanceOf(EntityNotFoundException.class);
+    }
+
+    private Member createMember(String sex, String name) {
         return Member.builder()
-            .sex("MALE")
-            .name("김철수")
+            .sex(sex)
+            .name(name)
             .nickname("듬직이")
             .birthday(LocalDate.of(1996, 7, 30))
             .mbti("ESFJ")

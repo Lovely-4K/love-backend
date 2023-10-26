@@ -34,4 +34,19 @@ class CoupleControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.body.coupleId").value(coupleId))
             .andExpect(jsonPath("$.body.invitationCode").value(invitationCode));
     }
+
+    @Test
+    @DisplayName("초대코드와 초대코드를 받은 회원의 id를 통해 커플을 등록할 수 있다.")
+    void registerCouple() throws Exception {
+        //given
+        String invitationCode = UUID.randomUUID().toString();
+
+        //when //then
+        mockMvc.perform(post("/v1/couples")
+                .queryParam("invitationCode", invitationCode)
+                .queryParam("receivedMemberId", "2")
+            )
+            .andDo(print())
+            .andExpect(status().isOk());
+    }
 }

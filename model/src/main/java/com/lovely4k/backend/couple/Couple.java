@@ -37,4 +37,8 @@ public class Couple extends BaseTimeEntity {
         this.meetDay = meetDay;
         this.invitationCode = invitationCode;
     }
+
+    public void registerLover(Long receivedMemberId) {
+        this.girlId = receivedMemberId;
+    }
 }
