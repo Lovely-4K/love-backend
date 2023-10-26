@@ -2,7 +2,10 @@ package com.lovely4k.backend.couple.service;
 
 import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
+import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
+import com.lovely4k.backend.member.Member;
+import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import java.util.UUID;
 public class CoupleService {
 
     private final CoupleRepository coupleRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public InvitationCodeCreateResponse createInvitationCode(Long requestedMemberId) {
@@ -41,6 +45,26 @@ public class CoupleService {
         Couple couple = validateInvitationCode(invitationCode);
 
         couple.registerLover(receivedMemberId);
+    }
+
+    public CoupleProfileGetResponse getCoupleProfile(Long coupleId) {
+
+        Couple couple = validateCoupleId(coupleId);
+
+        Member boy = findMember(couple.getBoyId());
+        Member girl = findMember(couple.getGirlId());
+
+        return CoupleProfileGetResponse.fromEntity(boy, girl);
+    }
+
+    private Member findMember(Long memberId) {
+        return memberRepository.findById(memberId)
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원 id 입니다."));
+    }
+
+    private Couple validateCoupleId(Long coupleId) {
+        return coupleRepository.findById(coupleId)
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
     }
 
     private Couple validateInvitationCode(String invitationCode) {

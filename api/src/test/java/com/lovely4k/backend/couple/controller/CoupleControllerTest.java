@@ -1,6 +1,7 @@
 package com.lovely4k.backend.couple.controller;
 
 import com.lovely4k.backend.ControllerTestSupport;
+import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.UUID;
 
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -48,5 +50,30 @@ class CoupleControllerTest extends ControllerTestSupport {
             )
             .andDo(print())
             .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("coupleId를 통해서 커플 프로필을 조회할 수 있다.")
+    void getCoupleProfile() throws Exception {
+        //given
+        Long coupleId = 1L;
+
+        given(coupleService.getCoupleProfile(coupleId))
+            .willReturn(new CoupleProfileGetResponse(
+                "듬직이",
+                "ESTJ",
+                "깜찍이",
+                "INFP"
+            ));
+
+        //when //then
+        mockMvc.perform(get("/v1/couples")
+                .queryParam("coupleId", coupleId.toString()))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.body.boyNickname").value("듬직이"))
+            .andExpect(jsonPath("$.body.boyMbti").value("ESTJ"))
+            .andExpect(jsonPath("$.body.girlNickname").value("깜찍이"))
+            .andExpect(jsonPath("$.body.girlMbti").value("INFP"));
     }
 }
