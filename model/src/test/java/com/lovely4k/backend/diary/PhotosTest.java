@@ -25,4 +25,16 @@ class PhotosTest {
         );
     }
 
+    @DisplayName("countOfImages 메서드를 통해 Photos에 담긴 이미지의 개수를 조회할 수 있다.")
+    @Test
+    void countOfImages() {
+        // given
+        Photos photos = Photos.create(List.of("image-url1", "image-url2", "image-url3", "image-url4"));
+
+        // when
+        int countOfImages = photos.countOfImages();
+
+        // then
+        assertThat(countOfImages).isEqualTo(4);
+    }
 }

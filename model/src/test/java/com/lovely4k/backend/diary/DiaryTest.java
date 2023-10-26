@@ -114,4 +114,27 @@ class DiaryTest {
 
     }
 
+    @DisplayName("다른 커플의 내용을 확인하려고 하는 경우 IllegalArgumentException이 발생한다.")
+    @Test
+    void checkAuthority() {
+        // given
+        Member member = Member.builder()
+                .sex("boy")
+                .coupleId(1L)
+                .build();
+
+        Diary diary = Diary.builder()
+                .coupleId(2L)
+                .boyText("hello")
+                .girlText("hi")
+                .build();
+
+        Long memberCoupleId = member.getCoupleId();
+        // when && then
+        assertThatThrownBy(
+                () -> diary.checkAuthority(memberCoupleId)
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("you can only see your couple's diary");
+    }
+
 }

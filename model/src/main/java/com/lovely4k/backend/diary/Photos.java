@@ -57,4 +57,14 @@ public class Photos {
         if (size > 3) builder.fourthImage(uploadedImageUrls.get(3));
         if (size > 4) builder.fifthImage(uploadedImageUrls.get(4));
     }
+
+    public int countOfImages() {
+        int count = 0;
+        if (this.firstImage != null) count ++;
+        if (this.secondImage != null) count ++;
+        if (this.thirdImage != null) count ++;
+        if (this.fourthImage != null) count ++;
+        if (this.fifthImage != null) count ++;
+        return count;
+    }
 }

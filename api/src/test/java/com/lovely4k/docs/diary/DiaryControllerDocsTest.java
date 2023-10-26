@@ -2,6 +2,9 @@ package com.lovely4k.docs.diary;
 
 import com.lovely4k.backend.diary.controller.DiaryController;
 import com.lovely4k.backend.diary.service.DiaryService;
+import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
+import com.lovely4k.backend.diary.service.response.PhotoList;
+import com.lovely4k.backend.location.Category;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,8 +14,10 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
@@ -82,6 +87,15 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     @DisplayName("다이어리를 상세 조회하는 API")
     @Test
     void getDiaryDetail() throws Exception{
+        // stubbing
+        when(diaryService.getDiaryDetail(1L, 1L))
+                .thenReturn(
+                        new DiaryDetailResponse(102L,
+                                LocalDate.of(2021, 10, 20), 5, Category.FOOD,
+                                "여기 음식 최고", "포브스 선정 맛집 답다.",
+                                PhotoList.builder().firstImage("image-url1").secondImage("image-url2").build()
+                        ));
+
         this.mockMvc.perform(
                         get("/v1/diaries/{id}", 1L)
                                 .header("memberId", 1L)
@@ -93,12 +107,17 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                         preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("code").type(NUMBER).description("코드"),
-                                fieldWithPath("body.kakaoId").type(NUMBER).description("카카오 장소 id"),
+                                fieldWithPath("body.kakaoMapId").type(NUMBER).description("카카오 장소 id"),
                                 fieldWithPath("body.datingDay").type(ARRAY).description("데이트 날짜"),
                                 fieldWithPath("body.score").type(NUMBER).description("장소에 대한 평점"),
                                 fieldWithPath("body.category").type(STRING).description("장소 카테고리"),
                                 fieldWithPath("body.boyText").type(STRING).description("남자친구 다이어리 내용"),
-                                fieldWithPath("body.girlText").type(STRING).description("여자친구 다이어리 내용")
+                                fieldWithPath("body.girlText").type(STRING).description("여자친구 다이어리 내용"),
+                                fieldWithPath("body.pictures.firstImage").type(STRING).optional().description("이미지 주소"),
+                                fieldWithPath("body.pictures.secondImage").type(STRING).optional().description("이미지 주소"),
+                                fieldWithPath("body.pictures.thirdImage").type(STRING).optional().description("이미지 주소"),
+                                fieldWithPath("body.pictures.fourthImage").type(STRING).optional().description("이미지 주소"),
+                                fieldWithPath("body.pictures.fifthImage").type(STRING).optional().description("이미지 주소")
                         )
                 ))
         ;
@@ -119,7 +138,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                         responseFields(
                                 fieldWithPath("code").type(NUMBER).description("코드"),
                                 fieldWithPath("body[0].diaryId").type(NUMBER).description("다이어리 id"),
-                                fieldWithPath("body[0].kakaoId").type(NUMBER).description("카카오 장소 id")
+                                fieldWithPath("body[0].kakaoMapId").type(NUMBER).description("카카오 장소 id")
                         )
                 ));
     }

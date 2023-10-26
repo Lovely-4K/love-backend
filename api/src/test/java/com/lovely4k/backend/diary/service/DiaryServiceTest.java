@@ -5,11 +5,14 @@ import com.lovely4k.backend.common.imageuploader.ImageUploader;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
+import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
+import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.location.Location;
 import com.lovely4k.backend.location.LocationRepository;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,13 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
     @MockBean
     ImageUploader imageUploader;
+
+    @AfterEach
+    void tearDown() {
+        memberRepository.deleteAllInBatch();
+        diaryRepository.deleteAllInBatch();
+        locationRepository.deleteAllInBatch();
+    }
 
     @DisplayName("createDiary 메서드를 통해 다이어리를 생성할 수 있다.")
     @Test
@@ -146,5 +156,94 @@ class DiaryServiceTest extends IntegrationTestSupport {
         MockMultipartFile fifthImage = new MockMultipartFile("images", "image5.png", "image/png", "some-image".getBytes());
         MockMultipartFile sixthImage = new MockMultipartFile("images", "image6.png", "image/png", "some-image".getBytes());
         return List.of(firstImage, secondImage, thirdImage, fourthImage, fifthImage, sixthImage);
+    }
+
+    @DisplayName("getDiaryDetail을 통해 다이어리 상세 정보를 조회할 수 있다.")
+    @Test
+    void getDiaryDetail() {
+        // given
+
+        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Diary diary = buildDiary(location, 1L);
+        diaryRepository.save(diary);
+
+        Member member = buildMember();
+        memberRepository.save(member);
+
+        // when
+        DiaryDetailResponse diaryDetailResponse =
+                diaryService.getDiaryDetail(diary.getId(), member.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(diaryDetailResponse.kakaoMapId()).isEqualTo(10L),
+                () -> assertThat(diaryDetailResponse.boyText()).isEqualTo("hello"),
+                () -> assertThat(diaryDetailResponse.girlText()).isEqualTo("hi"),
+                () -> assertThat(diaryDetailResponse.score()).isEqualTo(4)
+        );
+    }
+
+    @DisplayName("다이어리 상세 정보 조회 시 잘못된 diary id인 경우 EntityNotFoundException이 발생한다. ")
+    @Test
+    void getDiaryDetailInvalidDiaryId() {
+        // given
+
+        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Diary diary = buildDiary(location, 1L);
+        diaryRepository.save(diary);
+
+        Member member = buildMember();
+        memberRepository.save(member);
+
+        Long invalidDiaryId = diary.getId() + 1;
+        Long memberId = member.getId();
+
+        // when && then
+        assertThatThrownBy(
+                () -> diaryService.getDiaryDetail(invalidDiaryId, memberId)
+        ).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage("invalid diary id");
+
+    }
+
+    @DisplayName("다이어리 상세 정보 조회 시 다른 커플이 작성한 다이어리는 조회할 수 없다. ")
+    @Test
+    void getDiaryDetailNoAuthority() {
+        // given
+
+        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Diary diary = buildDiary(location, 2L);
+        diaryRepository.save(diary);
+
+        Member member = buildMember();
+        memberRepository.save(member);
+
+        Long diaryId = diary.getId();
+        Long memberId = member.getId();
+
+        // when && then
+        assertThatThrownBy(
+                () -> diaryService.getDiaryDetail(diaryId, memberId)
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("you can only see your couple's diary");
+    }
+
+    private static Diary buildDiary(Location location, long coupleId) {
+        return Diary.builder()
+                .coupleId(coupleId)
+                .location(location)
+                .boyText("hello")
+                .girlText("hi")
+                .score(4)
+                .datingDay(LocalDate.of(2023, 10, 20))
+                .build();
+    }
+
+    private static Member buildMember() {
+        return Member.builder()
+                .sex("boy")
+                .coupleId(1L)
+                .name("Tommy")
+                .build();
     }
 }

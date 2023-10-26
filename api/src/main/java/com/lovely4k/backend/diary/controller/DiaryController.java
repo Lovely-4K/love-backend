@@ -6,14 +6,12 @@ import com.lovely4k.backend.diary.controller.request.WebDiaryCreateRequest;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
-import com.lovely4k.backend.location.Category;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -39,7 +37,8 @@ public class DiaryController {
             @PathVariable Long id,
             @RequestHeader Long memberId
     ) {
-        return ApiResponse.ok(new DiaryDetailResponse(1L, LocalDate.of(2023, 10, 20), 4, Category.FOOD, "너무 좋았어..", "완전 맛집!"));
+
+        return ApiResponse.ok(diaryService.getDiaryDetail(id, memberId));
     }
 
     @GetMapping

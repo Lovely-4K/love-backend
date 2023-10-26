@@ -5,6 +5,7 @@ import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.Photos;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
+import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -57,4 +58,19 @@ public class DiaryService {
 
         return imageUploader.upload("diary/", multipartFileList);
     }
+
+    public DiaryDetailResponse getDiaryDetail(Long diaryId, Long memberId) {
+        Diary diary = validateDiaryId(diaryId);
+        Member member = validateMemberId(memberId);
+        diary.checkAuthority(member.getCoupleId());
+
+        return DiaryDetailResponse.of(diary);
+    }
+
+    private Diary validateDiaryId(Long diaryId) {
+        return diaryRepository.findById(diaryId).orElseThrow(
+                () -> new EntityNotFoundException("invalid diary id")
+        );
+    }
+
 }
