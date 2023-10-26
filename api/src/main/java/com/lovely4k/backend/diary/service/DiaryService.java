@@ -73,4 +73,11 @@ public class DiaryService {
         );
     }
 
+    @Transactional
+    public void deleteDiary(Long diaryId, Long memberId) {
+        Diary diary = validateDiaryId(diaryId);
+        Member member = validateMemberId(memberId);
+        diary.checkAuthority(member.getCoupleId());
+        diaryRepository.delete(diary);
+    }
 }
