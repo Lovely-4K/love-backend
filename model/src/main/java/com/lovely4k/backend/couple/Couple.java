@@ -27,10 +27,14 @@ public class Couple extends BaseTimeEntity {
     @Column(name = "meet_day")
     private LocalDate meetDay;
 
+    @Column(name = "invitation_code")
+    private String invitationCode;
+
     @Builder
-    private Couple(Long boyId, Long girlId, LocalDate meetDay) {
+    private Couple(Long boyId, Long girlId, LocalDate meetDay, String invitationCode) {
         this.boyId = boyId;
         this.girlId = girlId;
         this.meetDay = meetDay;
+        this.invitationCode = invitationCode;
     }
 }
