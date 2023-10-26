@@ -59,6 +59,12 @@ public class Diary extends BaseTimeEntity {
         this.photos = photos;
     }
 
+    public void checkAuthority(Long coupleId) {
+        if (!this.coupleId.equals(coupleId)) {
+            throw new IllegalArgumentException("you can only see your couple's diary");
+        }
+    }
+
     public static Diary create(Integer score, LocalDate localDate, String text, Member member, Location location) {
         validateScore(score);
         DiaryBuilder diaryBuilder = Diary.builder()
