@@ -63,4 +63,8 @@ public class Member extends BaseTimeEntity {
         this.calendarColor = calendarColor;
         this.imageUrl = imageUrl;
     }
+
+    public void registerCoupleId(Long id) {
+        this.coupleId = id;
+    }
 }

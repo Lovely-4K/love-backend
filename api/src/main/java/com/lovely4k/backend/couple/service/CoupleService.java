@@ -2,6 +2,7 @@ package com.lovely4k.backend.couple.service;
 
 import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
+import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import com.lovely4k.backend.member.Member;
@@ -11,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -45,6 +45,8 @@ public class CoupleService {
         Couple couple = validateInvitationCode(invitationCode);
 
         couple.registerLover(receivedMemberId);
+
+        registerCoupleId(couple);
     }
 
     public CoupleProfileGetResponse getCoupleProfile(Long coupleId) {
@@ -55,6 +57,14 @@ public class CoupleService {
         Member girl = findMember(couple.getGirlId());
 
         return CoupleProfileGetResponse.fromEntity(boy, girl);
+    }
+
+    @Transactional
+    public void updateCoupleProfile(CoupleProfileEditServiceRequest request, Long memberId) {
+        Long coupleId = findMember(memberId).getCoupleId();
+        Couple couple = validateCoupleId(coupleId);
+
+        couple.update(request.meetDay());
     }
 
     private Member findMember(Long memberId) {
@@ -70,5 +80,12 @@ public class CoupleService {
     private Couple validateInvitationCode(String invitationCode) {
         return coupleRepository.findByInvitationCode(invitationCode)
             .orElseThrow(() -> new EntityNotFoundException("유효하지 않은 초대코드 입니다."));
+    }
+
+    private void registerCoupleId(Couple couple) {
+        Member boy = findMember(couple.getBoyId());
+        Member girl = findMember(couple.getGirlId());
+        boy.registerCoupleId(couple.getId());
+        girl.registerCoupleId(couple.getId());
     }
 }

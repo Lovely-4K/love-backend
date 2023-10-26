@@ -6,6 +6,7 @@ import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,9 @@ public class CoupleController {
     }
 
     @PatchMapping
-    public ResponseEntity<ApiResponse<Object>> editCoupleProfile(@RequestBody CoupleProfileEditRequest request) {
+    public ResponseEntity<ApiResponse<Void>> editCoupleProfile(@Valid @RequestBody CoupleProfileEditRequest request, @RequestParam Long memberId) {
+        coupleService.updateCoupleProfile(request.toServiceRequest(), memberId);
+
         return ApiResponse.ok(null);
     }
 }
