@@ -33,13 +33,9 @@ public class CoupleController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<CoupleProfileGetResponse>> getCoupleProfile() {
-        return ApiResponse.ok(new CoupleProfileGetResponse(
-            "듬직이",
-            "ESTJ",
-            "깜찍이",
-            "INTP"
-        ));
+    public ResponseEntity<ApiResponse<CoupleProfileGetResponse>> getCoupleProfile(@RequestParam Long coupleId) {
+
+        return ApiResponse.ok(coupleService.getCoupleProfile(coupleId));
     }
 
     @PatchMapping

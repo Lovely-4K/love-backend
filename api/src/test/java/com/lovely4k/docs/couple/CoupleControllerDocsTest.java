@@ -4,7 +4,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lovely4k.backend.couple.controller.CoupleController;
 import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
-import com.lovely4k.backend.member.service.MemberService;
+import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,10 +12,9 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.time.LocalDate;
 
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -58,8 +57,18 @@ class CoupleControllerDocsTest extends RestDocsSupport {
     @Test
     @DisplayName("커플 프로필을 조회하는 API")
     void getCoupleProfile() throws Exception {
+        given(coupleService.getCoupleProfile(1L)).willReturn(
+            new CoupleProfileGetResponse(
+                "듬직이",
+                "ESTJ",
+                "깜찍이",
+                "INFP"
+            )
+        );
+
         mockMvc.perform(
                 get("/v1/couples")
+                    .param("coupleId", "1")
                     .characterEncoding("utf-8")
             )
             .andDo(print())
@@ -111,5 +120,4 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                 )
             );
     }
-
 }
