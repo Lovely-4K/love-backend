@@ -11,4 +11,4 @@ INSERT INTO question_form (id, member_id, question_content, first_choice, second
 
 
 -- Question 테이블에 데이터 삽입
-INSERT INTO question (couple_id, question_form_id, boy_answer, girl_answer, question_day) VALUES (1, 1, 'Blue', 'Red', 0);
+INSERT INTO question (id, couple_id, question_form_id, boy_choice_index, girl_choice_index, question_day) VALUES (1, 1, 1, 1, 1, 0);

@@ -1,14 +1,17 @@
 package com.lovely4k.backend.question;
 
 import com.lovely4k.backend.common.jpa.BaseTimeEntity;
+import com.lovely4k.backend.member.Sex;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
+@ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -21,18 +24,21 @@ public class Question extends BaseTimeEntity {
     @Column(name = "couple_id")
     private Long coupleId;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "question_form_id")
     private QuestionForm questionForm;
 
-    @Column(name = "boy_answer")
-    private String boyAnswer;
+    @Column(name = "boy_choice_index")
+    private int boyChoiceIndex;  // 1, 2, 3, or 4
 
-    @Column(name = "girl_answer")
-    private String girlAnswer;
+    @Column(name = "girl_choice_index")
+    private int girlChoiceIndex;
 
     @Column(name = "question_day")
     private long questionDay;
+
+    @Version
+    private Long version;
 
     private Question(Long coupleId, QuestionForm questionForm, Long questionDay) {
         this.coupleId = Objects.requireNonNull(coupleId, "coupleId는 null값이 될 수 없습니다.");
@@ -45,24 +51,62 @@ public class Question extends BaseTimeEntity {
     }
 
     public void validateAnswer() {
-        if (!isAnswerComplete()) {
+        validateAnswer(boyChoiceIndex);
+        validateAnswer(girlChoiceIndex);
+    }
+
+    private void validateAnswer(int answer) {
+        if (answer == 0) {
             throw new IllegalStateException("질문에 답변을 아직 안했습니다.");
         }
     }
 
-    private boolean isAnswerComplete() {
-        return StringUtils.isNotEmpty(boyAnswer) && StringUtils.isNotEmpty(girlAnswer);
+    public void updateAnswer(int answer, Sex sex) {
+        validateChoice(answer);
+        switch (sex) {
+            case MALE -> this.boyChoiceIndex = answer;
+            case FEMALE -> this.girlChoiceIndex = answer;
+        }
     }
 
-    public void updateBoyAnswer(String boyAnswer) {
-        this.boyAnswer = boyAnswer;
+    private void validateChoice(int answer) {
+        switch (answer) {
+            case 1 -> validateSpecificChoice(1, getQuestionChoices().getFirstChoice());
+            case 2 -> validateSpecificChoice(2, getQuestionChoices().getSecondChoice());
+            case 3 -> validateSpecificChoice(3, getQuestionChoices().getThirdChoice());
+            case 4 -> validateSpecificChoice(4, getQuestionChoices().getFourthChoice());
+            default -> throw new IllegalArgumentException("유효하지 않은 선택입니다.");
+        }
     }
 
-    public void updateGirlAnswer(String girlAnswer) {
-        this.girlAnswer = girlAnswer;
+    private void validateSpecificChoice(int choiceIndex, String choice) {
+        if (StringUtils.isEmpty(choice)) {
+            throw new IllegalArgumentException("유효하지 않은 선택입니다.: " + choiceIndex);
+        }
     }
 
-    private boolean isNotEmpty(String answer) {
-        return answer != null && !answer.isEmpty();
+    private QuestionChoices getQuestionChoices() {
+        return this.questionForm.getQuestionChoices();
     }
+
+    public String getGirlChoiceAnswer() {
+        return getChoiceAnswerByIndex(girlChoiceIndex);
+    }
+
+    public String getBoyChoiceAnswer() {
+        return getChoiceAnswerByIndex(boyChoiceIndex);
+    }
+
+    private String getChoiceAnswerByIndex(int choiceIndex) {
+        QuestionChoices choices = getQuestionChoices();
+        return switch (choiceIndex) {
+            case 1 -> choices.getFirstChoice();
+            case 2 -> choices.getSecondChoice();
+            case 3 -> choices.getThirdChoice();
+            case 4 -> choices.getFourthChoice();
+            default -> throw new IllegalStateException("아직 답변을 하지 않았습니다.");
+        };
+    }
+
+
 }

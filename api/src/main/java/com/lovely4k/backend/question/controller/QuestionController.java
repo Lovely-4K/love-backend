@@ -1,12 +1,12 @@
 package com.lovely4k.backend.question.controller;
 
 import com.lovely4k.backend.common.ApiResponse;
+import com.lovely4k.backend.member.Sex;
+import com.lovely4k.backend.question.controller.request.AnswerQuestionRequest;
+import com.lovely4k.backend.question.controller.request.AnsweredQuestionParamRequest;
 import com.lovely4k.backend.question.controller.request.CreateQuestionFormRequest;
 import com.lovely4k.backend.question.service.QuestionService;
-import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
-import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
-import com.lovely4k.backend.question.service.response.DailyQuestionResponse;
-import com.lovely4k.backend.question.service.response.QuestionDetailsResponse;
+import com.lovely4k.backend.question.service.response.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +21,8 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @GetMapping("/daily")
-    public ResponseEntity<ApiResponse<DailyQuestionResponse>> getDailyQuestion(@RequestParam("userId") Long userId) {
-        return ApiResponse.ok(questionService.findDailyQuestion(userId));
+    public ResponseEntity<ApiResponse<DailyQuestionResponse>> getDailyQuestion(@RequestParam("coupleId") Long coupleId) {
+        return ApiResponse.ok(questionService.findDailyQuestion(coupleId));
     }
 
     @PostMapping("/question-forms")
@@ -40,12 +40,15 @@ public class QuestionController {
     }
 
     @PatchMapping("/{id}/answers")
-    public ResponseEntity<ApiResponse<Void>> answerQuestion(@PathVariable("id") Long id) {
-        questionService.updateQuestionAnswer();
+    public ResponseEntity<ApiResponse<Void>> answerQuestion(@PathVariable("id") Long id, @RequestParam("sex") Sex sex, @RequestBody @Valid AnswerQuestionRequest request) {
+        questionService.updateQuestionAnswer(id, sex, request.choiceNumber());
         return ApiResponse.ok();
     }
 
-    //TODO: 우리가 답변한 질문 모아보기 페이징 처리 어케 할지
+    @GetMapping
+    public ResponseEntity<ApiResponse<AnsweredQuestionResponse>> getAnsweredQuestions(@ModelAttribute @Valid AnsweredQuestionParamRequest params) {
+        return ApiResponse.ok(questionService.findAllAnsweredQuestionByCoupleId(params.getId(), params.getCoupleId(), params.getLimit()));
+    }
 
     @GetMapping("/details/{id}")
     public ResponseEntity<ApiResponse<QuestionDetailsResponse>> getQuestionDetails(@PathVariable("id") Long id) {

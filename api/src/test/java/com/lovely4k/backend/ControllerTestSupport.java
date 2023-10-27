@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(controllers = {
     DiaryController.class,
     MemberController.class,
-    DiaryController.class,
     QuestionController.class,
     CoupleController.class
 })

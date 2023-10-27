@@ -12,7 +12,6 @@ CREATE TABLE couple (
     boy_id BIGINT,
     girl_id BIGINT,
     meet_day date,
-    invitation_code VARCHAR,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_couple_boy_id (boy_id),
@@ -28,11 +27,6 @@ CREATE TABLE diary (
     girl_text TEXT,
     score INT,
     dating_day DATE,
-    first_image VARCHAR,
-    second_image VARCHAR,
-    third_image VARCHAR,
-    fourth_image VARCHAR,
-    fifth_image VARCHAR,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_diary_location_id (location_id),
@@ -42,12 +36,11 @@ CREATE TABLE diary (
 -- Location 테이블
 CREATE TABLE location (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    kakao_map_id BIGINT,
-    address VARCHAR,
+    kakao_id BIGINT,
     category VARCHAR(50),
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_lacation_kakao_map_id (kakao_map_id)
+    INDEX idx_lacation_kakao_id (kakao_id)
 );
 
 -- Member 테이블
@@ -60,10 +53,10 @@ CREATE TABLE member (
     birthday DATE,
     mbti VARCHAR(7),
     calendar_color VARCHAR(31),
-    image_url VARCHAR,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_couple_id(couple_id)
+
 );
 
 -- Question 테이블
