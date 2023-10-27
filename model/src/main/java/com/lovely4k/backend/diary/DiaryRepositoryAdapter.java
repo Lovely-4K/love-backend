@@ -27,4 +27,8 @@ public class DiaryRepositoryAdapter {
     public Page<Diary> findAllByMemberId(Long coupleId, Category category, Pageable pageable) {
         return qDiaryRepository.findAll(coupleId, category, pageable);
     }
+
+    public void delete(Diary diary) {
+        diaryRepository.delete(diary);
+    }
 }
