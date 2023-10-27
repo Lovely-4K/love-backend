@@ -1,6 +1,8 @@
 package com.lovely4k.backend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lovely4k.backend.couple.controller.CoupleController;
+import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.diary.controller.DiaryController;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.member.controller.MemberController;
@@ -16,7 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
     DiaryController.class,
     MemberController.class,
     DiaryController.class,
-    QuestionController.class
+    QuestionController.class,
+    CoupleController.class
 })
 public abstract class ControllerTestSupport {
 
@@ -34,4 +37,7 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected QuestionService questionService;
+
+    @MockBean
+    protected CoupleService coupleService;
 }

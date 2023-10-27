@@ -105,7 +105,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
 
         this.mockMvc.perform(
                         get("/v1/diaries/{id}", 1L)
-                                .header("memberId", 1L)
+                                .param("memberId", "1")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -205,7 +205,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     void deleteDiary() throws Exception {
         this.mockMvc.perform(
                         delete("/v1/diaries/{id}", 1L)
-                                .header("memberId", 1L)
+                                .param("memberId", "1")
                 )
                 .andDo(print())
                 .andExpect(status().isNoContent())

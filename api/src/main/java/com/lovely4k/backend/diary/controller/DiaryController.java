@@ -39,7 +39,7 @@ public class DiaryController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<DiaryDetailResponse>> getDiaryDetail(
             @PathVariable Long id,
-            @RequestHeader Long memberId
+            @RequestParam Long memberId
     ) {
 
         return ApiResponse.ok(diaryService.getDiaryDetail(id, memberId));
@@ -66,8 +66,10 @@ public class DiaryController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDiary(
             @PathVariable Long id,
-            @RequestHeader Long memberId
+            @RequestParam Long memberId
     ) {
+        diaryService.deleteDiary(id, memberId);
+
         return ResponseEntity.noContent().build();
     }
 }

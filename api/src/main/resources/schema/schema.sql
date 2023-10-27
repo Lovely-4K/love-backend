@@ -12,6 +12,7 @@ CREATE TABLE couple (
     boy_id BIGINT,
     girl_id BIGINT,
     meet_day date,
+    invitation_code VARCHAR,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_couple_boy_id (boy_id),
