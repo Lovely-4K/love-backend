@@ -38,13 +38,13 @@ class CoupleControllerDocsTest extends RestDocsSupport {
         mockMvc.perform(
                 post("/v1/couples")
                     .param("invitationCode", "invitationCodeSample")
+                    .param("receivedMemberId", "1")
                     .characterEncoding("utf-8")
             )
             .andDo(print())
-            .andExpect(status().isCreated())
+            .andExpect(status().isOk())
             .andDo(document("couple-register",
                     preprocessResponse(prettyPrint()),
-                    responseHeaders(headerWithName("Location").description("리소스 저장 경로")),
                     responseFields(
                         fieldWithPath("code").type(JsonFieldType.NUMBER)
                             .description("응답 코드"),

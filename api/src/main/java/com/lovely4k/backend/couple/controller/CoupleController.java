@@ -6,11 +6,10 @@ import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,9 +26,10 @@ public class CoupleController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Object>> registerCouple(@RequestParam String invitationCode) {
-        return ApiResponse.created("/v1/couples", 1L);
+    public ResponseEntity<ApiResponse<Null>> registerCouple(@RequestParam String invitationCode, @RequestParam Long receivedMemberId) {
+        coupleService.registerCouple(invitationCode, receivedMemberId);
 
+        return ApiResponse.ok();
     }
 
     @GetMapping
