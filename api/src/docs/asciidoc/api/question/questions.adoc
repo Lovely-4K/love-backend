@@ -78,6 +78,8 @@ include::{snippets}/get-question-details/response-fields.adoc[]
 
 == Get Answered Questions (GET /v1/questions)
 
+커플이 답변한 질문에 대해 조회를 합니다. 페이지네이션 처리 시 마지막 응답한 아이디를 기억해두고 해당 id를 쿼리 파라미터에 넣어주면 됩니다.
+
 ==== Request
 include::{snippets}/get-answered-questions/http-request.adoc[]
 ====== Query Parameters
