@@ -91,7 +91,7 @@ class CoupleControllerDocsTest extends RestDocsSupport {
     @Test
     @DisplayName("커플 프로필을 조회하는 API")
     void getCoupleProfile() throws Exception {
-        given(coupleService.getCoupleProfile(1L)).willReturn(
+        given(coupleService.findCoupleProfile(1L)).willReturn(
             new CoupleProfileGetResponse(
                 "듬직이",
                 "ESTJ",

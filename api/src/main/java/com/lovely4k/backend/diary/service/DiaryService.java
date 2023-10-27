@@ -62,7 +62,7 @@ public class DiaryService {
         return imageUploader.upload("diary/", multipartFileList);
     }
 
-    public DiaryDetailResponse getDiaryDetail(Long diaryId, Long memberId) {
+    public DiaryDetailResponse findDiaryDetail(Long diaryId, Long memberId) {
         Diary diary = validateDiaryId(diaryId);
         Member member = validateMemberId(memberId);
         diary.checkAuthority(member.getCoupleId());
@@ -75,7 +75,7 @@ public class DiaryService {
                 () -> new EntityNotFoundException("invalid diary id")
         );
     }
-    public Page<DiaryListResponse> getDiaryList(Long coupleId, String category, Pageable pageable) {
+    public Page<DiaryListResponse> findDiaryList(Long coupleId, String category, Pageable pageable) {
         Category.validateRequest(category);
         Page<Diary> pageDiary = diaryRepositoryAdapter.findAllByMemberId(coupleId, Category.valueOf(category), pageable);
 

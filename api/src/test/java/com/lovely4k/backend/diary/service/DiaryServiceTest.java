@@ -173,7 +173,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // when
         DiaryDetailResponse diaryDetailResponse =
-                diaryService.getDiaryDetail(diary.getId(), member.getId());
+                diaryService.findDiaryDetail(diary.getId(), member.getId());
 
         // then
         assertAll(
@@ -201,7 +201,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // when && then
         assertThatThrownBy(
-                () -> diaryService.getDiaryDetail(invalidDiaryId, memberId)
+                () -> diaryService.findDiaryDetail(invalidDiaryId, memberId)
         ).isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("invalid diary id");
 
@@ -224,7 +224,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // when && then
         assertThatThrownBy(
-                () -> diaryService.getDiaryDetail(diaryId, memberId)
+                () -> diaryService.findDiaryDetail(diaryId, memberId)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("you can only manage your couple's diary");
     }

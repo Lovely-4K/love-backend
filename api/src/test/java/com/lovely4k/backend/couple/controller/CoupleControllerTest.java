@@ -1,18 +1,15 @@
 package com.lovely4k.backend.couple.controller;
 
 import com.lovely4k.backend.ControllerTestSupport;
-import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
 import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -63,7 +60,7 @@ class CoupleControllerTest extends ControllerTestSupport {
         //given
         Long coupleId = 1L;
 
-        given(coupleService.getCoupleProfile(coupleId))
+        given(coupleService.findCoupleProfile(coupleId))
             .willReturn(new CoupleProfileGetResponse(
                 "듬직이",
                 "ESTJ",

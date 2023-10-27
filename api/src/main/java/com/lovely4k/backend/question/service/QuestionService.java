@@ -20,6 +20,7 @@ import java.util.NoSuchElementException;
 
 import static com.lovely4k.backend.common.ExceptionMessage.notFoundEntityMessage;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class QuestionService {
@@ -41,19 +42,6 @@ public class QuestionService {
         return CreateQuestionFormResponse.from(savedQuestion);
     }
 
-
-    @Transactional(readOnly = true)
-    public DailyQuestionResponse findDailyQuestion(Long coupleId) {
-        long questionDay = questionServiceSupporter.getQuestionDay(coupleId);
-        Question question = questionRepository
-                .findQuestionByCoupleIdAndQuestionDay(coupleId, questionDay)
-                .stream()
-                .reduce((first, second) -> second)
-                .orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("question", coupleId))); // NOSONAR
-
-        return DailyQuestionResponse.from(question);
-    }
-
     @Transactional(timeout = LOCK_TIME_OUT)
     public CreateQuestionResponse createQuestion(Long coupleId) {
         long questionDay = questionServiceSupporter.getQuestionDay(coupleId);
@@ -72,8 +60,19 @@ public class QuestionService {
     @Transactional
     public void updateQuestionAnswer(Long id, Sex sex, int answer) {
         Question question = questionRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(notFoundEntityMessage("question", id)));
+                .orElseThrow(() -> new NoSuchElementException(notFoundEntityMessage("question", id)));  // NOSONAR
         question.updateAnswer(answer, sex);
+    }
+
+    public DailyQuestionResponse findDailyQuestion(Long coupleId) {
+        long questionDay = questionServiceSupporter.getQuestionDay(coupleId);
+        Question question = questionRepository
+                .findQuestionByCoupleIdAndQuestionDay(coupleId, questionDay)
+                .stream()
+                .reduce((first, second) -> second)
+                .orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("question", coupleId)));
+
+        return DailyQuestionResponse.from(question);
     }
 
     public QuestionDetailsResponse findQuestionDetails(Long id) {
@@ -86,4 +85,5 @@ public class QuestionService {
         List<Question> questions= questionRepository.findQuestionsByCoupleIdWithLimit(id, coupleId, limit);
         return AnsweredQuestionResponse.from(questions);
     }
+
 }

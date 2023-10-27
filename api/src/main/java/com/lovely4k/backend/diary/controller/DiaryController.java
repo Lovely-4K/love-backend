@@ -42,7 +42,7 @@ public class DiaryController {
             @RequestParam Long memberId
     ) {
 
-        return ApiResponse.ok(diaryService.getDiaryDetail(id, memberId));
+        return ApiResponse.ok(diaryService.findDiaryDetail(id, memberId));
     }
 
     @GetMapping
@@ -51,7 +51,7 @@ public class DiaryController {
             @RequestParam(required = false) String category,
             @PageableDefault(size = 10, sort = "localDateTime", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return ApiResponse.ok(diaryService.getDiaryList(coupleId, category, pageable));
+        return ApiResponse.ok(diaryService.findDiaryList(coupleId, category, pageable));
     }
 
     @PatchMapping("/{id}")

@@ -5,7 +5,6 @@ import com.lovely4k.backend.member.controller.request.MemberProfileEditRequest;
 import com.lovely4k.backend.member.service.response.MemberProfileGetResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 
 import java.time.LocalDate;
 
@@ -25,7 +24,7 @@ class MemberControllerTest extends ControllerTestSupport {
         //given
         Long memberId = 1L;
 
-        given(memberService.getMemberProfile(memberId))
+        given(memberService.findMemberProfile(memberId))
             .willReturn(new MemberProfileGetResponse(
                     "boy",
                     "sampleImageUrl",

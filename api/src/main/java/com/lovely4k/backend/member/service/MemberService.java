@@ -16,7 +16,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public MemberProfileGetResponse getMemberProfile(Long memberId) {
+    public MemberProfileGetResponse findMemberProfile(Long memberId) {
 
         Member findMember = validateMemberId(memberId);
 

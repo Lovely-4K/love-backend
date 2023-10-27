@@ -36,7 +36,7 @@ class MemberControllerDocsTest extends RestDocsSupport {
     @Test
     @DisplayName("회원 프로필을 조회하는 API")
     void getProfile() throws Exception {
-        given(memberService.getMemberProfile(any(Long.class)))
+        given(memberService.findMemberProfile(any(Long.class)))
             .willReturn(new MemberProfileGetResponse(
                 "boy",
                 "sampleImageUrl",

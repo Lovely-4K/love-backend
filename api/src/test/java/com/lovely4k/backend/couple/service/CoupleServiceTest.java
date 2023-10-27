@@ -110,7 +110,7 @@ class CoupleServiceTest extends IntegrationTestSupport {
         coupleService.registerCouple(codeCreateResponse.invitationCode(), girl.getId());
 
         //when
-        CoupleProfileGetResponse profileGetResponse = coupleService.getCoupleProfile(codeCreateResponse.coupleId());
+        CoupleProfileGetResponse profileGetResponse = coupleService.findCoupleProfile(codeCreateResponse.coupleId());
 
         //then
         assertAll(

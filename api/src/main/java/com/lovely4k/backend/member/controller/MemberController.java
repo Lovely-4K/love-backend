@@ -19,7 +19,7 @@ public class MemberController {
     @GetMapping
     public ResponseEntity<ApiResponse<MemberProfileGetResponse>> getMemberProfile(@RequestParam Long userId) {
 
-        return ApiResponse.ok(memberService.getMemberProfile(userId));
+        return ApiResponse.ok(memberService.findMemberProfile(userId));
     }
 
     @PatchMapping

@@ -27,6 +27,7 @@ sonar {
         property "sonar.organization", "lovely-4k"
         property "sonar.host.url", "https://sonarcloud.io"
         property 'sonar.coverage.exclusions', '**/*Request.java, **/*Response.java, **/docs, **/utils, **/*Config*.java, **/resources/**, **/*Exception*.java'
+        property 'sonar.exclusions', '**/*ApplicationTest*.java'
     }
 }
 
@@ -77,6 +78,7 @@ subprojects {
     dependencies {
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
+        testImplementation 'com.tngtech.archunit:archunit-junit5:1.1.0'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
     }
 

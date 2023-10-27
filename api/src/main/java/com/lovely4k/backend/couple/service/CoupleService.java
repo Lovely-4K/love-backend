@@ -49,7 +49,7 @@ public class CoupleService {
         registerCoupleId(couple);
     }
 
-    public CoupleProfileGetResponse getCoupleProfile(Long coupleId) {
+    public CoupleProfileGetResponse findCoupleProfile(Long coupleId) {
 
         Couple couple = validateCoupleId(coupleId);
 

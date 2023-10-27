@@ -95,7 +95,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     @Test
     void getDiaryDetail() throws Exception{
         // stubbing
-        when(diaryService.getDiaryDetail(1L, 1L))
+        when(diaryService.findDiaryDetail(1L, 1L))
                 .thenReturn(
                         new DiaryDetailResponse(102L,
                                 LocalDate.of(2021, 10, 20), 5, Category.FOOD,
@@ -146,7 +146,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                         PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")),
                         diaryListResponseList.size());
 
-        when(diaryService.getDiaryList(eq(1L), any(), any()))
+        when(diaryService.findDiaryList(eq(1L), any(), any()))
                 .thenReturn(responsePage);
 
         this.mockMvc.perform(
