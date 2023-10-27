@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 class ModelApplicationTests {
 
     @Test
-    void contextLoads() {
+    void contextLoads() { // NOSONAR
     }
 
 }

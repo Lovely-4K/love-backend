@@ -27,7 +27,7 @@ sonar {
         property "sonar.organization", "lovely-4k"
         property "sonar.host.url", "https://sonarcloud.io"
         property 'sonar.coverage.exclusions', '**/*Request.java, **/*Response.java, **/docs, **/utils, **/*Config*.java, **/resources/**, **/*Exception*.java'
-        property 'sonar.exclusions', '**/*ApplicationTest*.java'
+        property 'sonar.exclusions', '**/*Application*.java'
     }
 }
 
