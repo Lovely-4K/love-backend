@@ -4,6 +4,7 @@ import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionChoices;
 import com.lovely4k.backend.question.QuestionForm;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

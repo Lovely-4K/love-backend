@@ -13,11 +13,11 @@ spring:
 #    password: 1234
 #    url: jdbc:mysql://localhost:3307/citron?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
 
-  sql:
-    init:
-      mode: always
-      encoding: UTF-8
-      schema-locations: classpath:/schema.sql
+  #sql:
+   # init:
+   #   mode: always
+    #  encoding: UTF-8
+     # schema-locations: classpath:/schema.sql
 
   jpa:
     open-in-view: false
