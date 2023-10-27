@@ -3,6 +3,7 @@ package com.lovely4k.backend.couple.service;
 import com.lovely4k.backend.IntegrationTestSupport;
 import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
+import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import com.lovely4k.backend.member.Member;
@@ -103,7 +104,6 @@ class CoupleServiceTest extends IntegrationTestSupport {
         memberRepository.saveAll(List.of(boy, girl));
 
         InvitationCodeCreateResponse codeCreateResponse = coupleService.createInvitationCode(boy.getId());
-        System.out.println("codeCreateResponse.coupleId() = " + codeCreateResponse.coupleId());
 
         coupleService.registerCouple(codeCreateResponse.invitationCode(), girl.getId());
 
@@ -119,6 +119,30 @@ class CoupleServiceTest extends IntegrationTestSupport {
         );
     }
 
+    @Test
+    @DisplayName("커플 프로필을 수정할 수 있다.")
+    void updateCoupleProfile() throws Exception {
+        //given
+        CoupleProfileEditServiceRequest request = new CoupleProfileEditServiceRequest(LocalDate.of(2022, 7, 26));
+
+        Member boy = createMember("MALE", "김철수", "ESTJ", "듬직이");
+        Member girl = createMember("FEMALE", "김영희", "INFP", "깜찍이");
+        memberRepository.saveAll(List.of(boy, girl));
+
+        InvitationCodeCreateResponse codeCreateResponse = coupleService.createInvitationCode(boy.getId());
+
+        coupleService.registerCouple(codeCreateResponse.invitationCode(), girl.getId());
+
+        //when
+        coupleService.updateCoupleProfile(request, boy.getId());
+
+        //then
+        Couple findCouple = coupleRepository.findById(codeCreateResponse.coupleId())
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
+
+        assertThat(findCouple.getMeetDay()).isEqualTo(request.meetDay());
+    }
+
     private Member createMember(String sex, String name, String mbti, String nickname) {
         return Member.builder()
             .sex(sex)
@@ -130,5 +154,4 @@ class CoupleServiceTest extends IntegrationTestSupport {
             .imageUrl("http://www.imageUrlSample.com")
             .build();
     }
-
 }

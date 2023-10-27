@@ -41,4 +41,8 @@ public class Couple extends BaseTimeEntity {
     public void registerLover(Long receivedMemberId) {
         this.girlId = receivedMemberId;
     }
+
+    public void update(LocalDate meetDay) {
+        this.meetDay = meetDay;
+    }
 }

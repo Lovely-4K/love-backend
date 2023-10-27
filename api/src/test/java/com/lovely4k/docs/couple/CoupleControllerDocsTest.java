@@ -3,6 +3,7 @@ package com.lovely4k.docs.couple;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lovely4k.backend.couple.controller.CoupleController;
 import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
+import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.docs.RestDocsSupport;
@@ -94,11 +95,12 @@ class CoupleControllerDocsTest extends RestDocsSupport {
     @Test
     @DisplayName("커플 프로필의 만난날을 수정하는 API")
     void editProfile() throws Exception {
-        CoupleProfileEditRequest request =
-            new CoupleProfileEditRequest(LocalDate.of(2022, 7, 26));
+        TestCoupleProfileEditRequest request =
+            new TestCoupleProfileEditRequest("2022-07-26");
 
         mockMvc.perform(
                 patch("/v1/couples")
+                    .param("memberId", "1")
                     .content(objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(request))
                     .contentType(APPLICATION_JSON)
                     .characterEncoding("utf-8"))
@@ -108,7 +110,7 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     requestFields(
-                        fieldWithPath("meetDay").type(JsonFieldType.ARRAY)
+                        fieldWithPath("meetDay").type(JsonFieldType.STRING)
                             .description("만난날")
                     ),
                     responseFields(

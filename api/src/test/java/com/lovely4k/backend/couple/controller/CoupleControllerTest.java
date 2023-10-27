@@ -1,16 +1,21 @@
 package com.lovely4k.backend.couple.controller;
 
 import com.lovely4k.backend.ControllerTestSupport;
+import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
+import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.http.MediaType.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -75,5 +80,36 @@ class CoupleControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.body.boyMbti").value("ESTJ"))
             .andExpect(jsonPath("$.body.girlNickname").value("깜찍이"))
             .andExpect(jsonPath("$.body.girlMbti").value("INFP"));
+    }
+
+    @Test
+    @DisplayName("커플 프로필을 수정할 수 있다.")
+    void editCoupleProfile() throws Exception {
+        //given
+        TestCoupleProfileEditRequest request = new TestCoupleProfileEditRequest("2022-07-26");
+
+        //when //then
+        mockMvc.perform(patch("/v1/couples")
+                .queryParam("memberId", "1")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("커플 프로필을 수정시 날짜는 yyyy-MM-dd 패턴으로 입력되어야 한다.")
+    void editCoupleProfileWithWrongDatePattern() throws Exception {
+        //given
+        TestCoupleProfileEditRequest request = new TestCoupleProfileEditRequest("2022-7-26");
+
+        //when //then
+        mockMvc.perform(patch("/v1/couples")
+                .queryParam("memberId", "1")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType(APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.body.title").value("DateTimeParseException"));
     }
 }
