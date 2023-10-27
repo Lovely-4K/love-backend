@@ -2,20 +2,21 @@ package com.lovely4k.docs.couple;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lovely4k.backend.couple.controller.CoupleController;
-import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
 import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
+import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
 
-import java.time.LocalDate;
-
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -30,6 +31,38 @@ class CoupleControllerDocsTest extends RestDocsSupport {
     @Override
     protected Object initController() {
         return new CoupleController(coupleService);
+    }
+
+
+    @Test
+    @DisplayName("초대코드를 생성하는 API")
+    void createInvitationCode() throws Exception {
+
+        given(coupleService.createInvitationCode(anyLong()))
+            .willReturn(new InvitationCodeCreateResponse(1L, "SampleInvitationCode"));
+
+        mockMvc.perform(
+                post("/v1/couples/invitation-code")
+                    .param("requestedMemberId", "1")
+                    .characterEncoding("utf-8")
+            )
+            .andDo(print())
+            .andExpect(status().isCreated())
+            .andDo(document("get-invitationCode",
+                    preprocessResponse(prettyPrint()),
+                    responseHeaders(
+                        headerWithName("Location").description("리소스 저장 경로")
+                    ),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.NUMBER)
+                            .description("응답 코드"),
+                        fieldWithPath("body.coupleId").type(JsonFieldType.NUMBER)
+                            .description("커플 id"),
+                        fieldWithPath("body.invitationCode").type(JsonFieldType.STRING)
+                            .description("초대 코드")
+                    )
+                )
+            );
     }
 
     @Test
