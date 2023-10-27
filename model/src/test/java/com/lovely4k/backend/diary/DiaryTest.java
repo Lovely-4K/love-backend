@@ -134,7 +134,7 @@ class DiaryTest {
         assertThatThrownBy(
                 () -> diary.checkAuthority(memberCoupleId)
         ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("you can only see your couple's diary");
+                .hasMessage("you can only manage your couple's diary");
     }
 
 }

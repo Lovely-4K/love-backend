@@ -3,6 +3,8 @@ package com.lovely4k.docs.couple;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lovely4k.backend.couple.controller.CoupleController;
 import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
+import com.lovely4k.backend.couple.service.CoupleService;
+import com.lovely4k.backend.member.service.MemberService;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.time.LocalDate;
 
+import static org.mockito.Mockito.mock;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -21,9 +24,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class CoupleControllerDocsTest extends RestDocsSupport {
+
+    private final CoupleService coupleService = mock(CoupleService.class);
+
     @Override
     protected Object initController() {
-        return new CoupleController();
+        return new CoupleController(coupleService);
     }
 
     @Test
