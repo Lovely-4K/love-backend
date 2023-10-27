@@ -31,7 +31,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class QuestionApiDocs extends RestDocsSupport {
+class QuestionApiDocsTest extends RestDocsSupport {
 
     private final QuestionService questionService = mock(QuestionService.class);
 

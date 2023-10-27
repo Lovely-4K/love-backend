@@ -64,7 +64,7 @@ public class QDiaryRepository {
 
     private OrderSpecifier[] getOrderSpecifiers(Pageable pageable) {
         return pageable.getSort().stream()
-                .map(order -> new OrderSpecifier(
+                .map(order -> new OrderSpecifier<>(
                         order.isAscending() ? Order.ASC : Order.DESC,
                         Expressions.stringPath(order.getProperty())
                 ))

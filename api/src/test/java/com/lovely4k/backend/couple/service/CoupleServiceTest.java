@@ -90,8 +90,10 @@ class CoupleServiceTest extends IntegrationTestSupport {
 
         InvitationCodeCreateResponse response = coupleService.createInvitationCode(savedRequestedMember.getId());
 
-        //when //then
-        assertThatThrownBy(() -> coupleService.registerCouple("wrongCode", savedReceivedMember.getId()))
+        Long savedReceivedMemberId = savedReceivedMember.getId();
+
+        //when && then
+        assertThatThrownBy(() -> coupleService.registerCouple("wrongCode", savedReceivedMemberId))
             .isInstanceOf(EntityNotFoundException.class);
     }
 

@@ -43,7 +43,7 @@ public class Member extends BaseTimeEntity {
     private String imageUrl;
 
     @Builder
-    private Member(Long coupleId, String sex, String name, String nickname, LocalDate birthday, String mbti, String calendarColor, String imageUrl) {
+    private Member(Long coupleId, String sex, String name, String nickname, LocalDate birthday, String mbti, String calendarColor, String imageUrl) { // NOSONAR
         this.coupleId = coupleId;
         this.sex = sex;
         this.name = name;
@@ -62,6 +62,7 @@ public class Member extends BaseTimeEntity {
         this.mbti = mbti;
         this.calendarColor = calendarColor;
         this.imageUrl = imageUrl;
+        Member.builder().build();
     }
 
     public void registerCoupleId(Long id) {

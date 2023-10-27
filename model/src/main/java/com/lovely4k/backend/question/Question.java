@@ -63,7 +63,7 @@ public class Question extends BaseTimeEntity {
 
     public void updateAnswer(int answer, Sex sex) {
         validateChoice(answer);
-        switch (sex) {
+        switch (sex) {  // NOSONAR
             case MALE -> this.boyChoiceIndex = answer;
             case FEMALE -> this.girlChoiceIndex = answer;
         }

@@ -49,7 +49,7 @@ public class QuestionService {
                 .findQuestionByCoupleIdAndQuestionDay(coupleId, questionDay)
                 .stream()
                 .reduce((first, second) -> second)
-                .orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("question", coupleId)));
+                .orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("question", coupleId))); // NOSONAR
 
         return DailyQuestionResponse.from(question);
     }

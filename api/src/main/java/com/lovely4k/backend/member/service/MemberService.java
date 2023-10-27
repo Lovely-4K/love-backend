@@ -1,13 +1,11 @@
 package com.lovely4k.backend.member.service;
 
-import com.lovely4k.backend.common.ApiResponse;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import com.lovely4k.backend.member.service.request.MemberProfileEditServiceRequest;
 import com.lovely4k.backend.member.service.response.MemberProfileGetResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +23,7 @@ public class MemberService {
         return MemberProfileGetResponse.of(findMember);
     }
 
-    // TODO : 프로필 사진 수정
+    // 프로필 사진 수정
     @Transactional
     public void updateMemberProfile(MemberProfileEditServiceRequest serviceRequest, Long memberId) {
         Member findMember = validateMemberId(memberId);

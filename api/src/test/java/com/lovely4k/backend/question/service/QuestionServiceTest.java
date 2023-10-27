@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -75,7 +76,7 @@ class QuestionServiceTest {
 
     @Test
     @DisplayName("오늘의 질문을 조회한다.")
-    public void testFindDailyQuestion() {
+    void testFindDailyQuestion() {
         // Given
         Long coupleId = 1L;
         long questionDay = 1L;
@@ -91,8 +92,12 @@ class QuestionServiceTest {
         DailyQuestionResponse result = questionService.findDailyQuestion(coupleId);
 
         // Then
-        Assertions.assertThat(result).isNotNull();
-        Assertions.assertThat(result).isEqualTo(DailyQuestionResponse.from(mockQuestion));
+        assertAll(
+                () -> Assertions.assertThat(result).isNotNull(),
+                () -> Assertions.assertThat(result).isEqualTo(DailyQuestionResponse.from(mockQuestion))
+        );
+
+
     }
 
     @DisplayName("질문을 생성한다.")

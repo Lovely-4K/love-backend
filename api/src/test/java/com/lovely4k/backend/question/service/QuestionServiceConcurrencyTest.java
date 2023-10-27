@@ -32,8 +32,7 @@ class QuestionServiceConcurrencyTest {
     @Autowired
     QuestionRepository questionRepository;
 
-    //H2 환경에서는 동작하지 않음
-    @Disabled
+    @Disabled("H2 환경에서는 동작하지 않음")
     @DisplayName("커플이 동시에 질문지를 생성할 때 한 쪽의 질문지만 생성 된다.")
     @Test
     void testConcurrency() throws InterruptedException {
