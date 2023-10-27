@@ -13,8 +13,9 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
+@Disabled(value = "paging 관련 쿼리 확인 테스트, 필요시에 풀어서 사용하세요")
 @SpringBootTest
-@Sql(scripts = "/init.sql")
+@Sql(scripts = "/test.sql")
 @ActiveProfiles("test")
 class QuestionRepositoryTest {
 

@@ -25,7 +25,7 @@ CREATE TABLE diary (
     couple_id BIGINT,
     boy_text TEXT,
     girl_text TEXT,
-    score INT,
+    score INT,e
     dating_day DATE,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
