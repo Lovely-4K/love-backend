@@ -8,6 +8,10 @@ import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,13 +46,12 @@ public class DiaryController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<DiaryListResponse>>> getDiaryList(
-            @RequestHeader Long memberId
+    public ResponseEntity<ApiResponse<Page<DiaryListResponse>>> getDiaryList(
+            @RequestHeader Long coupleId,
+            @RequestParam(required = false) String category,
+            @PageableDefault(size = 10, sort = "localDateTime", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return ApiResponse.ok(List.of(
-                new DiaryListResponse(1L, 1L),
-                new DiaryListResponse(2L, 102L)
-        ));
+        return ApiResponse.ok(diaryService.getDiaryList(coupleId, category, pageable));
     }
 
     @PatchMapping("/{id}")
