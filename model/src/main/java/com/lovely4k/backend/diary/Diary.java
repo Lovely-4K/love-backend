@@ -61,7 +61,7 @@ public class Diary extends BaseTimeEntity {
 
     public void checkAuthority(Long coupleId) {
         if (!this.coupleId.equals(coupleId)) {
-            throw new IllegalArgumentException("you can only see your couple's diary");
+            throw new IllegalArgumentException("you can only manage your couple's diary");
         }
     }
 

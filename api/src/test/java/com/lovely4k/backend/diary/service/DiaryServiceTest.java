@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -225,7 +226,51 @@ class DiaryServiceTest extends IntegrationTestSupport {
         assertThatThrownBy(
                 () -> diaryService.getDiaryDetail(diaryId, memberId)
         ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("you can only see your couple's diary");
+                .hasMessage("you can only manage your couple's diary");
+    }
+
+    @DisplayName("deleteDiary 메서드를 통해 다이어리를 삭제할 수 있다. ")
+    @Test
+    void deleteDiary() {
+        // given
+        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Diary diary = buildDiary(location, 1L);
+        diaryRepository.save(diary);
+
+        Member member = buildMember();
+        memberRepository.save(member);
+
+        Long diaryId = diary.getId();
+        Long memberId = member.getId();
+
+        // when
+        diaryService.deleteDiary(diaryId, memberId);
+
+        // then
+        Optional<Diary> optionalDiary = diaryRepository.findById(diaryId);
+        assertThat(optionalDiary).isEmpty();
+    }
+
+    @DisplayName("다른 커플의 다이어리를 삭제할 수 없다.")
+    @Test
+    void deleteDiaryNoAuthority() {
+        // given
+        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Diary diary = buildDiary(location, 2L);
+        diaryRepository.save(diary);
+
+        Member member = buildMember();
+        memberRepository.save(member);
+
+        Long diaryId = diary.getId();
+        Long memberId = member.getId();
+
+        // when && then
+        assertThatThrownBy(
+                () -> diaryService.deleteDiary(diaryId, memberId)
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("you can only manage your couple's diary");
+
     }
 
     private static Diary buildDiary(Location location, long coupleId) {
