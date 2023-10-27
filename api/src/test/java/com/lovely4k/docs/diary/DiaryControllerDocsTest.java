@@ -3,11 +3,15 @@ package com.lovely4k.docs.diary;
 import com.lovely4k.backend.diary.controller.DiaryController;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
+import com.lovely4k.backend.diary.service.response.DiaryListResponse;
 import com.lovely4k.backend.diary.service.response.PhotoList;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -15,7 +19,10 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -126,19 +133,44 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     @DisplayName("다이어리 목록을 조회하는 API")
     @Test
     void getDiaryList() throws Exception {
+        // stubbing
+        List<DiaryListResponse> diaryListResponseList = List.of(
+                new DiaryListResponse(3L, 103L, "image-url"),
+                new DiaryListResponse(2L, 103532L, "image-url"),
+                new DiaryListResponse(1L, 123562L, "image-url")
+        );
+
+        PageImpl<DiaryListResponse> responsePage =
+                new PageImpl<>(
+                        diaryListResponseList,
+                        PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")),
+                        diaryListResponseList.size());
+
+        when(diaryService.getDiaryList(eq(1L), any(), any()))
+                .thenReturn(responsePage);
+
         this.mockMvc.perform(
                         get("/v1/diaries")
-                                .header("memberId", 1L)
+                                .header("coupleId", 1L)
+                                .param("page", "0")
+                                .param("size", "10")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("diary-list",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        responseFields(
+                        relaxedResponseFields(
                                 fieldWithPath("code").type(NUMBER).description("코드"),
-                                fieldWithPath("body[0].diaryId").type(NUMBER).description("다이어리 id"),
-                                fieldWithPath("body[0].kakaoMapId").type(NUMBER).description("카카오 장소 id")
+                                fieldWithPath("body.content[0].diaryId").description("다이어리 id"),
+                                fieldWithPath("body.content[0].kakaoMapId").description("카카오 맵 id"),
+                                fieldWithPath("body.content[0].imageUrl").description("이미지 주소").optional(),
+                                fieldWithPath("body.pageable.pageNumber").description("페이지 번호"),
+                                fieldWithPath("body.pageable.pageSize").description("페이지 사이즈"),
+                                fieldWithPath("body.first").description("첫번째 페이지 여부"),
+                                fieldWithPath("body.numberOfElements").description("컨텐츠 수"),
+                                fieldWithPath("body.empty").description("empty 여부")
+
                         )
                 ));
     }
