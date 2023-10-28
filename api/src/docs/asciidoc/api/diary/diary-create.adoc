@@ -1,0 +1,22 @@
+[[diary-create]]
+=== 다이어리 생성
+
+다이어리 생성의 경우 `form-data` 형식으로 요청을 주시면 됩니다.
+
+이미지의 경우 다음과 같이 요청 해 주시면 됩니다.
+(이미지의 경우 최대 1MB의 이미지만 받을 수 있습니다. )
+
+key : images | value : 이미지 파일
+
+텍스트의 경우 다음과 같이 요청 해 주시면 됩니다.
+
+key : texts | value : 다이어리 관련된 값들 | Content-Type : application/json
+
+다이어리 관련된 값들은 다음과 같습니다.
+include::{snippets}/diary-create/request-part-texts-fields.adoc[]
+
+
+==== HTTP Request
+include::{snippets}/diary-create/http-request.adoc[]
+==== HTTP Response
+include::{snippets}/diary-create/http-response.adoc[]

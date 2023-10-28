@@ -29,8 +29,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,19 +56,16 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                                 .file(firstImage)
                                 .file(secondImage)
                                 .file(mockMultipartFile)
-                                .param("memberId", "1")
-                                .param("kakaoMapId", "1")
-                                .param("address", "서울 강동구 테헤란로")
-                                .param("score", "5")
-                                .param("datingDay", "2023-10-20")
-                                .param("category", "ACCOMODATION")
-                                .param("text", "여기 숙소 좋았어!")
+                                .queryParam("memberId", "1")
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andDo(document("diary-create",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
+                                queryParameters(
+                                        parameterWithName("memberId").description("회원 아이디")
+                                ),
                                 requestPartFields("texts",
                                         fieldWithPath("kakaoMapId").type(NUMBER).description("카카오 맵 id"),
                                         fieldWithPath("address").type(STRING).description("장소에 대한 주소"),
@@ -105,7 +101,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
 
         this.mockMvc.perform(
                         get("/v1/diaries/{id}", 1L)
-                                .param("coupleId", "1")
+                                .queryParam("coupleId", "1")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -151,9 +147,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
 
         this.mockMvc.perform(
                         get("/v1/diaries")
-                                .header("coupleId", 1L)
-                                .param("page", "0")
-                                .param("size", "10")
+                                .queryParam("coupleId", "1")
+                                .queryParam("page", "0")
+                                .queryParam("size", "10")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
