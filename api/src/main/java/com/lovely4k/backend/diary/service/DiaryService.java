@@ -77,9 +77,9 @@ public class DiaryService {
     }
     public Page<DiaryListResponse> findDiaryList(Long coupleId, String category, Pageable pageable) {
         Category.validateRequest(category);
-        Page<Diary> pageDiary = diaryRepositoryAdapter.findAllByMemberId(coupleId, Category.valueOf(category), pageable);
+        Page<Diary> pageDiary = diaryRepositoryAdapter.findDiaryList(coupleId, Category.valueOf(category.toUpperCase()), pageable);
 
-        if (pageDiary.isEmpty()) {
+        if (pageDiary.getContent().isEmpty()) {
             return Page.empty();
         }
         return pageDiary.map(DiaryListResponse::from);

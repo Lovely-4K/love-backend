@@ -24,7 +24,7 @@ public class DiaryRepositoryAdapter {
         return diaryRepository.findById(diaryId);
     }
 
-    public Page<Diary> findAllByMemberId(Long coupleId, Category category, Pageable pageable) {
+    public Page<Diary> findDiaryList(Long coupleId, Category category, Pageable pageable) {
         return qDiaryRepository.findAll(coupleId, category, pageable);
     }
 

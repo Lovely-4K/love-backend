@@ -70,6 +70,28 @@ class DiaryTest {
         );
     }
 
+    @DisplayName("만약 회원의 성별이 이상하다면 IllegalArgumentException이 발생한다.")
+    @Test
+    void createInvalidSex() {
+        // given
+        Integer score = 0;
+        LocalDate localDate = LocalDate.of(2023, 10, 20);
+        String text = "안녕하세요";
+        Member member = Member.builder()
+                .name("tommy")
+                .sex("toy")
+                .coupleId(1L)
+                .build();
+
+        Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
+
+        // when && then
+        assertThatThrownBy(
+                () -> Diary.create(score, localDate, text, member, location)
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("invalid input of sex");
+    }
+
     @DisplayName("다이어리 평점이 0 이하인 경우 IllegalArgumentException이 발생한다.")
     @Test
     void scoreUnderRange() {
@@ -116,7 +138,7 @@ class DiaryTest {
 
     @DisplayName("다른 커플의 내용을 확인하려고 하는 경우 IllegalArgumentException이 발생한다.")
     @Test
-    void checkAuthority() {
+    void checkAuthorityNoAuthority() {
         // given
         Member member = Member.builder()
                 .sex("boy")
@@ -135,6 +157,52 @@ class DiaryTest {
                 () -> diary.checkAuthority(memberCoupleId)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("you can only manage your couple's diary");
+    }
+
+    @DisplayName("내가 속한 커플의 다이어리에 대해 checkAuthority를 하면 아무 일이 발생하지 않는다. ")
+    @Test
+    void checkAuthority() {
+        // given
+        Member member = Member.builder()
+                .sex("boy")
+                .coupleId(1L)
+                .build();
+
+        Diary diary = Diary.builder()
+                .coupleId(1L)
+                .boyText("hello")
+                .girlText("hi")
+                .build();
+
+        Long memberCoupleId = member.getCoupleId();
+        // when && then
+        diary.checkAuthority(memberCoupleId);
+    }
+
+    @DisplayName("addPhoto 메서드를 통해 다이어리에 사진을 추가할 수 있다.")
+    @Test
+    void addPhoto() {
+        // given
+        Photos photos = Photos.builder()
+                .firstImage("first-image-url")
+                .secondImage("second-image-url")
+                .build();
+
+        Diary diary = Diary.builder()
+                .coupleId(1L)
+                .boyText("boy-text")
+                .girlText("girl-text")
+                .build();
+
+        assertThat(diary.getPhotos()).isNull();
+        // when
+        diary.addPhoto(photos);
+
+        // then
+        assertAll(
+                () -> assertThat(diary.getPhotos()).isNotNull(),
+                () -> assertThat(diary.getPhotos().countOfImages()).isEqualTo(2)
+        );
     }
 
 }

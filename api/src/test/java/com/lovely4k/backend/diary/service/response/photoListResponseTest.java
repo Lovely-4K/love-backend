@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class PhotoListTest {
+class PhotoListResponseTest {
 
     @DisplayName("PhotoList의 from 메서드를 통해 PhotoList를 생성할 수 있다. ")
     @Test
@@ -20,15 +20,15 @@ class PhotoListTest {
                 .build();
 
         // when
-        PhotoList photoList = PhotoList.from(photos);
+        PhotoListResponse photoListResponse = PhotoListResponse.from(photos);
 
         // then
         assertAll(
-                () -> assertThat(photoList.getFifthImage()).isNull(),
-                () -> assertThat(photoList.getFourthImage()).isNull(),
-                () -> assertThat(photoList.getFirstImage()).isNotNull().isEqualTo("image-url1"),
-                () -> assertThat(photoList.getSecondImage()).isNotNull().isEqualTo("image-url2"),
-                () -> assertThat(photoList.getThirdImage()).isNotNull().isEqualTo("image-url3")
+                () -> assertThat(photoListResponse.getFifthImage()).isNull(),
+                () -> assertThat(photoListResponse.getFourthImage()).isNull(),
+                () -> assertThat(photoListResponse.getFirstImage()).isNotNull().isEqualTo("image-url1"),
+                () -> assertThat(photoListResponse.getSecondImage()).isNotNull().isEqualTo("image-url2"),
+                () -> assertThat(photoListResponse.getThirdImage()).isNotNull().isEqualTo("image-url3")
         );
 
     }

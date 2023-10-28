@@ -4,7 +4,7 @@ import com.lovely4k.backend.diary.controller.DiaryController;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
-import com.lovely4k.backend.diary.service.response.PhotoList;
+import com.lovely4k.backend.diary.service.response.PhotoListResponse;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
@@ -100,7 +100,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                         new DiaryDetailResponse(102L,
                                 LocalDate.of(2021, 10, 20), 5, Category.FOOD,
                                 "여기 음식 최고", "포브스 선정 맛집 답다.",
-                                PhotoList.builder().firstImage("image-url1").secondImage("image-url2").build()
+                                PhotoListResponse.builder().firstImage("image-url1").secondImage("image-url2").build()
                         ));
 
         this.mockMvc.perform(
