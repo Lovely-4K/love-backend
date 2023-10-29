@@ -125,7 +125,7 @@ class CoupleServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("coupleId로 커플 프로필을 조회할 수 있다.")
+    @DisplayName("memberId를 통하여 커플 프로필을 조회할 수 있다.")
     void getCoupleProfile() throws Exception {
         //given
         Member boy = createMember(MALE, "김철수", "ESTJ", "듬직이");
@@ -137,7 +137,7 @@ class CoupleServiceTest extends IntegrationTestSupport {
         coupleService.registerCouple(codeCreateResponse.invitationCode(), girl.getId());
 
         //when
-        CoupleProfileGetResponse profileGetResponse = coupleService.findCoupleProfile(codeCreateResponse.coupleId());
+        CoupleProfileGetResponse profileGetResponse = coupleService.findCoupleProfile(boy.getId());
 
         //then
         assertAll(

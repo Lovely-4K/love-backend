@@ -21,8 +21,16 @@ include::api/common/http-status-code.adoc[]
 [[Member]]
 == Member
 
+include::api/member/member-profile-get.adoc[]
+include::api/member/member-profile-edit.adoc[]
+
 [[Couple]]
 == Couple
+
+include::api/couple/couple-invitationCode-get.adoc[]
+include::api/couple/couple-register.adoc[]
+include::api/couple/couple-profile-get.adoc[]
+include::api/couple/couple-profile-edit.adoc[]
 
 [[Diary]]
 == Diary

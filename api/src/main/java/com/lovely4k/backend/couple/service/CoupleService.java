@@ -46,7 +46,9 @@ public class CoupleService {
         registerCoupleId(couple);
     }
 
-    public CoupleProfileGetResponse findCoupleProfile(Long coupleId) {
+    public CoupleProfileGetResponse findCoupleProfile(Long memberId) {
+
+        Long coupleId = findMember(memberId).getCoupleId();
 
         Couple couple = findCouple(coupleId);
 

@@ -60,9 +60,9 @@ class CoupleControllerTest extends ControllerTestSupport {
     @DisplayName("coupleId를 통해서 커플 프로필을 조회할 수 있다.")
     void getCoupleProfile() throws Exception {
         //given
-        Long coupleId = 1L;
+        Long memberId = 1L;
 
-        given(coupleService.findCoupleProfile(coupleId))
+        given(coupleService.findCoupleProfile(memberId))
             .willReturn(new CoupleProfileGetResponse(
                 "듬직이",
                 "ESTJ",
@@ -72,7 +72,7 @@ class CoupleControllerTest extends ControllerTestSupport {
 
         //when //then
         mockMvc.perform(get("/v1/couples")
-                .queryParam("coupleId", coupleId.toString()))
+                .queryParam("memberId", memberId.toString()))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.body.boyNickname").value("듬직이"))
