@@ -16,7 +16,8 @@ CREATE TABLE couple (
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_couple_boy_id (boy_id),
-    INDEX idx_couple_girl_id (girl_id)
+    INDEX idx_couple_girl_id (girl_id),
+    INDEX idx_couple_invitation_code (invitation_code)
 );
 
 -- Diary 테이블

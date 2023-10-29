@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static org.assertj.core.api.Assertions.*;
+import static com.lovely4k.backend.member.Sex.MALE;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -39,7 +41,7 @@ class MemberServiceTest {
         //then
         assertThat(memberProfileGetResponse)
             .extracting("sex", "name")
-            .contains("MALE", "김철수");
+            .contains(MALE, "김철수");
     }
 
     @Test
@@ -63,7 +65,7 @@ class MemberServiceTest {
         Member savedMember = memberRepository.save(member);
 
         MemberProfileEditServiceRequest serviceRequest = new MemberProfileEditServiceRequest(
-            "MALE",
+            MALE,
             "http://www.imageUrlSample.com",
             "김동수",
             "길쭉이",
@@ -86,7 +88,7 @@ class MemberServiceTest {
     private Member createMember() {
         return Member.builder()
             .coupleId(1L)
-            .sex("MALE")
+            .sex(MALE)
             .name("김철수")
             .nickname("듬직이")
             .birthday(LocalDate.of(1996, 7, 30))

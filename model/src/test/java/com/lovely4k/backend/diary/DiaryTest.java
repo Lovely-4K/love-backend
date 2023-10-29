@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
+import static com.lovely4k.backend.member.Sex.FEMALE;
+import static com.lovely4k.backend.member.Sex.MALE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -23,7 +25,7 @@ class DiaryTest {
         String text = "안녕하세요";
         Member member = Member.builder()
                 .name("tommy")
-                .sex("boy")
+                .sex(MALE)
                 .coupleId(1L)
                 .build();
 
@@ -51,7 +53,7 @@ class DiaryTest {
         String text = "안녕하세요";
         Member member = Member.builder()
                 .name("tommy")
-                .sex("girl")
+                .sex(FEMALE)
                 .coupleId(1L)
                 .build();
 
@@ -79,7 +81,7 @@ class DiaryTest {
         String text = "안녕하세요";
         Member member = Member.builder()
                 .name("tommy")
-                .sex("boy")
+                .sex(MALE)
                 .build();
 
         Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
@@ -101,7 +103,7 @@ class DiaryTest {
         String text = "안녕하세요";
         Member member = Member.builder()
                 .name("tommy")
-                .sex("boy")
+                .sex(MALE)
                 .build();
 
         Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
@@ -119,7 +121,7 @@ class DiaryTest {
     void checkAuthority() {
         // given
         Member member = Member.builder()
-                .sex("boy")
+                .sex(MALE)
                 .coupleId(1L)
                 .build();
 

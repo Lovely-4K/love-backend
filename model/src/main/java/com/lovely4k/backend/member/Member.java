@@ -22,7 +22,8 @@ public class Member extends BaseTimeEntity {
     private Long coupleId;
 
     @Column(length = 7, name = "sex")
-    private String sex;
+    @Enumerated(EnumType.STRING)
+    private Sex sex;
 
     @Column(length = 15, name = "name")
     private String name;
@@ -43,7 +44,7 @@ public class Member extends BaseTimeEntity {
     private String imageUrl;
 
     @Builder
-    private Member(Long coupleId, String sex, String name, String nickname, LocalDate birthday, String mbti, String calendarColor, String imageUrl) { // NOSONAR
+    private Member(Long coupleId, Sex sex, String name, String nickname, LocalDate birthday, String mbti, String calendarColor, String imageUrl) { // NOSONAR
         this.coupleId = coupleId;
         this.sex = sex;
         this.name = name;
@@ -54,7 +55,7 @@ public class Member extends BaseTimeEntity {
         this.imageUrl = imageUrl;
     }
 
-    public void updateProfile(String sex, String imageUrl, String name, String nickname, LocalDate birthday, String mbti, String calendarColor) {
+    public void updateProfile(Sex sex, String imageUrl, String name, String nickname, LocalDate birthday, String mbti, String calendarColor) {
         this.sex = sex;
         this.name = name;
         this.nickname = nickname;

@@ -1,11 +1,12 @@
 package com.lovely4k.backend.member.service.response;
 
 import com.lovely4k.backend.member.Member;
+import com.lovely4k.backend.member.Sex;
 
 import java.time.LocalDate;
 
 public record MemberProfileGetResponse(
-    String sex,
+    Sex sex,
     String imageUrl,
     String name,
     String nickname,

@@ -38,8 +38,12 @@ public class Couple extends BaseTimeEntity {
         this.invitationCode = invitationCode;
     }
 
-    public void registerLover(Long receivedMemberId) {
+    public void registerGirlId(Long receivedMemberId) {
         this.girlId = receivedMemberId;
+    }
+
+    public void registerBoyId(Long receivedMemberId) {
+        this.boyId = receivedMemberId;
     }
 
     public void update(LocalDate meetDay) {

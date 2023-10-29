@@ -8,8 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
+import static com.lovely4k.backend.member.Sex.MALE;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -26,7 +27,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
         given(memberService.findMemberProfile(memberId))
             .willReturn(new MemberProfileGetResponse(
-                    "boy",
+                    MALE,
                     "sampleImageUrl",
                     "김철수",
                     "듬직이",
@@ -42,7 +43,7 @@ class MemberControllerTest extends ControllerTestSupport {
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.code").value(200))
-            .andExpect(jsonPath("$.body.sex").value("boy"))
+            .andExpect(jsonPath("$.body.sex").value("MALE"))
             .andExpect(jsonPath("$.body.name").value("김철수"));
     }
 
@@ -51,7 +52,7 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfile() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "MALE",
+            MALE,
             "http://www.imageUrlSample.com",
             "김동수",
             "길쭉이",
@@ -102,7 +103,7 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithoutImageUrl() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "MALE",
+            MALE,
             null,
             "김동수",
             "길쭉이",
@@ -128,7 +129,7 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithout() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "MALE",
+            MALE,
             "http://www.imageUrlSample.com",
             null,
             "길쭉이",
@@ -154,7 +155,7 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithoutNickname() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "MALE",
+            MALE,
             "http://www.imageUrlSample.com",
             "김동수",
             null,
@@ -180,7 +181,7 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithoutBirthday() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "MALE",
+            MALE,
             "http://www.imageUrlSample.com",
             "김동수",
             "길쭉이",
@@ -206,7 +207,7 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithoutMBTI() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "MALE",
+            MALE,
             "http://www.imageUrlSample.com",
             "김동수",
             "길쭉이",
@@ -232,7 +233,7 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithoutColor() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "MALE",
+            MALE,
             "http://www.imageUrlSample.com",
             "김동수",
             "길쭉이",
