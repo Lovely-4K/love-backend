@@ -38,8 +38,8 @@ class CoupleServiceTest extends IntegrationTestSupport {
     private CoupleRepository coupleRepository;
 
     @Test
-    @DisplayName("초대 코드를 발급받을 수 있다.")
-    void createInvitationCode() throws Exception {
+    @DisplayName("초대 코드를 발급받을 수 있다. - MALE 이 코드를 넘겨 줄 경우")
+    void createInvitationCodeByMale() throws Exception {
         //given
         Member savedMember = memberRepository.save(createMember(MALE, "김철수", "ESFJ", "듬직이"));
 
@@ -52,7 +52,28 @@ class CoupleServiceTest extends IntegrationTestSupport {
 
         assertAll(
             () -> assertThat(findCouple.getId()).isNotNull(),
-            () -> assertThat(findCouple.getInvitationCode()).isNotNull()
+            () -> assertThat(findCouple.getInvitationCode()).isNotNull(),
+            () -> assertThat(findCouple.getBoyId()).isEqualTo(savedMember.getId())
+        );
+    }
+
+    @Test
+    @DisplayName("초대 코드를 발급받을 수 있다. - FEMALE 이 코드를 넘겨 줄 경우")
+    void createInvitationCodeByFemale() throws Exception {
+        //given
+        Member savedMember = memberRepository.save(createMember(FEMALE, "김영희", "INFP", "깜찍이"));
+
+        //when
+        InvitationCodeCreateResponse response = coupleService.createInvitationCode(savedMember.getId(), savedMember.getSex());
+
+        //then
+        Couple findCouple = coupleRepository.findById(response.coupleId())
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id입니다."));
+
+        assertAll(
+            () -> assertThat(findCouple.getId()).isNotNull(),
+            () -> assertThat(findCouple.getInvitationCode()).isNotNull(),
+            () -> assertThat(findCouple.getGirlId()).isEqualTo(savedMember.getId())
         );
     }
 
@@ -99,7 +120,8 @@ class CoupleServiceTest extends IntegrationTestSupport {
 
         //when && then
         assertThatThrownBy(() -> coupleService.registerCouple("wrongCode", savedReceivedMemberId))
-            .isInstanceOf(EntityNotFoundException.class);
+            .isInstanceOf(EntityNotFoundException.class)
+            .hasMessage("유효하지 않은 초대코드 입니다.");
     }
 
     @Test

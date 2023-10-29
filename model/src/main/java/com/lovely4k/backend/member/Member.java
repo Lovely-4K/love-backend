@@ -63,7 +63,6 @@ public class Member extends BaseTimeEntity {
         this.mbti = mbti;
         this.calendarColor = calendarColor;
         this.imageUrl = imageUrl;
-        Member.builder().build();
     }
 
     public void registerCoupleId(Long id) {
