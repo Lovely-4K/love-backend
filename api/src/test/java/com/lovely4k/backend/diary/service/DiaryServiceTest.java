@@ -173,7 +173,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // when
         DiaryDetailResponse diaryDetailResponse =
-                diaryService.findDiaryDetail(diary.getId(), member.getId());
+                diaryService.findDiaryDetail(diary.getId(), member.getCoupleId());
 
         // then
         assertAll(
@@ -241,10 +241,10 @@ class DiaryServiceTest extends IntegrationTestSupport {
         memberRepository.save(member);
 
         Long diaryId = diary.getId();
-        Long memberId = member.getId();
+        Long coupleId = member.getCoupleId();
 
         // when
-        diaryService.deleteDiary(diaryId, memberId);
+        diaryService.deleteDiary(diaryId, coupleId);
 
         // then
         Optional<Diary> optionalDiary = diaryRepository.findById(diaryId);
