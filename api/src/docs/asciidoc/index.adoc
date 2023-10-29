@@ -1,4 +1,4 @@
-= LOVELY-4K API 문서
+= LOVELY-4K API Document
 ifndef::snippets[]
 :snippets: ../../build/generated-snippets
 endif::[]
@@ -9,6 +9,14 @@ endif::[]
 :toc: left
 :toclevels: 2
 :sectlinks:
+
+[[overview]]
+= 개요
+
+include::api/common/http-verbs.adoc[]
+include::api/common/http-status-code.adoc[]
+
+
 
 [[Member]]
 == Member
