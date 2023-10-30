@@ -52,7 +52,6 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfile() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            MALE,
             "http://www.imageUrlSample.com",
             "김동수",
             "길쭉이",
@@ -73,37 +72,10 @@ class MemberControllerTest extends ControllerTestSupport {
     }
 
     @Test
-    @DisplayName("회원 프로필을 수정할 경우 성별이 반드시 입력되어야 한다.")
-    void editMemberProfileWithoutSex() throws Exception {
-        //given
-        MemberProfileEditRequest request = new MemberProfileEditRequest(
-            null,
-            "http://www.imageUrlSample.com",
-            "김동수",
-            "길쭉이",
-            LocalDate.of(1996, 7, 31),
-            "ENFP",
-            "blue"
-        );
-
-        //when //then
-        mockMvc.perform(
-                patch("/v1/members")
-                    .queryParam("userId", "1")
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.code").value("400"))
-            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"));
-    }
-
-    @Test
     @DisplayName("회원 프로필을 수정할 경우 이미지 주소가 반드시 입력되어야 한다.")
     void editMemberProfileWithoutImageUrl() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            MALE,
             null,
             "김동수",
             "길쭉이",
@@ -129,7 +101,6 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithout() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            MALE,
             "http://www.imageUrlSample.com",
             null,
             "길쭉이",
@@ -155,7 +126,6 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithoutNickname() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            MALE,
             "http://www.imageUrlSample.com",
             "김동수",
             null,
@@ -181,7 +151,6 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithoutBirthday() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            MALE,
             "http://www.imageUrlSample.com",
             "김동수",
             "길쭉이",
@@ -207,7 +176,6 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithoutMBTI() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            MALE,
             "http://www.imageUrlSample.com",
             "김동수",
             "길쭉이",
@@ -233,7 +201,6 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithoutColor() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            MALE,
             "http://www.imageUrlSample.com",
             "김동수",
             "길쭉이",

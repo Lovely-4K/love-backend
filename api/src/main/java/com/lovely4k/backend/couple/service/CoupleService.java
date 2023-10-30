@@ -27,24 +27,7 @@ public class CoupleService {
     public InvitationCodeCreateResponse createInvitationCode(Long requestedMemberId, Sex sex) {
         String invitationCode = UUID.randomUUID().toString();
 
-        Couple couple = Couple.builder().build();
-
-        if (sex == Sex.MALE) {
-            couple = Couple.builder()
-                .boyId(requestedMemberId)
-                .girlId(null)
-                .meetDay(null)
-                .invitationCode(invitationCode)
-                .build();
-        } else if (sex == Sex.FEMALE) {
-            couple = Couple.builder()
-                .boyId(null)
-                .girlId(requestedMemberId)
-                .meetDay(null)
-                .invitationCode(invitationCode)
-                .build();
-        }
-
+        Couple couple = Couple.create(requestedMemberId, sex, invitationCode);
         Couple savedCouple = coupleRepository.save(couple);
 
         return new InvitationCodeCreateResponse(savedCouple.getId(), invitationCode);

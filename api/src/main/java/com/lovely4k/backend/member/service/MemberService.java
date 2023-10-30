@@ -38,7 +38,6 @@ public class MemberService {
 
     private void updateMemberProfile(MemberProfileEditServiceRequest serviceRequest, Member findMember) {
         findMember.updateProfile(
-            serviceRequest.sex(),
             serviceRequest.imageUrl(),
             serviceRequest.name(),
             serviceRequest.nickname(),

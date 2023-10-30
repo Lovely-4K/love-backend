@@ -43,6 +43,6 @@ public class CoupleController {
     public ResponseEntity<ApiResponse<Void>> editCoupleProfile(@Valid @RequestBody CoupleProfileEditRequest request, @RequestParam Long memberId) {
         coupleService.updateCoupleProfile(request.toServiceRequest(), memberId);
 
-        return ApiResponse.ok(null);
+        return ApiResponse.ok();
     }
 }

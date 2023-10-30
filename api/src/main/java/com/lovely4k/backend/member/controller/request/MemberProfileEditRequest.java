@@ -1,7 +1,6 @@
 package com.lovely4k.backend.member.controller.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.member.service.request.MemberProfileEditServiceRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,9 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public record MemberProfileEditRequest(
-    @NotNull(message = "성별을 입력해주세요.")
-    Sex sex,
-
     @NotBlank(message = "image url을 입력해주세요.")
     String imageUrl,
 
@@ -33,7 +29,6 @@ public record MemberProfileEditRequest(
 ) {
     public MemberProfileEditServiceRequest toServiceRequest() {
         return new MemberProfileEditServiceRequest(
-            this.sex,
             this.imageUrl,
             this.name,
             this.nickname,

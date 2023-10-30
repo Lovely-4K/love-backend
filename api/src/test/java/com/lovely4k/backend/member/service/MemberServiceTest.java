@@ -65,7 +65,6 @@ class MemberServiceTest {
         Member savedMember = memberRepository.save(member);
 
         MemberProfileEditServiceRequest serviceRequest = new MemberProfileEditServiceRequest(
-            MALE,
             "http://www.imageUrlSample.com",
             "김동수",
             "길쭉이",

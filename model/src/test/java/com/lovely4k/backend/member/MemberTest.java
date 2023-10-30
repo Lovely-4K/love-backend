@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-import static com.lovely4k.backend.member.Sex.FEMALE;
 import static com.lovely4k.backend.member.Sex.MALE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,7 +18,6 @@ class MemberTest {
 
         //when
         member.updateProfile(
-            FEMALE,
             "sampleImageUrl",
             "김영희",
             "깜찍이",
