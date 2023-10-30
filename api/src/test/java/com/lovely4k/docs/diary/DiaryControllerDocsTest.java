@@ -115,7 +115,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         queryParameters(
-                                parameterWithName("memberId").description("회원 아이디")
+                                parameterWithName("coupleId").description("커플 아이디")
                         ),
                         responseFields(
                                 fieldWithPath("code").type(NUMBER).description("코드"),
@@ -228,7 +228,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         queryParameters(
-                                parameterWithName("memberId").description("회원 아이디")
+                                parameterWithName("coupleId").description("커플 아이디")
                         )
                 ));
     }
