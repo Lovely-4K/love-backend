@@ -6,6 +6,7 @@ import com.lovely4k.backend.diary.controller.request.WebDiaryCreateRequest;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
+import com.lovely4k.backend.location.Category;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -48,7 +49,7 @@ public class DiaryController {
     @GetMapping
     public ResponseEntity<ApiResponse<Page<DiaryListResponse>>> getDiaryList(
             @RequestHeader Long coupleId,
-            @RequestParam(required = false) String category,
+            @RequestParam(required = false) Category category,
             @PageableDefault(size = 10, sort = "localDateTime", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ApiResponse.ok(diaryService.findDiaryList(coupleId, category, pageable));
