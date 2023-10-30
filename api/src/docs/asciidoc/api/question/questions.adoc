@@ -1,0 +1,79 @@
+= Questions API
+
+== Get Daily Question (GET /v1/questions/daily)
+
+=== Request
+include::{snippets}/get-daily-question/http-request.adoc[]
+====== Query Parameters
+include::{snippets}/get-daily-question/query-parameters.adoc[]
+
+=== Response (Success)
+include::{snippets}/get-daily-question/http-response.adoc[]
+====== Response Body
+include::{snippets}/get-daily-question/response-fields.adoc[]
+
+== Create Question Form And Question By User(POST /v1/questions/question-forms)
+
+=== Request
+include::{snippets}/create-question-form-and-question-by-user/http-request.adoc[]
+====== Query Parameters
+include::{snippets}/create-question-form-and-question-by-user/query-parameters.adoc[]
+====== Request Body
+include::{snippets}/create-question-form-and-question-by-user/request-fields.adoc[]
+
+=== Response (Success)
+include::{snippets}/create-question-form-and-question-by-user/http-response.adoc[]
+====== Response Body
+include::{snippets}/create-question-form-and-question-by-user/response-fields.adoc[]
+====== Response Header
+include::{snippets}/create-question-form-and-question-by-user/response-headers.adoc[]
+
+== Create Question (POST /v1/questions)
+
+==== Request
+include::{snippets}/create-question/http-request.adoc[]
+====== Query Parameters
+include::{snippets}/create-question/query-parameters.adoc[]
+
+==== Response (Success)
+include::{snippets}/create-question/http-response.adoc[]
+====== Response Body
+include::{snippets}/create-question/response-fields.adoc[]
+
+== Answer Question (PATCH /v1/questions/{id}/answers)
+
+==== Request
+include::{snippets}/answer-question/http-request.adoc[]
+====== Request Body
+include::{snippets}/answer-question/request-fields.adoc[]
+====== Query Parameters
+include::{snippets}/answer-question/query-parameters.adoc[]
+
+==== Response (Success)
+include::{snippets}/answer-question/http-response.adoc[]
+====== Response Body
+include::{snippets}/answer-question/response-fields.adoc[]
+
+== Get Question Details (GET /v1/questions/details/{id})
+
+==== Request
+include::{snippets}/get-question-details/http-request.adoc[]
+====== Path Variable
+include::{snippets}/get-question-details/path-parameters.adoc[]
+
+==== Response (Success)
+include::{snippets}/get-question-details/http-response.adoc[]
+====== Response Body
+include::{snippets}/get-question-details/response-fields.adoc[]
+
+== Get Answered Questions (GET /v1/questions)
+
+==== Request
+include::{snippets}/get-answered-questions/http-request.adoc[]
+====== Query Parameters
+include::{snippets}/get-answered-questions/query-parameters.adoc[]
+
+==== Response (Success)
+include::{snippets}/get-answered-questions/http-response.adoc[]
+====== Response Body
+include::{snippets}/get-answered-questions/response-fields.adoc[]
