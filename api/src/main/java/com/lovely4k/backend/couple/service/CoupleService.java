@@ -6,6 +6,7 @@ import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceReque
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import com.lovely4k.backend.member.Member;
+import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -23,46 +24,42 @@ public class CoupleService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public InvitationCodeCreateResponse createInvitationCode(Long requestedMemberId) {
+    public InvitationCodeCreateResponse createInvitationCode(Long requestedMemberId, Sex sex) {
         String invitationCode = UUID.randomUUID().toString();
 
-        // 코드 발급자의 성별 구분해서 저장할것. 현재는 남자로 가정.
-        Couple couple = Couple.builder()
-            .boyId(requestedMemberId)
-            .girlId(null)
-            .meetDay(null)
-            .invitationCode(invitationCode)
-            .build();
-
+        Couple couple = Couple.create(requestedMemberId, sex, invitationCode);
         Couple savedCouple = coupleRepository.save(couple);
 
         return new InvitationCodeCreateResponse(savedCouple.getId(), invitationCode);
     }
 
-    // 동일한 초대 코드가 여러개일 경우 어떻게 처리할지
     @Transactional
     public void registerCouple(String invitationCode, Long receivedMemberId) {
         Couple couple = validateInvitationCode(invitationCode);
 
-        couple.registerLover(receivedMemberId);
+        if (couple.getBoyId() == null) {
+            couple.registerBoyId(receivedMemberId);
+        } else {
+            couple.registerGirlId(receivedMemberId);
+        }
 
         registerCoupleId(couple);
     }
 
     public CoupleProfileGetResponse findCoupleProfile(Long coupleId) {
 
-        Couple couple = validateCoupleId(coupleId);
+        Couple couple = findCouple(coupleId);
 
         Member boy = findMember(couple.getBoyId());
         Member girl = findMember(couple.getGirlId());
 
-        return CoupleProfileGetResponse.fromEntity(boy, girl);
+        return CoupleProfileGetResponse.from(boy, girl);
     }
 
     @Transactional
     public void updateCoupleProfile(CoupleProfileEditServiceRequest request, Long memberId) {
         Long coupleId = findMember(memberId).getCoupleId();
-        Couple couple = validateCoupleId(coupleId);
+        Couple couple = findCouple(coupleId);
 
         couple.update(request.meetDay());
     }
@@ -72,7 +69,7 @@ public class CoupleService {
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원 id 입니다."));
     }
 
-    private Couple validateCoupleId(Long coupleId) {
+    private Couple findCouple(Long coupleId) {
         return coupleRepository.findById(coupleId)
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
     }

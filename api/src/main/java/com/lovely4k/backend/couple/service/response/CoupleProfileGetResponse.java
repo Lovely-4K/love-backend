@@ -8,7 +8,7 @@ public record CoupleProfileGetResponse(
     String girlNickname,
     String girlMbti
 ) {
-    public static CoupleProfileGetResponse fromEntity(Member boy, Member girl) {
+    public static CoupleProfileGetResponse from(Member boy, Member girl) {
         return new CoupleProfileGetResponse(boy.getNickname(), boy.getMbti(), girl.getNickname(), girl.getMbti());
     }
 }

@@ -1,6 +1,7 @@
 package com.lovely4k.backend.couple;
 
 import com.lovely4k.backend.common.jpa.BaseTimeEntity;
+import com.lovely4k.backend.member.Sex;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -38,8 +39,38 @@ public class Couple extends BaseTimeEntity {
         this.invitationCode = invitationCode;
     }
 
-    public void registerLover(Long receivedMemberId) {
+    public static Couple create(Long requestedMemberId, Sex sex, String invitationCode) {
+        if (sex == Sex.MALE) {
+            return createBoy(requestedMemberId, invitationCode);
+        } else {
+            return createGirl(requestedMemberId, invitationCode);
+        }
+    }
+
+    private static Couple createGirl(Long requestedMemberId, String invitationCode) {
+        return Couple.builder()
+            .boyId(null)
+            .girlId(requestedMemberId)
+            .meetDay(null)
+            .invitationCode(invitationCode)
+            .build();
+    }
+
+    private static Couple createBoy(Long requestedMemberId, String invitationCode) {
+        return Couple.builder()
+            .boyId(requestedMemberId)
+            .girlId(null)
+            .meetDay(null)
+            .invitationCode(invitationCode)
+            .build();
+    }
+
+    public void registerGirlId(Long receivedMemberId) {
         this.girlId = receivedMemberId;
+    }
+
+    public void registerBoyId(Long receivedMemberId) {
+        this.boyId = receivedMemberId;
     }
 
     public void update(LocalDate meetDay) {

@@ -12,6 +12,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.time.LocalDate;
 
+import static com.lovely4k.backend.member.Sex.MALE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -38,7 +39,7 @@ class MemberControllerDocsTest extends RestDocsSupport {
     void getProfile() throws Exception {
         given(memberService.findMemberProfile(any(Long.class)))
             .willReturn(new MemberProfileGetResponse(
-                "boy",
+                MALE,
                 "sampleImageUrl",
                 "김철수",
                 "듬직이",
@@ -81,7 +82,7 @@ class MemberControllerDocsTest extends RestDocsSupport {
     @Test
     @DisplayName("회원 프로필을 수정하는 API")
     void editProfile() throws Exception {
-        MemberProfileEditRequest request = new MemberProfileEditRequest("girl",
+        MemberProfileEditRequest request = new MemberProfileEditRequest(
             "imageUrlSample",
             "김영희",
             "이쁜이",
@@ -101,8 +102,6 @@ class MemberControllerDocsTest extends RestDocsSupport {
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     requestFields(
-                        fieldWithPath("sex").type(JsonFieldType.STRING)
-                            .description("성별"),
                         fieldWithPath("imageUrl").type(JsonFieldType.STRING)
                             .description("프로필 사진 url"),
                         fieldWithPath("name").type(JsonFieldType.STRING)

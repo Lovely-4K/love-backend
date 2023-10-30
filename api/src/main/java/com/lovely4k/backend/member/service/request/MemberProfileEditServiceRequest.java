@@ -3,7 +3,6 @@ package com.lovely4k.backend.member.service.request;
 import java.time.LocalDate;
 
 public record MemberProfileEditServiceRequest(
-    String sex,
     String imageUrl,
     String name,
     String nickname,

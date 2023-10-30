@@ -6,8 +6,8 @@ import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
+import com.lovely4k.backend.member.Sex;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,14 +20,14 @@ public class CoupleController {
     private final CoupleService coupleService;
 
     @PostMapping("/invitation-code")
-    public ResponseEntity<ApiResponse<InvitationCodeCreateResponse>> createInvitationCode(@RequestParam Long requestedMemberId) {
-        InvitationCodeCreateResponse response = coupleService.createInvitationCode(requestedMemberId);
+    public ResponseEntity<ApiResponse<InvitationCodeCreateResponse>> createInvitationCode(@RequestParam Long requestedMemberId, @RequestParam Sex sex) {
+        InvitationCodeCreateResponse response = coupleService.createInvitationCode(requestedMemberId, sex);
 
         return ApiResponse.created("/v1/couples/invitation-code", response.coupleId(), response);
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Null>> registerCouple(@RequestParam String invitationCode, @RequestParam Long receivedMemberId) {
+    public ResponseEntity<ApiResponse<Void>> registerCouple(@RequestParam String invitationCode, @RequestParam Long receivedMemberId) {
         coupleService.registerCouple(invitationCode, receivedMemberId);
 
         return ApiResponse.ok();
@@ -43,6 +43,6 @@ public class CoupleController {
     public ResponseEntity<ApiResponse<Void>> editCoupleProfile(@Valid @RequestBody CoupleProfileEditRequest request, @RequestParam Long memberId) {
         coupleService.updateCoupleProfile(request.toServiceRequest(), memberId);
 
-        return ApiResponse.ok(null);
+        return ApiResponse.ok();
     }
 }

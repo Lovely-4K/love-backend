@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
+import static com.lovely4k.backend.member.Sex.MALE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -18,7 +19,7 @@ class DiaryCreateRequestTest {
         // given
         Member member = Member.builder()
                 .name("tommy")
-                .sex("boy")
+                .sex(MALE)
                 .coupleId(1L)
                 .build();
 

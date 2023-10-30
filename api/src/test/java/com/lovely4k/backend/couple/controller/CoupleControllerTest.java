@@ -4,14 +4,14 @@ import com.lovely4k.backend.ControllerTestSupport;
 import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
+import com.lovely4k.backend.member.Sex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -24,15 +24,17 @@ class CoupleControllerTest extends ControllerTestSupport {
     void createInvitationCode() throws Exception {
         //given
         Long requestedMemberId = 1L;
+        Sex sex = Sex.MALE;
         Long coupleId = 2L;
         String invitationCode = UUID.randomUUID().toString();
 
-        given(coupleService.createInvitationCode(requestedMemberId))
+        given(coupleService.createInvitationCode(requestedMemberId,sex))
             .willReturn(new InvitationCodeCreateResponse(coupleId, invitationCode));
 
         //when //then
         mockMvc.perform(post("/v1/couples/invitation-code")
-                .queryParam("requestedMemberId", requestedMemberId.toString()))
+                .queryParam("requestedMemberId", requestedMemberId.toString())
+                .queryParam("sex", "MALE"))
             .andDo(print())
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.body.coupleId").value(coupleId))

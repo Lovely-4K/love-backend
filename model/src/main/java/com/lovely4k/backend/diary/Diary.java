@@ -68,10 +68,10 @@ public class Diary extends BaseTimeEntity {
     public static Diary create(Integer score, LocalDate localDate, String text, Member member, Location location) {
         validateScore(score);
         DiaryBuilder diaryBuilder = Diary.builder()
-                .location(location)
-                .coupleId(member.getCoupleId())
-                .score(score)
-                .datingDay(localDate);
+            .location(location)
+            .coupleId(member.getCoupleId())
+            .score(score)
+            .datingDay(localDate);
 
         fillOutText(text, member, diaryBuilder);
         return diaryBuilder.build();
@@ -85,8 +85,8 @@ public class Diary extends BaseTimeEntity {
 
     private static void fillOutText(String text, Member member, DiaryBuilder diaryBuilder) {
         switch (member.getSex()) {
-            case "boy" -> diaryBuilder.boyText(text);
-            case "girl" -> diaryBuilder.girlText(text);
+            case MALE -> diaryBuilder.boyText(text);
+            case FEMALE -> diaryBuilder.girlText(text);
             default -> throw new IllegalArgumentException("invalid input of sex");
         }
     }

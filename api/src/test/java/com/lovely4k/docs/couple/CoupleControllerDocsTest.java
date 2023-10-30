@@ -6,11 +6,13 @@ import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditReque
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
+import com.lovely4k.backend.member.Sex;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -38,12 +40,13 @@ class CoupleControllerDocsTest extends RestDocsSupport {
     @DisplayName("초대코드를 생성하는 API")
     void createInvitationCode() throws Exception {
 
-        given(coupleService.createInvitationCode(anyLong()))
+        given(coupleService.createInvitationCode(anyLong(), any(Sex.class)))
             .willReturn(new InvitationCodeCreateResponse(1L, "SampleInvitationCode"));
 
         mockMvc.perform(
                 post("/v1/couples/invitation-code")
                     .param("requestedMemberId", "1")
+                    .param("sex", "MALE")
                     .characterEncoding("utf-8")
             )
             .andDo(print())

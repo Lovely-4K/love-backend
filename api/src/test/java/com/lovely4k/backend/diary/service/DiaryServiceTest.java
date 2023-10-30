@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.lovely4k.backend.member.Sex.MALE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -65,7 +66,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         // given
         Member member = Member.builder()
                 .name("tommy")
-                .sex("boy")
+                .sex(MALE)
                 .build();
         memberRepository.save(member);
 
@@ -104,7 +105,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         // given
         Member member = Member.builder()
                 .name("tommy")
-                .sex("boy")
+                .sex(MALE)
                 .build();
         memberRepository.save(member);
         Long invalidMemberId = member.getId() + 1;
@@ -155,7 +156,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         // given
         Member member = Member.builder()
                 .name("tommy")
-                .sex("boy")
+                .sex(MALE)
                 .build();
         memberRepository.save(member);
         Long memberId = member.getId();
@@ -359,7 +360,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
     private static Member buildMember() {
         return Member.builder()
-                .sex("boy")
+                .sex(MALE)
                 .coupleId(1L)
                 .name("Tommy")
                 .build();
