@@ -1,6 +1,10 @@
 = Questions API
 
+질문 API 입니다. 현재 로그인 기능이 없어 쿼리 스트링으로 coupleId, userId를 받습니다.
+
 == Get Daily Question (GET /v1/questions/daily)
+
+오늘의 질문을 조회합니다. 커스텀 한 질문이 있다면 커스텀 질문을 반환합니다.
 
 === Request
 include::{snippets}/get-daily-question/http-request.adoc[]
@@ -13,6 +17,8 @@ include::{snippets}/get-daily-question/http-response.adoc[]
 include::{snippets}/get-daily-question/response-fields.adoc[]
 
 == Create Question Form And Question By User(POST /v1/questions/question-forms)
+
+유저가 만든 커스텀 질문 폼을 생성하며 질문 폼 생성과 동시에 질문도 생성되고, 생성된 질문을 바디에 담아서 반환합니다.
 
 === Request
 include::{snippets}/create-question-form-and-question-by-user/http-request.adoc[]
@@ -30,6 +36,8 @@ include::{snippets}/create-question-form-and-question-by-user/response-headers.a
 
 == Create Question (POST /v1/questions)
 
+오늘의 질문을 생성합니다. 클라이언트 측에서 오늘의 질문 조회시 조회 응답이 없다면 질문 해당 엔드포인트에 질문 생성 요청을 하면 됩니다.
+
 ==== Request
 include::{snippets}/create-question/http-request.adoc[]
 ====== Query Parameters
@@ -42,6 +50,8 @@ include::{snippets}/create-question/response-fields.adoc[]
 
 == Answer Question (PATCH /v1/questions/{id}/answers)
 
+오늘의 질문에 답변을 합니다. 질문에 해당하는 아이디를 경로 변수로 받습니다.
+
 ==== Request
 include::{snippets}/answer-question/http-request.adoc[]
 ====== Request Body
@@ -51,10 +61,10 @@ include::{snippets}/answer-question/query-parameters.adoc[]
 
 ==== Response (Success)
 include::{snippets}/answer-question/http-response.adoc[]
-====== Response Body
-include::{snippets}/answer-question/response-fields.adoc[]
 
 == Get Question Details (GET /v1/questions/details/{id})
+
+질문의 상세 정보를 조회합니다. 경로 변수로 질문의 id를 받습니다.
 
 ==== Request
 include::{snippets}/get-question-details/http-request.adoc[]

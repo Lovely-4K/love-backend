@@ -44,3 +44,4 @@ include::api/diary/diary-delete.adoc[]
 
 [[Question]]
 == Question
+include::api/question/questions.adoc[]
