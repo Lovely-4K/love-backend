@@ -12,11 +12,11 @@ public record DiaryDetailResponse(
         Category category,
         String boyText,
         String girlText,
-        PhotoList pictures
+        PhotoListResponse pictures
 ) {
     public static DiaryDetailResponse of(Diary diary) {
         return new DiaryDetailResponse(diary.getLocation().getKakaoMapId(), diary.getDatingDay(), diary.getScore(),
                 diary.getLocation().getCategory(), diary.getBoyText(), diary.getGirlText(),
-                PhotoList.from(diary.getPhotos()));
+                PhotoListResponse.from(diary.getPhotos()));
     }
 }

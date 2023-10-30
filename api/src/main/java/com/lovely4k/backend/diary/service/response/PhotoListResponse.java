@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class PhotoList {
+public class PhotoListResponse {
     private String firstImage;
     private String secondImage;
     private String thirdImage;
@@ -13,7 +13,7 @@ public class PhotoList {
     private String fifthImage;
 
     @Builder
-    private PhotoList(String firstImage, String secondImage, String thirdImage, String fourthImage, String fifthImage) {
+    private PhotoListResponse(String firstImage, String secondImage, String thirdImage, String fourthImage, String fifthImage) {
         this.firstImage = firstImage;
         this.secondImage = secondImage;
         this.thirdImage = thirdImage;
@@ -21,11 +21,11 @@ public class PhotoList {
         this.fifthImage = fifthImage;
     }
 
-    public static PhotoList from(Photos photos) {
+    public static PhotoListResponse from(Photos photos) {
         if (photos == null) {
-            return PhotoList.builder().build();
+            return PhotoListResponse.builder().build();
         }
-        PhotoListBuilder builder = PhotoList.builder();
+        PhotoListResponseBuilder builder = PhotoListResponse.builder();
         int numberOfImages = photos.countOfImages();
         if (numberOfImages > 0) builder.firstImage(photos.getFirstImage());
         if (numberOfImages > 1) builder.secondImage(photos.getSecondImage());

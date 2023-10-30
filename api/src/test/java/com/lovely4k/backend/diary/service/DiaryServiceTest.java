@@ -6,6 +6,7 @@ import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
+import com.lovely4k.backend.diary.service.response.DiaryListResponse;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.location.Location;
 import com.lovely4k.backend.location.LocationRepository;
@@ -17,10 +18,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -120,6 +125,28 @@ class DiaryServiceTest extends IntegrationTestSupport {
                 () -> diaryService.createDiary(multipartFileList, diaryCreateRequest, invalidMemberId)
         ).isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("invalid member id");
+    }
+
+    @DisplayName("이미지가 없는 경우 이미지업로드가 되지 않고, emptyList를 반환한다.")
+    @Test
+    void createDiaryNoImage() {
+        // given
+        Member member = Member.builder()
+                .name("tommy")
+                .sex("boy")
+                .build();
+        memberRepository.save(member);
+        Long memberId = member.getId();
+
+        DiaryCreateRequest diaryCreateRequest =
+                new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
+
+        // when
+        Long savedDiaryId = diaryService.createDiary(Collections.emptyList(), diaryCreateRequest, memberId);
+
+        // then
+        Diary findDiary = diaryRepository.findById(savedDiaryId).orElseThrow();
+        assertThat(findDiary.getPhotos()).isNull();
     }
 
     @DisplayName("5개 이상의 이미지를 업로드 하려고 하는 경우 IllegalArgumentException이 발생한다.")
@@ -251,6 +278,41 @@ class DiaryServiceTest extends IntegrationTestSupport {
         assertThat(optionalDiary).isEmpty();
     }
 
+    @DisplayName("findDiaryList 메서드를 통해 다이어리 목록을 조회해 올 수 있다. ")
+    @Test
+    void findDiaryList() {
+        // given
+        Diary food1 = buildDiary(Category.FOOD, 1L);
+        Diary food2 = buildDiary(Category.FOOD, 1L);
+        Diary accomodation1 = buildDiary(Category.ACCOMODATION, 1L);
+        Diary accomodation2 = buildDiary(Category.ACCOMODATION, 2L);
+        diaryRepository.saveAll(List.of(food1, food2, accomodation1, accomodation2));
+
+        // when
+        Page<DiaryListResponse> diaryList =
+                diaryService.findDiaryList(1L, "accomodation", PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")));
+
+        // then
+        assertAll(
+                () -> assertThat(diaryList.getNumberOfElements()).isEqualTo(1),
+                () -> assertThat(diaryList.getTotalPages()).isEqualTo(1)
+        );
+    }
+
+    @DisplayName("findDiaryList 메서드 실행 시 diary가 존재하지 않으면 빈 페이지를 반환한다.")
+    @Test
+    void findDiaryListNoDiary() {
+        // when
+        Page<DiaryListResponse> diaryList =
+                diaryService.findDiaryList(1L, "accomodation", PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")));
+
+        // then
+        assertAll(
+                () -> assertThat(diaryList.getNumberOfElements()).isZero(),
+                () -> assertThat(diaryList.getTotalPages()).isEqualTo(1)
+        );
+    }
+
     @DisplayName("다른 커플의 다이어리를 삭제할 수 없다.")
     @Test
     void deleteDiaryNoAuthority() {
@@ -277,6 +339,17 @@ class DiaryServiceTest extends IntegrationTestSupport {
         return Diary.builder()
                 .coupleId(coupleId)
                 .location(location)
+                .boyText("hello")
+                .girlText("hi")
+                .score(4)
+                .datingDay(LocalDate.of(2023, 10, 20))
+                .build();
+    }
+
+    private static Diary buildDiary(Category category, long coupleId) {
+        return Diary.builder()
+                .coupleId(coupleId)
+                .location(Location.create(1L, "경기도 고양", category))
                 .boyText("hello")
                 .girlText("hi")
                 .score(4)

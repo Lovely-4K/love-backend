@@ -75,11 +75,10 @@ public class DiaryService {
                 () -> new EntityNotFoundException("invalid diary id")
         );
     }
-    public Page<DiaryListResponse> findDiaryList(Long coupleId, String category, Pageable pageable) {
-        Category.validateRequest(category);
-        Page<Diary> pageDiary = diaryRepositoryAdapter.findAllByMemberId(coupleId, Category.valueOf(category), pageable);
+    public Page<DiaryListResponse> findDiaryList(Long coupleId, Category category, Pageable pageable) {
+        Page<Diary> pageDiary = diaryRepositoryAdapter.findDiaryList(coupleId, category, pageable);
 
-        if (pageDiary.isEmpty()) {
+        if (pageDiary.getContent().isEmpty()) {
             return Page.empty();
         }
         return pageDiary.map(DiaryListResponse::from);

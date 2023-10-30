@@ -5,7 +5,7 @@ public enum Category {
 
     public static void validateRequest(String category) {
         try {
-            Category.valueOf(category);
+            Category.valueOf(category.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid input : " + category);
         }
