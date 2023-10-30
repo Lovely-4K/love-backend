@@ -7,6 +7,7 @@ import com.lovely4k.backend.diary.service.response.DiaryListResponse;
 import com.lovely4k.backend.diary.service.response.PhotoListResponse;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.docs.RestDocsSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
@@ -25,12 +26,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,19 +59,16 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                                 .file(firstImage)
                                 .file(secondImage)
                                 .file(mockMultipartFile)
-                                .param("memberId", "1")
-                                .param("kakaoMapId", "1")
-                                .param("address", "서울 강동구 테헤란로")
-                                .param("score", "5")
-                                .param("datingDay", "2023-10-20")
-                                .param("category", "ACCOMODATION")
-                                .param("text", "여기 숙소 좋았어!")
+                                .queryParam("memberId", "1")
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andDo(document("diary-create",
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
+                                queryParameters(
+                                        parameterWithName("memberId").description("회원 아이디")
+                                ),
                                 requestPartFields("texts",
                                         fieldWithPath("kakaoMapId").type(NUMBER).description("카카오 맵 id"),
                                         fieldWithPath("address").type(STRING).description("장소에 대한 주소"),
@@ -81,6 +80,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                                 requestParts(
                                         partWithName("texts").ignored(),
                                         partWithName("images").description("장소에 대한 이미지").optional()
+                                ),
+                                responseHeaders(
+                                        headerWithName("Location").description("생성된 다이어리과 관련한 url")
                                 ),
                                 responseFields(
                                         fieldWithPath("code").type(NUMBER).description("코드"),
@@ -105,13 +107,16 @@ class DiaryControllerDocsTest extends RestDocsSupport {
 
         this.mockMvc.perform(
                         get("/v1/diaries/{id}", 1L)
-                                .param("coupleId", "1")
+                                .queryParam("coupleId", "1")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("diary-detail",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("coupleId").description("커플 아이디")
+                        ),
                         responseFields(
                                 fieldWithPath("code").type(NUMBER).description("코드"),
                                 fieldWithPath("body.kakaoMapId").type(NUMBER).description("카카오 장소 id"),
@@ -151,15 +156,20 @@ class DiaryControllerDocsTest extends RestDocsSupport {
 
         this.mockMvc.perform(
                         get("/v1/diaries")
-                                .header("coupleId", 1L)
-                                .param("page", "0")
-                                .param("size", "10")
+                                .queryParam("coupleId", "1")
+                                .queryParam("page", "0")
+                                .queryParam("size", "10")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("diary-list",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("coupleId").description("커플 아이디"),
+                                parameterWithName("size").description("페이지 사이즈"),
+                                parameterWithName("page").description("페이지 번호")
+                        ),
                         relaxedResponseFields(
                                 fieldWithPath("code").type(NUMBER).description("코드"),
                                 fieldWithPath("body.content[0].diaryId").description("다이어리 id"),
@@ -175,6 +185,8 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                 ));
     }
 
+
+    @Disabled("현재 미제공 API 이기 때문에 테스트를 수행하지 않습니다. ")
     @DisplayName("다이어리를 수정하는 API")
     @Test
     void editDiary() throws Exception {
@@ -184,7 +196,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
 
         this.mockMvc.perform(
                         patch("/v1/diaries/{id}", 1L)
-                                .header("memberId", 1L)
+                                .queryParam("memberId", "1")
                                 .content(objectMapper.writeValueAsString(mockDiaryEditRequest))
                                 .contentType("application/json")
                 )
@@ -193,6 +205,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                 .andDo(document("diary-edit",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("memberId").description("회원 아이디")
+                        ),
                         responseFields(
                                 fieldWithPath("code").type(NUMBER).description("코드"),
                                 fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디")
@@ -211,7 +226,10 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                 .andExpect(status().isNoContent())
                 .andDo(document("diary-delete",
                         preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
+                        preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("coupleId").description("커플 아이디")
+                        )
                 ));
     }
 }

@@ -169,6 +169,9 @@ class QuestionApiDocsTest extends RestDocsSupport {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("answer-question",
+                        queryParameters(
+                                parameterWithName("sex").description("성별")
+                        ),
                         pathParameters(
                                 parameterWithName("id").description("질문 ID")
                         ),

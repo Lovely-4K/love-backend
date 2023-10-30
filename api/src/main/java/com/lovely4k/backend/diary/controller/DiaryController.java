@@ -48,7 +48,7 @@ public class DiaryController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<Page<DiaryListResponse>>> getDiaryList(
-            @RequestHeader Long coupleId,
+            @RequestParam Long coupleId,
             @RequestParam(required = false) Category category,
             @PageableDefault(size = 10, sort = "localDateTime", direction = Sort.Direction.DESC) Pageable pageable
     ) {

@@ -1,2 +1,48 @@
-= LOVELY-4K API 문서
+= LOVELY-4K API Document
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= CafeKiosk REST API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
 
+[[overview]]
+= 개요
+
+include::api/common/http-verbs.adoc[]
+include::api/common/http-status-code.adoc[]
+
+
+
+[[Member]]
+== Member
+
+include::api/member/member-profile-get.adoc[]
+include::api/member/member-profile-edit.adoc[]
+
+[[Couple]]
+== Couple
+
+include::api/couple/couple-invitationCode-get.adoc[]
+include::api/couple/couple-register.adoc[]
+include::api/couple/couple-profile-get.adoc[]
+include::api/couple/couple-profile-edit.adoc[]
+
+[[Diary]]
+== Diary
+
+include::api/diary/diary-create.adoc[]
+include::api/diary/diary-getDetail.adoc[]
+include::api/diary/diary-getList.adoc[]
+include::api/diary/diary-edit.adoc[]
+include::api/diary/diary-delete.adoc[]
+
+
+[[Question]]
+== Question
+질문 API 입니다. 현재 로그인 기능이 없어 쿼리 스트링으로 coupleId, userId를 받습니다.
+include::api/question/questions.adoc[]

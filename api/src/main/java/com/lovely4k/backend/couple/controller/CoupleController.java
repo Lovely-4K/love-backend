@@ -34,9 +34,9 @@ public class CoupleController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<CoupleProfileGetResponse>> getCoupleProfile(@RequestParam Long coupleId) {
+    public ResponseEntity<ApiResponse<CoupleProfileGetResponse>> getCoupleProfile(@RequestParam Long memberId) {
 
-        return ApiResponse.ok(coupleService.findCoupleProfile(coupleId));
+        return ApiResponse.ok(coupleService.findCoupleProfile(memberId));
     }
 
     @PatchMapping

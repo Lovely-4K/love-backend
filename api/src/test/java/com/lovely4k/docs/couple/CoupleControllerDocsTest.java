@@ -105,7 +105,7 @@ class CoupleControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                 get("/v1/couples")
-                    .param("coupleId", "1")
+                    .param("memberId", "1")
                     .characterEncoding("utf-8")
             )
             .andDo(print())

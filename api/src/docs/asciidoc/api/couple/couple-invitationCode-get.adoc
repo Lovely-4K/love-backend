@@ -1,0 +1,18 @@
+[[couple-invitationCode-get]]
+=== 커플 초대코드 발급
+
+초대코드 발급을 할 경우 생성된 커플 데이터의 id와 초대코드가 응답 body에 담겨 나갑니다.
+헤더에는 리소스 저장 경로가 저장됩니다.
+
+==== Http Request
+include::{snippets}/get-invitationCode/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/get-invitationCode/http-response.adoc[]
+
+초대 코드 발급 시 응답 값에 대한 설명입니다.
+
+include::{snippets}/get-invitationCode/response-fields.adoc[]
+
+초대 코드 발급 시 응답 헤더에 대한 설명입니다.
+include::{snippets}/get-invitationCode/response-headers.adoc[]

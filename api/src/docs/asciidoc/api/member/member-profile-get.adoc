@@ -1,0 +1,13 @@
+[[member-profile-get]]
+=== 회원 프로필 조회
+
+회원 id를 통해 회원의 프로필을 조회할 수 있습니다.
+
+==== Http Request
+include::{snippets}/member-profile-get/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/member-profile-get/http-response.adoc[]
+
+회원 조회시 하단의 값들이 body에 담겨져 응답이 됩니다.
+include::{snippets}/member-profile-get/response-fields.adoc[]
