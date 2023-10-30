@@ -62,10 +62,9 @@ public class DiaryService {
         return imageUploader.upload("diary/", multipartFileList);
     }
 
-    public DiaryDetailResponse findDiaryDetail(Long diaryId, Long memberId) {
+    public DiaryDetailResponse findDiaryDetail(Long diaryId, Long coupleId) {
         Diary diary = validateDiaryId(diaryId);
-        Member member = validateMemberId(memberId);
-        diary.checkAuthority(member.getCoupleId());
+        diary.checkAuthority(coupleId);
 
         return DiaryDetailResponse.of(diary);
     }
@@ -85,10 +84,9 @@ public class DiaryService {
     }
 
     @Transactional
-    public void deleteDiary(Long diaryId, Long memberId) {
+    public void deleteDiary(Long diaryId, Long coupleId) {
         Diary diary = validateDiaryId(diaryId);
-        Member member = validateMemberId(memberId);
-        diary.checkAuthority(member.getCoupleId());
+        diary.checkAuthority(coupleId);
         diaryRepositoryAdapter.delete(diary);
     }
 }
