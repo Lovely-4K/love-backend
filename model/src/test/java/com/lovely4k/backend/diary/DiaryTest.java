@@ -72,28 +72,6 @@ class DiaryTest {
         );
     }
 
-    @DisplayName("만약 회원의 성별이 이상하다면 IllegalArgumentException이 발생한다.")
-    @Test
-    void createInvalidSex() {
-        // given
-        Integer score = 0;
-        LocalDate localDate = LocalDate.of(2023, 10, 20);
-        String text = "안녕하세요";
-        Member member = Member.builder()
-                .name("tommy")
-                .sex("toy")
-                .coupleId(1L)
-                .build();
-
-        Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
-
-        // when && then
-        assertThatThrownBy(
-                () -> Diary.create(score, localDate, text, member, location)
-        ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("invalid input of sex");
-    }
-
     @DisplayName("다이어리 평점이 0 이하인 경우 IllegalArgumentException이 발생한다.")
     @Test
     void scoreUnderRange() {
@@ -166,7 +144,7 @@ class DiaryTest {
     void checkAuthority() {
         // given
         Member member = Member.builder()
-                .sex("boy")
+                .sex(MALE)
                 .coupleId(1L)
                 .build();
 

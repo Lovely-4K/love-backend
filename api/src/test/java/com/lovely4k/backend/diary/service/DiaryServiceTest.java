@@ -134,7 +134,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         // given
         Member member = Member.builder()
                 .name("tommy")
-                .sex("boy")
+                .sex(MALE)
                 .build();
         memberRepository.save(member);
         Long memberId = member.getId();
@@ -291,7 +291,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // when
         Page<DiaryListResponse> diaryList =
-                diaryService.findDiaryList(1L, "accomodation", PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")));
+                diaryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")));
 
         // then
         assertAll(
@@ -305,7 +305,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
     void findDiaryListNoDiary() {
         // when
         Page<DiaryListResponse> diaryList =
-                diaryService.findDiaryList(1L, "accomodation", PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")));
+                diaryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")));
 
         // then
         assertAll(
