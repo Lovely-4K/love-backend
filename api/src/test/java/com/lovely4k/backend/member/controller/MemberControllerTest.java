@@ -39,7 +39,7 @@ class MemberControllerTest extends ControllerTestSupport {
 
         //when //then
         mockMvc.perform(get("/v1/members")
-                .queryParam("userId", "1"))
+                .queryParam("memberId", "1"))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.code").value(200))
@@ -63,7 +63,7 @@ class MemberControllerTest extends ControllerTestSupport {
         //when //then
         mockMvc.perform(
                 patch("/v1/members")
-                    .queryParam("userId", "1")
+                    .queryParam("memberId", "1")
                     .content(objectMapper.writeValueAsString(request))
                     .contentType(APPLICATION_JSON))
             .andDo(print())

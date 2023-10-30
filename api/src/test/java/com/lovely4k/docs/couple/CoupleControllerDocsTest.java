@@ -10,6 +10,7 @@ import com.lovely4k.backend.member.Sex;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -48,6 +49,7 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                     .param("requestedMemberId", "1")
                     .param("sex", "MALE")
                     .characterEncoding("utf-8")
+                    .contentType(APPLICATION_JSON)
             )
             .andDo(print())
             .andExpect(status().isCreated())
@@ -62,7 +64,15 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("body.coupleId").type(JsonFieldType.NUMBER)
                             .description("커플 id"),
                         fieldWithPath("body.invitationCode").type(JsonFieldType.STRING)
-                            .description("초대 코드")
+                            .description("초대 코드"),
+                        fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[0].href").type(JsonFieldType.STRING)
+                            .description("url of relation"),
+                        fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[1].href").type(JsonFieldType.STRING)
+                            .description("url of relation")
                     )
                 )
             );
@@ -76,6 +86,7 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                     .param("invitationCode", "invitationCodeSample")
                     .param("receivedMemberId", "1")
                     .characterEncoding("utf-8")
+                    .contentType(APPLICATION_JSON)
             )
             .andDo(print())
             .andExpect(status().isOk())
@@ -85,7 +96,15 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("code").type(JsonFieldType.NUMBER)
                             .description("응답 코드"),
                         fieldWithPath("body").type(JsonFieldType.NULL)
-                            .description("응답 바디")
+                            .description("응답 바디"),
+                        fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[0].href").type(JsonFieldType.STRING)
+                            .description("url of relation"),
+                        fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[1].href").type(JsonFieldType.STRING)
+                            .description("url of relation")
                     )
                 )
             );
@@ -122,7 +141,15 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("body.girlNickname").type(JsonFieldType.STRING)
                             .description("여자친구 별명"),
                         fieldWithPath("body.girlMbti").type(JsonFieldType.STRING)
-                            .description("여자친구 MBTI")
+                            .description("여자친구 MBTI"),
+                        fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[0].href").type(JsonFieldType.STRING)
+                            .description("url of relation"),
+                        fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[1].href").type(JsonFieldType.STRING)
+                            .description("url of relation")
                     )
                 )
             );
@@ -153,7 +180,15 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("code").type(JsonFieldType.NUMBER)
                             .description("응답 코드"),
                         fieldWithPath("body").type(JsonFieldType.NULL)
-                            .description("응답 바디")
+                            .description("응답 바디"),
+                        fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[0].href").type(JsonFieldType.STRING)
+                            .description("url of relation"),
+                        fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[1].href").type(JsonFieldType.STRING)
+                            .description("url of relation")
                     )
                 )
             );

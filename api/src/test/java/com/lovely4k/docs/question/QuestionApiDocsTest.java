@@ -26,6 +26,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.headerWit
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -64,7 +65,9 @@ class QuestionApiDocsTest extends RestDocsSupport {
                                 fieldWithPath("body.firstChoice").type(JsonFieldType.STRING).description("첫 번째 선택지"),
                                 fieldWithPath("body.secondChoice").type(JsonFieldType.STRING).description("두 번째 선택지"),
                                 fieldWithPath("body.thirdChoice").type(JsonFieldType.STRING).optional().description("세 번째 선택지"),
-                                fieldWithPath("body.fourthChoice").type(JsonFieldType.STRING).optional().description("네 번째 선택지")
+                                fieldWithPath("body.fourthChoice").type(JsonFieldType.STRING).optional().description("네 번째 선택지"),
+                                fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
+                                fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
                         )
                 ));
     }
@@ -88,7 +91,7 @@ class QuestionApiDocsTest extends RestDocsSupport {
                 .willReturn(mockResponse);
 
         mockMvc.perform(post("/v1/questions/question-forms")
-                        .param("userId", "1")
+                        .param("memberId", "1")
                         .param("coupleId", "1")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -98,7 +101,7 @@ class QuestionApiDocsTest extends RestDocsSupport {
                                 headerWithName("Location").description("리소스 저장 경로")
                         ),
                         queryParameters(
-                                parameterWithName("userId").description("사용자 ID"),
+                                parameterWithName("memberId").description("사용자 ID"),
                                 parameterWithName("coupleId").description("커플 ID")
                         ),
                         requestFields(
@@ -115,7 +118,9 @@ class QuestionApiDocsTest extends RestDocsSupport {
                                 fieldWithPath("body.firstChoice").type(JsonFieldType.STRING).description("첫 번째 선택지"),
                                 fieldWithPath("body.secondChoice").type(JsonFieldType.STRING).description("두 번째 선택지"),
                                 fieldWithPath("body.thirdChoice").type(JsonFieldType.STRING).description("세 번째 선택지"),
-                                fieldWithPath("body.fourthChoice").type(JsonFieldType.STRING).description("네 번째 선택지")
+                                fieldWithPath("body.fourthChoice").type(JsonFieldType.STRING).description("네 번째 선택지"),
+                                fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
+                                fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
                         )
                 ));
     }
@@ -149,7 +154,9 @@ class QuestionApiDocsTest extends RestDocsSupport {
                                 fieldWithPath("body.firstChoice").type(JsonFieldType.STRING).description("첫 번째 선택지"),
                                 fieldWithPath("body.secondChoice").type(JsonFieldType.STRING).description("두 번째 선택지"),
                                 fieldWithPath("body.thirdChoice").type(JsonFieldType.STRING).optional().description("세 번째 선택지"),
-                                fieldWithPath("body.fourthChoice").type(JsonFieldType.STRING).optional().description("네 번째 선택지")
+                                fieldWithPath("body.fourthChoice").type(JsonFieldType.STRING).optional().description("네 번째 선택지"),
+                                fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
+                                fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
                         )
                 ));
     }
@@ -180,7 +187,9 @@ class QuestionApiDocsTest extends RestDocsSupport {
                         ),
                         responseFields(
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
-                                fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디")
+                                fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디"),
+                                fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
+                                fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
                         )
                 ));
     }
@@ -204,7 +213,9 @@ class QuestionApiDocsTest extends RestDocsSupport {
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
                                 fieldWithPath("body.questionContent").type(JsonFieldType.STRING).description("질문 내용"),
                                 fieldWithPath("body.boyAnswer").type(JsonFieldType.STRING).description("남자의 답변"),
-                                fieldWithPath("body.girlAnswer").type(JsonFieldType.STRING).description("여자의 답변")
+                                fieldWithPath("body.girlAnswer").type(JsonFieldType.STRING).description("여자의 답변"),
+                                fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
+                                fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
                         )
                 ));
     }
@@ -240,7 +251,9 @@ class QuestionApiDocsTest extends RestDocsSupport {
                                 fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
                                 fieldWithPath("body.answeredQuestions[]").type(JsonFieldType.ARRAY).description("커플이 대답한 질문 목록"),
                                 fieldWithPath("body.answeredQuestions[].questionId").type(JsonFieldType.NUMBER).description("질문의 ID"),
-                                fieldWithPath("body.answeredQuestions[].questionContent").type(JsonFieldType.STRING).description("질문 내용")
+                                fieldWithPath("body.answeredQuestions[].questionContent").type(JsonFieldType.STRING).description("질문 내용"),
+                                fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
+                                fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
                         )
 
                 ));

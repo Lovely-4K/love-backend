@@ -50,7 +50,7 @@ class MemberControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                 get("/v1/members")
-                    .queryParam("userId", "1")
+                    .queryParam("memberId", "1")
                     .characterEncoding("utf-8")
             )
             .andDo(print())
@@ -73,7 +73,15 @@ class MemberControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("body.mbti").type(JsonFieldType.STRING)
                             .description("MBTI"),
                         fieldWithPath("body.calendarColor").type(JsonFieldType.STRING)
-                            .description("개인 색상")
+                            .description("개인 색상"),
+                        fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[0].href").type(JsonFieldType.STRING)
+                            .description("url of relation"),
+                        fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[1].href").type(JsonFieldType.STRING)
+                            .description("url of relation")
                     )
                 )
             );
@@ -93,7 +101,7 @@ class MemberControllerDocsTest extends RestDocsSupport {
         mockMvc.perform(
                 patch("/v1/members")
                     .content(objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(request))
-                    .queryParam("userId", "1")
+                    .queryParam("memberId", "1")
                     .contentType(APPLICATION_JSON)
                     .characterEncoding("utf-8"))
             .andDo(print())
@@ -119,7 +127,15 @@ class MemberControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("code").type(JsonFieldType.NUMBER)
                             .description("응답 코드"),
                         fieldWithPath("body").type(JsonFieldType.NULL)
-                            .description("응답 바디")
+                            .description("응답 바디"),
+                        fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[0].href").type(JsonFieldType.STRING)
+                            .description("url of relation"),
+                        fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[1].href").type(JsonFieldType.STRING)
+                            .description("url of relation")
                     )
                 )
             );

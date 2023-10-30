@@ -67,6 +67,10 @@ CREATE TABLE member (
     INDEX idx_couple_id(couple_id)
 );
 
+INSERT INTO couple (id, boy_id, girl_id, meet_day, invitation_code, created_at, updated_at)
+VALUES (1, 1, 2, '2023-10-30', 'INV123', NOW(), NOW());
+
+
 -- Question 테이블
 CREATE TABLE question (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
