@@ -7,6 +7,7 @@ import com.lovely4k.backend.diary.service.response.DiaryListResponse;
 import com.lovely4k.backend.diary.service.response.PhotoListResponse;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.docs.RestDocsSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
@@ -25,6 +26,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
@@ -78,6 +81,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                                         partWithName("texts").ignored(),
                                         partWithName("images").description("장소에 대한 이미지").optional()
                                 ),
+                                responseHeaders(
+                                        headerWithName("Location").description("생성된 다이어리과 관련한 url")
+                                ),
                                 responseFields(
                                         fieldWithPath("code").type(NUMBER).description("코드"),
                                         fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디")
@@ -108,6 +114,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                 .andDo(document("diary-detail",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("memberId").description("회원 아이디")
+                        ),
                         responseFields(
                                 fieldWithPath("code").type(NUMBER).description("코드"),
                                 fieldWithPath("body.kakaoMapId").type(NUMBER).description("카카오 장소 id"),
@@ -156,6 +165,11 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                 .andDo(document("diary-list",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("coupleId").description("커플 아이디"),
+                                parameterWithName("size").description("페이지 사이즈"),
+                                parameterWithName("page").description("페이지 번호")
+                        ),
                         relaxedResponseFields(
                                 fieldWithPath("code").type(NUMBER).description("코드"),
                                 fieldWithPath("body.content[0].diaryId").description("다이어리 id"),
@@ -171,6 +185,8 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                 ));
     }
 
+
+    @Disabled("현재 미제공 API 이기 때문에 테스트를 수행하지 않습니다. ")
     @DisplayName("다이어리를 수정하는 API")
     @Test
     void editDiary() throws Exception {
@@ -180,7 +196,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
 
         this.mockMvc.perform(
                         patch("/v1/diaries/{id}", 1L)
-                                .header("memberId", 1L)
+                                .queryParam("memberId", "1")
                                 .content(objectMapper.writeValueAsString(mockDiaryEditRequest))
                                 .contentType("application/json")
                 )
@@ -189,6 +205,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                 .andDo(document("diary-edit",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("memberId").description("회원 아이디")
+                        ),
                         responseFields(
                                 fieldWithPath("code").type(NUMBER).description("코드"),
                                 fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디")
@@ -207,7 +226,10 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                 .andExpect(status().isNoContent())
                 .andDo(document("diary-delete",
                         preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint())
+                        preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("memberId").description("회원 아이디")
+                        )
                 ));
     }
 }

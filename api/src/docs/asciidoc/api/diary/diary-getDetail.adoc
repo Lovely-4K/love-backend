@@ -8,5 +8,8 @@
 
 ==== HTTP Request
 include::{snippets}/diary-detail/http-request.adoc[]
+include::{snippets}/diary-detail/query-parameters.adoc[]
+
 ==== HTTP Response
 include::{snippets}/diary-detail/http-response.adoc[]
+include::{snippets}/diary-detail/response-fields.adoc[]

@@ -15,5 +15,7 @@ page = 0, size = 10, sort = "localDateTime", direction = Sort.Direction.DESC
 
 ==== HTTP Request
 include::{snippets}/diary-list/http-request.adoc[]
+include::{snippets}/diary-list/query-parameters.adoc[]
 ==== HTTP Response
 include::{snippets}/diary-list/http-response.adoc[]
+include::{snippets}/diary-list/response-fields.adoc[]
