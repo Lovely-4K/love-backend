@@ -11,6 +11,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation group: 'org.springframework.retry', name: 'spring-retry', version: '2.0.4'
 
+    // HATEOAS
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+
+
     // AWS
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
@@ -50,3 +54,7 @@ task copyAsciidoc(type: Copy) {
 build {
     dependsOn copyAsciidoc
 }
+
+version '1.0.1-SNAPSHOT-'+new Date().format("yyyyMMddHHmmss")
+
+jar.enabled=false

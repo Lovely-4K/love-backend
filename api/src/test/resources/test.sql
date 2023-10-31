@@ -1,6 +1,6 @@
 
 -- Couple 테이블에 데이터 삽입
-INSERT INTO couple (id, boy_id, girl_id, meet_day) VALUES (1, 1, 2, '2023-01-01');
+INSERT INTO couple (boy_id, girl_id, meet_day, invitation_code) VALUES (1, 2, '2023-01-01', 'qejrhqwelrhqwejrhq');
 
 -- Member 테이블에 데이터 삽입
 INSERT INTO member (id, couple_id) VALUES (1, 1);

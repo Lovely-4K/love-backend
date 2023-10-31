@@ -9,24 +9,37 @@ import com.lovely4k.backend.diary.service.response.DiaryListResponse;
 import com.lovely4k.backend.location.Category;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @RestController
-@RequestMapping("/v1/diaries")
+@RequestMapping(value = "/v1/diaries", produces = HAL_JSON_VALUE)
 @RequiredArgsConstructor
 public class DiaryController {
 
     private final DiaryService diaryService;
 
-    @PostMapping
+    private static final String DETAIL = "get detail information of diary";
+    private static final String EDIT = "edit diary";
+    private static final String DELETE = "delete diary";
+
+
+    @SneakyThrows
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<Void>> createDiary(
             @RequestPart(value = "images", required = false) List<MultipartFile> multipartFileList,
             @RequestPart(value = "texts") @Valid WebDiaryCreateRequest request,
@@ -34,34 +47,52 @@ public class DiaryController {
     ) {
         Long diaryId = diaryService.createDiary(multipartFileList, request.toServiceRequest(), memberId);
 
-        return ApiResponse.created("/v1/diaries", diaryId);
+        return ApiResponse.created(diaryId,
+                linkTo(methodOn(DiaryController.class).createDiary(multipartFileList, request, memberId)).withSelfRel(),
+                linkTo(DiaryController.class.getMethod("getDiaryDetail", Long.class, Long.class)).withRel(DETAIL),
+                linkTo(DiaryController.class.getMethod("getDiaryList", Long.class, Category.class, Pageable.class)).withRel("get list of diary"),
+                linkTo(DiaryController.class).slash(diaryId).withRel(EDIT),
+                linkTo(DiaryController.class).slash(diaryId).withRel(DELETE)
+        );
     }
 
+    @SneakyThrows
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<DiaryDetailResponse>> getDiaryDetail(
             @PathVariable Long id,
             @RequestParam Long coupleId
     ) {
 
-        return ApiResponse.ok(diaryService.findDiaryDetail(id, coupleId));
+        return ApiResponse.ok(diaryService.findDiaryDetail(id, coupleId),
+                linkTo(methodOn(DiaryController.class).getDiaryDetail(id, coupleId)).withSelfRel(),
+                linkTo(DiaryController.class.getMethod("editDiary", Long.class, Long.class, DiaryEditRequest.class)).withRel(EDIT),
+                linkTo(DiaryController.class).slash(id).withRel(DELETE)
+        );
     }
-
+    @SneakyThrows
     @GetMapping
     public ResponseEntity<ApiResponse<Page<DiaryListResponse>>> getDiaryList(
             @RequestParam Long coupleId,
             @RequestParam(required = false) Category category,
             @PageableDefault(size = 10, sort = "localDateTime", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return ApiResponse.ok(diaryService.findDiaryList(coupleId, category, pageable));
+        return ApiResponse.ok(diaryService.findDiaryList(coupleId, category, pageable),
+                linkTo(DiaryController.class.getMethod("getDiaryDetail", Long.class, Long.class)).withRel(DETAIL),
+                linkTo(DiaryController.class.getMethod("editDiary", Long.class, Long.class, DiaryEditRequest.class)).withRel(EDIT),
+                linkTo(DiaryController.class.getMethod("deleteDiary", Long.class, Long.class)).withRel(DELETE)
+        );
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping(path = "/{id}", consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Void>> editDiary(
             @PathVariable Long id,
             @RequestHeader Long memberId,
             @RequestBody DiaryEditRequest request
     ) {
-        return ApiResponse.ok(null);
+        return ApiResponse.ok(
+                linkTo(DiaryController.class).slash(id).withRel(DETAIL),
+                linkTo(DiaryController.class).slash(id).withRel(DELETE)
+        );
     }
 
     @DeleteMapping("/{id}")

@@ -107,6 +107,7 @@ class ArchTests {
                     public void check(JavaClass item, ConditionEvents events) {
                         long finalFieldCount = item.getFields().stream()
                                 .filter(field -> field.getModifiers().contains(JavaModifier.FINAL))
+                                .filter(field -> !field.getModifiers().contains(JavaModifier.STATIC))  // static 필드 제외
                                 .count();
 
                         boolean satisfied = finalFieldCount <= 2;

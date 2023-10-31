@@ -49,8 +49,10 @@ class CoupleControllerTest extends ControllerTestSupport {
 
         //when //then
         mockMvc.perform(post("/v1/couples")
-                .queryParam("invitationCode", invitationCode)
+                .queryParam(
+                        "invitationCode", invitationCode)
                 .queryParam("receivedMemberId", "2")
+                .contentType(APPLICATION_JSON)
             )
             .andDo(print())
             .andExpect(status().isOk());

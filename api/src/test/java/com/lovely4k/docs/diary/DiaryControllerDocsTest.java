@@ -86,7 +86,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                                 ),
                                 responseFields(
                                         fieldWithPath("code").type(NUMBER).description("코드"),
-                                        fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디")
+                                        fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디"),
+                                        fieldWithPath("links[0].rel").type(STRING).description("relation of url"),
+                                        fieldWithPath("links[0].href").type(STRING).description("url of relation")
                                 )
                         )
                 )
@@ -108,6 +110,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
         this.mockMvc.perform(
                         get("/v1/diaries/{id}", 1L)
                                 .queryParam("coupleId", "1")
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -129,7 +132,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("body.pictures.secondImage").type(STRING).optional().description("이미지 주소"),
                                 fieldWithPath("body.pictures.thirdImage").type(STRING).optional().description("이미지 주소"),
                                 fieldWithPath("body.pictures.fourthImage").type(STRING).optional().description("이미지 주소"),
-                                fieldWithPath("body.pictures.fifthImage").type(STRING).optional().description("이미지 주소")
+                                fieldWithPath("body.pictures.fifthImage").type(STRING).optional().description("이미지 주소"),
+                                fieldWithPath("links[0].rel").type(STRING).description("relation of url"),
+                                fieldWithPath("links[0].href").type(STRING).description("url of relation")
                         )
                 ))
         ;
@@ -159,6 +164,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                                 .queryParam("coupleId", "1")
                                 .queryParam("page", "0")
                                 .queryParam("size", "10")
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -179,7 +185,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("body.pageable.pageSize").description("페이지 사이즈"),
                                 fieldWithPath("body.first").description("첫번째 페이지 여부"),
                                 fieldWithPath("body.numberOfElements").description("컨텐츠 수"),
-                                fieldWithPath("body.empty").description("empty 여부")
+                                fieldWithPath("body.empty").description("empty 여부"),
+                                fieldWithPath("links[0].rel").type(STRING).description("relation of url"),
+                                fieldWithPath("links[0].href").type(STRING).description("url of relation")
 
                         )
                 ));
@@ -210,7 +218,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                         ),
                         responseFields(
                                 fieldWithPath("code").type(NUMBER).description("코드"),
-                                fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디")
+                                fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디"),
+                                fieldWithPath("links[0].rel").type(STRING).description("relation of url"),
+                                fieldWithPath("links[0].href").type(STRING).description("url of relation")
                         )
                 ));
     }
@@ -221,6 +231,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
         this.mockMvc.perform(
                         delete("/v1/diaries/{id}", 1L)
                                 .queryParam("coupleId", "1")
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isNoContent())

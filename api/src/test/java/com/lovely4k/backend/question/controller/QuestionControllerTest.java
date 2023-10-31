@@ -117,6 +117,7 @@ class QuestionControllerTest extends ControllerTestSupport {
                                 .queryParam("id", String.valueOf(id))
                                 .queryParam("coupleId", String.valueOf(coupleId))
                                 .queryParam("limit", String.valueOf(limit))
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())

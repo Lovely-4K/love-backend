@@ -9,40 +9,61 @@ import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse
 import com.lovely4k.backend.member.Sex;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/couples")
+@RequestMapping(value = "/v1/couples", produces = MediaTypes.HAL_JSON_VALUE)
 public class CoupleController {
 
     private final CoupleService coupleService;
 
-    @PostMapping("/invitation-code")
+    @SneakyThrows
+    @PostMapping(value = "/invitation-code")
     public ResponseEntity<ApiResponse<InvitationCodeCreateResponse>> createInvitationCode(@RequestParam Long requestedMemberId, @RequestParam Sex sex) {
         InvitationCodeCreateResponse response = coupleService.createInvitationCode(requestedMemberId, sex);
 
-        return ApiResponse.created("/v1/couples/invitation-code", response.coupleId(), response);
+        return ApiResponse.created(response, response.coupleId(),
+            linkTo(methodOn(CoupleController.class).createInvitationCode(requestedMemberId, sex)).withSelfRel(),
+            linkTo(CoupleController.class.getMethod("registerCouple", String.class, Long.class)).withRel("register couple"));
     }
 
-    @PostMapping
+    @SneakyThrows
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Void>> registerCouple(@RequestParam String invitationCode, @RequestParam Long receivedMemberId) {
         coupleService.registerCouple(invitationCode, receivedMemberId);
 
-        return ApiResponse.ok();
+        return ApiResponse.ok(
+            linkTo(methodOn(CoupleController.class).registerCouple(invitationCode, receivedMemberId)).withSelfRel(),
+            linkTo(CoupleController.class.getMethod("getCoupleProfile", Long.class)).withRel("get couple profile")
+        );
     }
 
+    @SneakyThrows
     @GetMapping
     public ResponseEntity<ApiResponse<CoupleProfileGetResponse>> getCoupleProfile(@RequestParam Long memberId) {
 
-        return ApiResponse.ok(coupleService.findCoupleProfile(memberId));
+        return ApiResponse.ok(coupleService.findCoupleProfile(memberId),
+            linkTo(methodOn(CoupleController.class).getCoupleProfile(memberId)).withSelfRel(),
+            linkTo(CoupleController.class.getMethod("editCoupleProfile", CoupleProfileEditRequest.class, Long.class)).withRel("edit couple profile"));
     }
 
-    @PatchMapping
+    @SneakyThrows
+    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Void>> editCoupleProfile(@Valid @RequestBody CoupleProfileEditRequest request, @RequestParam Long memberId) {
         coupleService.updateCoupleProfile(request.toServiceRequest(), memberId);
 
-        return ApiResponse.ok();
+        return ApiResponse.ok(
+            linkTo(methodOn(CoupleController.class).editCoupleProfile(request, memberId)).withSelfRel(),
+            linkTo(CoupleController.class.getMethod("getCoupleProfile", Long.class)).withRel("get couple profile")
+            );
     }
 }
