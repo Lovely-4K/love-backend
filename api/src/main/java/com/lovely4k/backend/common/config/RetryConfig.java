@@ -1,9 +1,9 @@
-package com.lovely4k.backend.common;
+package com.lovely4k.backend.common.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.annotation.EnableRetry;
 
 @EnableRetry
 @Configuration
-public class AppConfig {
+public class RetryConfig {
 }
