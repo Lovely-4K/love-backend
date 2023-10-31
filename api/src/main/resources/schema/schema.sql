@@ -12,7 +12,7 @@ CREATE TABLE couple (
     boy_id BIGINT,
     girl_id BIGINT,
     meet_day date,
-    invitation_code VARCHAR,
+    invitation_code VARCHAR(255),
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_couple_boy_id (boy_id),
@@ -29,11 +29,11 @@ CREATE TABLE diary (
     girl_text TEXT,
     score INT,
     dating_day DATE,
-    first_image VARCHAR,
-    second_image VARCHAR,
-    third_image VARCHAR,
-    fourth_image VARCHAR,
-    fifth_image VARCHAR,
+    first_image VARCHAR(255),
+    second_image VARCHAR(255),
+    third_image VARCHAR(255),
+    fourth_image VARCHAR(255),
+    fifth_image VARCHAR(255),
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_diary_location_id (location_id),
@@ -44,7 +44,7 @@ CREATE TABLE diary (
 CREATE TABLE location (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     kakao_map_id BIGINT,
-    address VARCHAR,
+    address VARCHAR(255),
     category VARCHAR(50),
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -61,15 +61,11 @@ CREATE TABLE member (
     birthday DATE,
     mbti VARCHAR(7),
     calendar_color VARCHAR(31),
-    image_url VARCHAR,
+    image_url VARCHAR(255),
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_couple_id(couple_id)
 );
-
-INSERT INTO couple (id, boy_id, girl_id, meet_day, invitation_code, created_at, updated_at)
-VALUES (1, 1, 2, '2023-10-30', 'INV123', NOW(), NOW());
-
 
 -- Question 테이블
 CREATE TABLE question (
