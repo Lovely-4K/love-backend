@@ -10,7 +10,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-public class HealthController {
+public class HealthChecker {
 
     private final Environment environment;
 

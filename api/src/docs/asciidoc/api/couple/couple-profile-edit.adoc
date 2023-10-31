@@ -1,0 +1,21 @@
+[[couple-profile-edit]]
+=== 커플 프로필 수정
+
+회원 id를 통해 커플을 조회하여 커플 정보를 수정합니다.
+
+==== Http Request
+
+다음과 같은 요청으로 커플 프로필을 수정할 수 있습니다.
+
+include::{snippets}/couple-profile-edit/http-request.adoc[]
+
+커플 프로필의 값 중 수정할 수 있는 값은 다음과 같습니다.
+
+include::{snippets}/couple-profile-edit/request-fields.adoc[]
+
+==== Http Response
+
+커플 프로필을 성공적으로 수정하였다면 다음과 같은 응답이 나갑니다.
+
+include::{snippets}/couple-profile-edit/http-response.adoc[]
+include::{snippets}/couple-profile-edit/response-fields.adoc[]

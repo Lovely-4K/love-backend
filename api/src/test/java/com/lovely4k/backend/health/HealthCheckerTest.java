@@ -6,7 +6,7 @@ import org.springframework.mock.env.MockEnvironment;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class HealthControllerTest {
+class HealthCheckerTest {
 
     @DisplayName("Health Controller의  profile 메서드를 통해 profile 조회를 할 수 있다.")
     @Test
@@ -18,10 +18,10 @@ class HealthControllerTest {
         mockEnvironment.addActiveProfile("oauth");
         mockEnvironment.addActiveProfile("real-db");
 
-        HealthController healthController = new HealthController(mockEnvironment);
+        HealthChecker healthChecker = new HealthChecker(mockEnvironment);
 
         // when
-        String profile = healthController.profile();
+        String profile = healthChecker.profile();
 
         // then
         assertThat(profile).isEqualTo(expectedProfile);
@@ -36,10 +36,10 @@ class HealthControllerTest {
         mockEnvironment.addActiveProfile(expectedProfile);
         mockEnvironment.addActiveProfile("real-db");
 
-        HealthController healthController = new HealthController(mockEnvironment);
+        HealthChecker healthChecker = new HealthChecker(mockEnvironment);
 
         // when
-        String profile = healthController.profile();
+        String profile = healthChecker.profile();
 
         // then
         assertThat(profile).isEqualTo(expectedProfile);
@@ -52,10 +52,10 @@ class HealthControllerTest {
         String expectedProfile = "default";
         MockEnvironment mockEnvironment = new MockEnvironment();
 
-        HealthController healthController = new HealthController(mockEnvironment);
+        HealthChecker healthChecker = new HealthChecker(mockEnvironment);
 
         // when
-        String profile = healthController.profile();
+        String profile = healthChecker.profile();
 
         // then
         assertThat(profile).isEqualTo(expectedProfile);

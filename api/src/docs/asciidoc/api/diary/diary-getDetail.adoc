@@ -1,0 +1,15 @@
+[[diary-getDetail]]
+=== 다이어리 상세 조회
+
+다이어리 상세 조회의 경우 회원의 id를 통해 검증을 진행합니다.
+
+다른 커플이 작성한 다이어리는 조회 할 수 없습니다.
+
+
+==== HTTP Request
+include::{snippets}/diary-detail/http-request.adoc[]
+include::{snippets}/diary-detail/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/diary-detail/http-response.adoc[]
+include::{snippets}/diary-detail/response-fields.adoc[]
