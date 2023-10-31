@@ -66,6 +66,7 @@ class QuestionServiceConcurrencyTest {
         assertThat(failureCounter.get()).isEqualTo(1);
     }
 
+    @Disabled("로컬 환경 전용 테스트")
     @Test
     void testUpdateQuestionAnswer_Concurrency() throws InterruptedException {
         final int numberOfThreads = 2;
