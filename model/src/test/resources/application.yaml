@@ -1,0 +1,45 @@
+spring:
+  profiles:
+    active: test   # 기본 환경
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;
+  h2:
+    console:
+      enabled: true
+
+# MySQL 전용 테스트 옵션
+  #  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    username: root
+#    password: 1234
+#    url: jdbc:mysql://localhost:3307/citron?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+
+# SQL INIT MODE 관련 옵션 => 사용시 hibernate.ddl-auto : none 설정해주세요.
+  #sql:
+   # init:
+   #   mode: always
+    #  encoding: UTF-8
+     # schema-locations: classpath:/test.sql
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    root: info
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace

@@ -8,11 +8,6 @@ spring:
   h2:
     console:
       enabled: true
-  #  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    username: root
-#    password: 1234
-#    url: jdbc:mysql://localhost:3307/citron?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
 
   sql:
     init:
