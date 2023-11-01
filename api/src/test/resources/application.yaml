@@ -1,4 +1,13 @@
 spring:
+  profiles:
+    active: test   # 기본 환경
+    include: credential # 비밀 정보들 관리 관련 yaml
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
   datasource:
     driver-class-name: org.h2.Driver
     username: sa
@@ -7,20 +16,6 @@ spring:
   h2:
     console:
       enabled: true
-
-# MySQL 전용 테스트 옵션
-  #  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    username: root
-#    password: 1234
-#    url: jdbc:mysql://localhost:3307/citron?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-
-# SQL INIT MODE 관련 옵션 => 사용시 hibernate.ddl-auto : none 설정해주세요.
-  #sql:
-   # init:
-   #   mode: always
-    #  encoding: UTF-8
-     # schema-locations: classpath:/test.sql
 
   jpa:
     open-in-view: false

@@ -90,10 +90,11 @@ subprojects {
     tasks.register("prepareKotlinBuildScriptModel") {}
 }
 
-// api 모듈은 common 모듈에 의존
+// api 모듈은 common, model 모듈에 의존
 project(':api') {
     dependencies {
         implementation project(':common')
+        implementation project(':model')
     }
 }
 
@@ -101,12 +102,5 @@ project(':api') {
 project(':model') {
     dependencies {
         implementation project(':common')
-    }
-}
-
-// api 모듈은 model 모듈에 의존
-project(':api') {
-    dependencies {
-        implementation project(':model')
     }
 }
