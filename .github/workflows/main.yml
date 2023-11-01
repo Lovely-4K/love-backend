@@ -30,7 +30,7 @@ jobs:
         distribution: 'adopt'
 
     - name: Build With Gradle
-      run: ./gradlew clean build
+      run: ./gradlew clean copyAsciidoc assemble
 
     - name: Make Directory
       run: mkdir -p deploy
