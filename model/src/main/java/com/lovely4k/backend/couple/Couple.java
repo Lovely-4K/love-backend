@@ -31,12 +31,16 @@ public class Couple extends BaseTimeEntity {
     @Column(name = "invitation_code")
     private String invitationCode;
 
+    @Column(name = "temperature")
+    private Float temperature;
+
     @Builder
-    private Couple(Long boyId, Long girlId, LocalDate meetDay, String invitationCode) {
+    public Couple(Long boyId, Long girlId, LocalDate meetDay, String invitationCode, Float temperature) {
         this.boyId = boyId;
         this.girlId = girlId;
         this.meetDay = meetDay;
         this.invitationCode = invitationCode;
+        this.temperature = temperature;
     }
 
     public static Couple create(Long requestedMemberId, Sex sex, String invitationCode) {
@@ -47,22 +51,24 @@ public class Couple extends BaseTimeEntity {
         }
     }
 
-    private static Couple createGirl(Long requestedMemberId, String invitationCode) {
-        return Couple.builder()
-            .boyId(null)
-            .girlId(requestedMemberId)
-            .meetDay(null)
-            .invitationCode(invitationCode)
-            .build();
-    }
-
     private static Couple createBoy(Long requestedMemberId, String invitationCode) {
         return Couple.builder()
-            .boyId(requestedMemberId)
-            .girlId(null)
-            .meetDay(null)
-            .invitationCode(invitationCode)
-            .build();
+                .boyId(requestedMemberId)
+                .girlId(null)
+                .meetDay(null)
+                .invitationCode(invitationCode)
+                .temperature(0.0f)
+                .build();
+    }
+
+    private static Couple createGirl(Long requestedMemberId, String invitationCode) {
+        return Couple.builder()
+                .boyId(null)
+                .girlId(requestedMemberId)
+                .meetDay(null)
+                .invitationCode(invitationCode)
+                .temperature(0.0f)
+                .build();
     }
 
     public void registerGirlId(Long receivedMemberId) {
