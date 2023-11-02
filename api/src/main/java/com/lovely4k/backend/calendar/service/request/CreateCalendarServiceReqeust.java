@@ -1,7 +1,7 @@
 package com.lovely4k.backend.calendar.service.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.lovely4k.backend.calendar.ScheduleType;
+import com.lovely4k.backend.calendar.Calendar;
 
 import java.time.LocalDate;
 
@@ -14,6 +14,9 @@ public record CreateCalendarServiceReqeust(
         LocalDate endDate,
 
         String scheduleDetails,
-        ScheduleType scheduleType
+        String scheduleType
 ) {
+    public Calendar toEntity(long ownerId, long memberId) {
+        return Calendar.create(startDate, endDate, ownerId, scheduleType, scheduleDetails, memberId);
+    }
 }

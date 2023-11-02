@@ -1,6 +1,9 @@
 package com.lovely4k.backend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lovely4k.backend.calendar.controller.CalendarController;
+import com.lovely4k.backend.calendar.service.CalendarCommandService;
+import com.lovely4k.backend.calendar.service.CalendarQueryService;
 import com.lovely4k.backend.couple.controller.CoupleController;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.diary.controller.DiaryController;
@@ -20,7 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
     DiaryController.class,
     MemberController.class,
     QuestionController.class,
-    CoupleController.class
+    CoupleController.class,
+    CalendarController.class
 })
 public abstract class ControllerTestSupport {
 
@@ -41,4 +45,10 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected CoupleService coupleService;
+
+    @MockBean
+    protected CalendarCommandService calendarCommandService;
+
+    @MockBean
+    protected CalendarQueryService calendarQueryService;
 }

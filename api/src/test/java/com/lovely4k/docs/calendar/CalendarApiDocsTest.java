@@ -27,13 +27,14 @@ import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class CalendarApiDocsTest extends RestDocsSupport {
+class CalendarApiDocsTest extends RestDocsSupport {
 
     private final CalendarCommandService calendarCommandService = mock(CalendarCommandService.class);
     private final CalendarQueryService calendarQueryService = mock(CalendarQueryService.class);
@@ -131,11 +132,11 @@ public class CalendarApiDocsTest extends RestDocsSupport {
     @Test
     void createSchedule() throws Exception {
         // Given
-        CreateCalendarRequest request = new CreateCalendarRequest(LocalDate.now(), LocalDate.now(), "details", ScheduleType.DATE);
+        CreateCalendarRequest request = new CreateCalendarRequest(LocalDate.now(), LocalDate.now(), "details", "DATE");
 
-        CreateCalendarResponse response = new CreateCalendarResponse(1L, LocalDate.now(), LocalDate.now(), "details", ScheduleType.DATE);
+        CreateCalendarResponse response = new CreateCalendarResponse(1L, LocalDate.now(), LocalDate.now(), "details", ScheduleType.DATE, 0L);
 
-        given(calendarCommandService.createCalendar(anyLong(), any(CreateCalendarServiceReqeust.class)))
+        given(calendarCommandService.createCalendar(anyLong(), anyLong(), any(CreateCalendarServiceReqeust.class)))
                 .willReturn(response);
 
         mockMvc.perform(post("/v1/calendars")
@@ -147,7 +148,8 @@ public class CalendarApiDocsTest extends RestDocsSupport {
                 .andDo(print())
                 .andDo(document("create-schedules",
                         queryParameters(
-                                parameterWithName("coupleId").description("커플 ID")
+                                parameterWithName("coupleId").description("커플 ID"),
+                                parameterWithName("memberId").description("일정 기록자 id")
                         ),
                         requestFields(
                                 fieldWithPath("startDate").type(JsonFieldType.STRING).description("일정 시작 날짜"),
@@ -162,6 +164,7 @@ public class CalendarApiDocsTest extends RestDocsSupport {
                                 fieldWithPath("body.endDate").type(STRING).description("일정 종료 날짜"),
                                 fieldWithPath("body.scheduleDetails").type(JsonFieldType.STRING).description("일정 상세 정보"),
                                 fieldWithPath("body.scheduleType").type(JsonFieldType.STRING).description("일정 유형"),
+                                fieldWithPath("body.ownerId").type(NUMBER).description("일정의 주인 아이디(공유 일정일 경우 0)"),
                                 fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
                                 fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
                         )
