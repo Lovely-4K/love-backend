@@ -32,8 +32,8 @@ public class CoupleController {
         InvitationCodeCreateResponse response = coupleService.createInvitationCode(requestedMemberId, sex);
 
         return ApiResponse.created(response, response.coupleId(),
-            linkTo(methodOn(CoupleController.class).createInvitationCode(requestedMemberId, sex)).withSelfRel(),
-            linkTo(CoupleController.class.getMethod("registerCouple", String.class, Long.class)).withRel("register couple"));
+                linkTo(methodOn(CoupleController.class).createInvitationCode(requestedMemberId, sex)).withSelfRel(),
+                linkTo(CoupleController.class.getMethod("registerCouple", String.class, Long.class)).withRel("register couple"));
     }
 
     @SneakyThrows
@@ -42,8 +42,8 @@ public class CoupleController {
         coupleService.registerCouple(invitationCode, receivedMemberId);
 
         return ApiResponse.ok(
-            linkTo(methodOn(CoupleController.class).registerCouple(invitationCode, receivedMemberId)).withSelfRel(),
-            linkTo(CoupleController.class.getMethod("getCoupleProfile", Long.class)).withRel("get couple profile")
+                linkTo(methodOn(CoupleController.class).registerCouple(invitationCode, receivedMemberId)).withSelfRel(),
+                linkTo(CoupleController.class.getMethod("getCoupleProfile", Long.class)).withRel("get couple profile")
         );
     }
 
@@ -52,8 +52,8 @@ public class CoupleController {
     public ResponseEntity<ApiResponse<CoupleProfileGetResponse>> getCoupleProfile(@RequestParam Long memberId) {
 
         return ApiResponse.ok(coupleService.findCoupleProfile(memberId),
-            linkTo(methodOn(CoupleController.class).getCoupleProfile(memberId)).withSelfRel(),
-            linkTo(CoupleController.class.getMethod("editCoupleProfile", CoupleProfileEditRequest.class, Long.class)).withRel("edit couple profile"));
+                linkTo(methodOn(CoupleController.class).getCoupleProfile(memberId)).withSelfRel(),
+                linkTo(CoupleController.class.getMethod("editCoupleProfile", CoupleProfileEditRequest.class, Long.class)).withRel("edit couple profile"));
     }
 
     @SneakyThrows
@@ -62,8 +62,16 @@ public class CoupleController {
         coupleService.updateCoupleProfile(request.toServiceRequest(), memberId);
 
         return ApiResponse.ok(
-            linkTo(methodOn(CoupleController.class).editCoupleProfile(request, memberId)).withSelfRel(),
-            linkTo(CoupleController.class.getMethod("getCoupleProfile", Long.class)).withRel("get couple profile")
-            );
+                linkTo(methodOn(CoupleController.class).editCoupleProfile(request, memberId)).withSelfRel(),
+                linkTo(CoupleController.class.getMethod("getCoupleProfile", Long.class)).withRel("get couple profile")
+        );
+    }
+
+    @DeleteMapping("/{coupleId}")
+    public ResponseEntity<Void> deleteCouple(
+            @PathVariable Long coupleId,
+            @RequestParam Long memberId) {
+
+        return ResponseEntity.noContent().build();
     }
 }
