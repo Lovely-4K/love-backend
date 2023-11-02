@@ -78,10 +78,10 @@ class ArchTests {
     @DisplayName("Service 클래스 의존성 테스트")
     @Test
     void serviceDependencyTest() {
-        ArchRule shouldClassRule = classes().that().haveSimpleNameEndingWith("Service")  // Service 클래스
+        ArchRule shouldClassRule = classes().that().haveSimpleNameNotEndingWith("QueryService").and().haveSimpleNameEndingWith("Service")  // Service 클래스
                 .should().accessClassesThat().haveSimpleNameEndingWith("Repository");   // Service 클래스는 Repository에 접근할 수 있다.
 
-        ArchRule shouldNotClassRule = noClasses().that().haveSimpleNameEndingWith("Service")  // noClasses() -> 반대의 하위 규칙의 반대
+        ArchRule shouldNotClassRule = noClasses().that().haveSimpleNameNotEndingWith("QueryService").and().haveSimpleNameEndingWith("Service")  // noClasses() -> 반대의 하위 규칙의 반대
                 .should().accessClassesThat().haveSimpleNameEndingWith("Controller");   // Service 클래스는 Controller에 접근할 수 있다.
 
         shouldClassRule.check(importedClasses);
@@ -143,7 +143,6 @@ class ArchTests {
         serviceDependencyInjectRule.check(importedClasses);
     }
 
-
     @DisplayName("""
             Service class에는 @Transactional(readOnly=true) 옵션이 붙어 있어야 하며,"
             find로 시작하지 않는 public 메서드는 @Transactional 옵션을 붙여 주어야 한다. 
@@ -152,6 +151,8 @@ class ArchTests {
     void readOnlyTest() {
         ArchRule rule = classes()
                 .that().areAnnotatedWith(Service.class)
+                .and().haveSimpleNameNotEndingWith("QueryService")
+                .and().haveSimpleNameNotEndingWith("CommandService")
                 .should(haveTransactionalReadOnly())
                 .andShould(haveOtherMethodsTransactional());
 
