@@ -44,7 +44,7 @@ public class MemberController {
         @RequestPart(value = "texts") @Valid MemberProfileEditRequest request,
         @RequestParam Long memberId) {
 
-        log.info("profileImage null check : {}", profileImage == null);
+        log.debug("profileImage null check : {}", profileImage == null);
 
         memberService.updateMemberProfile(profileImage, request.toServiceRequest(), memberId);
 

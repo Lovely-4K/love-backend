@@ -1,7 +1,7 @@
 package com.lovely4k.backend.diary.service;
 
 import com.lovely4k.backend.IntegrationTestSupport;
-import com.lovely4k.backend.common.imagemanager.ImageManager;
+import com.lovely4k.backend.common.imageuploader.ImageUploader;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
@@ -51,7 +51,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
     LocationRepository locationRepository;
 
     @MockBean
-    ImageManager imageManager;
+    ImageUploader imageUploader;
 
     @AfterEach
     void tearDown() {
@@ -78,7 +78,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
                 new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
 
         // stubbing
-        given(imageManager.upload(any(String.class), any())
+        given(imageUploader.upload(any(String.class), any())
         ).willReturn(List.of("first-image-url", "second-image-url"));
 
         // when
@@ -115,7 +115,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         List<MultipartFile> multipartFileList = List.of(firstImage, secondImage);
 
         // stubbing
-        given(imageManager.upload(any(String.class), any())
+        given(imageUploader.upload(any(String.class), any())
         ).willReturn(List.of("first-image-url", "second-image-url"));
 
         DiaryCreateRequest diaryCreateRequest =
@@ -164,7 +164,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         List<MultipartFile> multipartFileList = getMultipartFiles();
 
         // stubbing
-        given(imageManager.upload(any(String.class), any())
+        given(imageUploader.upload(any(String.class), any())
         ).willReturn(List.of("first-image-url", "second-image-url","third-image-url", "fourth-image-url", "fifth-image-url", "sixth-image-url"));
 
         DiaryCreateRequest diaryCreateRequest =

@@ -1,4 +1,4 @@
-package com.lovely4k.backend.common.imagemanager;
+package com.lovely4k.backend.common.imageuploader;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class AWSS3Uploader implements ImageManager {
+public class AWSS3Uploader implements ImageUploader {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;

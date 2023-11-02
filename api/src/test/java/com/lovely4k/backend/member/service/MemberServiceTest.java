@@ -1,6 +1,6 @@
 package com.lovely4k.backend.member.service;
 
-import com.lovely4k.backend.common.imagemanager.ImageManager;
+import com.lovely4k.backend.common.imageuploader.ImageUploader;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import com.lovely4k.backend.member.service.request.MemberProfileEditServiceRequest;
@@ -35,7 +35,7 @@ class MemberServiceTest {
     private MemberRepository memberRepository;
 
     @MockBean
-    ImageManager imageManager;
+    ImageUploader imageUploader;
 
     @Test
     @DisplayName("회원 정보를 조회한다.")
@@ -85,7 +85,7 @@ class MemberServiceTest {
         MockMultipartFile profileImage = new MockMultipartFile("images", "newProfileImage.png", "image/png", "some-image".getBytes());
         List<MultipartFile> multipartFileList = List.of(profileImage);
 
-        given(imageManager.upload(any(String.class), any())
+        given(imageUploader.upload(any(String.class), any())
         ).willReturn(List.of("profile-image-url"));
 
         //when

@@ -1,6 +1,6 @@
 package com.lovely4k.backend.diary.service;
 
-import com.lovely4k.backend.common.imagemanager.ImageManager;
+import com.lovely4k.backend.common.imageuploader.ImageUploader;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepositoryAdapter;
 import com.lovely4k.backend.diary.Photos;
@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DiaryService {
 
-    private final ImageManager imageManager;
+    private final ImageUploader imageUploader;
     private final MemberRepository memberRepository;
     private final DiaryRepositoryAdapter diaryRepositoryAdapter;
 
@@ -59,7 +59,7 @@ public class DiaryService {
             return Collections.emptyList();
         }
 
-        return imageManager.upload("diary/", multipartFileList);
+        return imageUploader.upload("diary/", multipartFileList);
     }
 
     public DiaryDetailResponse findDiaryDetail(Long diaryId, Long coupleId) {

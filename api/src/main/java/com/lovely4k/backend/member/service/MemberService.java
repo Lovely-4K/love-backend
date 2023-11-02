@@ -1,6 +1,6 @@
 package com.lovely4k.backend.member.service;
 
-import com.lovely4k.backend.common.imagemanager.ImageManager;
+import com.lovely4k.backend.common.imageuploader.ImageUploader;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import com.lovely4k.backend.member.service.request.MemberProfileEditServiceRequest;
@@ -19,7 +19,7 @@ import java.util.List;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final ImageManager imageManager;
+    private final ImageUploader imageUploader;
 
 
     public MemberProfileGetResponse findMemberProfile(Long memberId) {
@@ -30,21 +30,26 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMemberProfile(List<MultipartFile> profileImage, MemberProfileEditServiceRequest serviceRequest, Long memberId) {
+    public void updateMemberProfile(List<MultipartFile> profileImages, MemberProfileEditServiceRequest serviceRequest, Long memberId) {
         Member findMember = validateMemberId(memberId);
-        String profileImageUrl = findMember.getImageUrl();
+        String oldProfileImageUrl = findMember.getImageUrl();
 
-        if (profileImage != null) {
-            imageManager.delete("member/", List.of(profileImageUrl));
-            checkCountOfImage(profileImage);
-            profileImageUrl = uploadImage(profileImage);
-        }
+        String profileImageUrl = updateProfileImage(profileImages, oldProfileImageUrl);
 
         updateMemberProfile(profileImageUrl, serviceRequest, findMember);
     }
 
+    private String updateProfileImage(List<MultipartFile> profileImages, String oldProfileImageUrl) {
+        if (profileImages != null) {
+            imageUploader.delete("member/", List.of(oldProfileImageUrl));
+            checkCountOfImage(profileImages);
+            return uploadImage(profileImages);
+        }
+        return oldProfileImageUrl;
+    }
+
     private String uploadImage(List<MultipartFile> profileImage) {
-        return imageManager.upload("member/", profileImage).get(0);
+        return imageUploader.upload("member/", profileImage).get(0);
     }
 
     private void checkCountOfImage(List<MultipartFile> multipartFileList) {
