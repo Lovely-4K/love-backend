@@ -3,7 +3,7 @@ spring:
     active: local   # 기본 환경
     include: credential, oauth # 비밀 정보들 관리 관련 yaml
 
-# == 공통 설정 영역 == #
+  # == 공통 설정 영역 == #
   jpa:
     open-in-view: false
     properties:
