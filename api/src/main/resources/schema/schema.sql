@@ -111,11 +111,13 @@ CREATE TABLE calendar(
      start_date DATE NOT NULL,
      end_date DATE,
      member_id BIGINT,
+     couple_id BIGINT NOT NULL,
      schedule_type VARCHAR(31) NOT NULL,
      schedule_details VARCHAR(255) NOT NULL,
      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      INDEX idx_calendar_member_id (member_id),
      INDEX idx_calendar_start_date (start_date),
-     INDEX idx_calendar_end_Date (end_date)
+     INDEX idx_calendar_end_Date (end_date),
+     INDEX idx_calendar_couple_id (couple_id)
 );

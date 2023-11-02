@@ -171,7 +171,7 @@ class CalendarApiDocsTest extends RestDocsSupport {
     void editScheduleById() throws Exception {
         // Given
         Long scheduleId = 1L;
-        UpdateCalendarRequest updateRequest = new UpdateCalendarRequest(LocalDate.now(), LocalDate.now(), "updated details", ScheduleType.DATE);
+        UpdateCalendarRequest updateRequest = new UpdateCalendarRequest(LocalDate.now(), LocalDate.now(), "updated details", "DATE");
         UpdateCalendarResponse updateResponse = new UpdateCalendarResponse(LocalDate.now(), LocalDate.now(), "updated details", ScheduleType.DATE);
 
         given(calendarCommandService.updateCalendarById(eq(scheduleId), any(UpdateCalendarServiceRequest.class)))
