@@ -2,7 +2,9 @@ package com.lovely4k.backend.couple.service;
 
 import com.lovely4k.backend.IntegrationTestSupport;
 import com.lovely4k.backend.couple.Couple;
+import com.lovely4k.backend.couple.Recovery;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
+import com.lovely4k.backend.couple.repository.RecoveryRepository;
 import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
@@ -38,6 +40,9 @@ class CoupleServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private CoupleRepository coupleRepository;
+
+    @Autowired
+    private RecoveryRepository recoveryRepository;
 
     @Test
     @DisplayName("초대 코드를 발급받을 수 있다. - MALE 이 코드를 넘겨 줄 경우")
@@ -108,7 +113,7 @@ class CoupleServiceTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("잘못된 초대코드를 입력하면 예외가 발생한다.")
-    void registerCoupleWithWrongCode()  {
+    void registerCoupleWithWrongCode() {
         //given
         Member requestedMember = createMember(MALE, "ESFJ", "듬직이");
         Member receivedMember = createMember(FEMALE, "ESFJ", "듬직이");
@@ -127,7 +132,7 @@ class CoupleServiceTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("memberId를 통하여 커플 프로필을 조회할 수 있다.")
-    void getCoupleProfile()  {
+    void getCoupleProfile() {
         //given
         Member boy = createMember(MALE, "ESTJ", "듬직이");
         Member girl = createMember(FEMALE, "INFP", "깜찍이");
@@ -178,17 +183,17 @@ class CoupleServiceTest extends IntegrationTestSupport {
     void deleteCouple() {
         // given
         Couple couple = Couple.builder()
-                .boyId(1L)
-                .girlId(2L)
-                .meetDay(LocalDate.of(2020, 10, 20))
-                .invitationCode("test-code")
-                .build();
+            .boyId(1L)
+            .girlId(2L)
+            .meetDay(LocalDate.of(2020, 10, 20))
+            .invitationCode("test-code")
+            .build();
         Couple savedCouple = coupleRepository.save(couple);
 
         Couple findCouple = coupleRepository.findById(savedCouple.getId()).orElseThrow();
         assertAll(
-                () -> assertThat(findCouple.isDeleted()).isFalse(),
-                () -> assertThat(findCouple.getDeletedDate()).isNull()
+            () -> assertThat(findCouple.isDeleted()).isFalse(),
+            () -> assertThat(findCouple.getDeletedDate()).isNull()
         );
 
         // when
@@ -205,18 +210,46 @@ class CoupleServiceTest extends IntegrationTestSupport {
     void deleteCouple_noAuthority() {
         // given
         Couple couple = Couple.builder()
-                .boyId(1L)
-                .girlId(2L)
-                .meetDay(LocalDate.of(2020, 10, 20))
-                .invitationCode("test-code")
-                .build();
+            .boyId(1L)
+            .girlId(2L)
+            .meetDay(LocalDate.of(2020, 10, 20))
+            .invitationCode("test-code")
+            .build();
         Couple savedCouple = coupleRepository.save(couple);
         Long coupleId = savedCouple.getId();
         // when && then
         assertThatThrownBy(
-                () -> coupleService.deleteCouple(coupleId, 3L)
+            () -> coupleService.deleteCouple(coupleId, 3L)
         ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(String.format("%s %d은 %s %d에 대한 권한이 없음", "member", 3, "couple", couple.getId()));
+            .hasMessage(String.format("%s %d은 %s %d에 대한 권한이 없음", "member", 3, "couple", couple.getId()));
+    }
+
+    @DisplayName("reCouple을 통해 Recovery 테이블에 신청 기록을 저장할 수 있다. ")
+    @Test
+    void reCouple() {
+        // given
+        Couple couple = Couple.builder()
+            .boyId(1L)
+            .girlId(2L)
+            .meetDay(LocalDate.of(2020, 10, 20))
+            .invitationCode("test-code")
+            .deleted(true)
+            .deletedDate(LocalDate.of(2022, 10, 20))
+            .build();
+        Couple savedCouple = coupleRepository.save(couple);
+
+        LocalDate requestedDate = LocalDate.of(2022, 10, 30);
+
+        // when
+        coupleService.reCouple(requestedDate, savedCouple.getId(), 1L);
+
+        // then
+        Recovery recovery = recoveryRepository.findByCoupleId(savedCouple.getId()).orElseThrow();
+        assertAll(
+            () -> assertThat(recovery.getCoupleId()).isEqualTo(savedCouple.getId()),
+            () -> assertThat(recovery.getRequestedDate()).isEqualTo(requestedDate)
+        );
+
     }
 
     private Member createMember(Sex sex, String mbti, String nickname) {

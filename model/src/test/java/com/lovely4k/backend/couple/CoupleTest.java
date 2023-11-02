@@ -100,8 +100,8 @@ class CoupleTest {
 
         // then
         assertAll(
-                () -> assertThat(couple.getTemperature()).isEqualTo(0f),
-                () -> assertThat(couple.getBoyId()).isNotNull()
+            () -> assertThat(couple.getTemperature()).isEqualTo(0f),
+            () -> assertThat(couple.getBoyId()).isNotNull()
         );
     }
 
@@ -118,8 +118,8 @@ class CoupleTest {
 
         // then
         assertAll(
-                () -> assertThat(couple.getTemperature()).isEqualTo(0f),
-                () -> assertThat(couple.getGirlId()).isNotNull()
+            () -> assertThat(couple.getTemperature()).isEqualTo(0f),
+            () -> assertThat(couple.getGirlId()).isNotNull()
         );
     }
 
@@ -128,12 +128,12 @@ class CoupleTest {
     void increaseTemperature() {
         // given
         Couple couple = Couple.builder()
-                .boyId(1L)
-                .girlId(2L)
-                .meetDay(LocalDate.of(2020, 10, 20))
-                .invitationCode("test-invitation-code")
-                .temperature(0f)
-                .build();
+            .boyId(1L)
+            .girlId(2L)
+            .meetDay(LocalDate.of(2020, 10, 20))
+            .invitationCode("test-invitation-code")
+            .temperature(0f)
+            .build();
 
         assertThat(couple.getTemperature()).isEqualTo(0f);
         // when
@@ -143,22 +143,61 @@ class CoupleTest {
         assertThat(couple.getTemperature()).isEqualTo(1f);
     }
 
+    @DisplayName("30일을 초과했을 경우 isExpired의 결과값은 true")
+    @Test
+    void isExpired_true() {
+        Couple couple = Couple.builder()
+            .boyId(1L)
+            .girlId(2L)
+            .meetDay(LocalDate.of(2020, 10, 20))
+            .invitationCode("sampleInvitationCode")
+            .deleted(true)
+            .deletedDate(LocalDate.of(2022, 7, 1))
+            .build();
+
+        // when
+        boolean result = couple.isExpired(LocalDate.of(2022, 8, 1));
+
+        // then
+        assertThat(result).isTrue();
+    }
+
     @DisplayName("커플의 온도는 최대 100도 이다.")
     @Test
     void increaseTemperature_max100() {
-        // given
         Couple couple = Couple.builder()
-                .boyId(1L)
-                .girlId(2L)
-                .meetDay(LocalDate.of(2020, 10, 20))
-                .invitationCode("test-invitation-code")
-                .temperature(100f)
-                .build();
+            .boyId(1L)
+            .girlId(2L)
+            .meetDay(LocalDate.of(2020, 10, 20))
+            .invitationCode("test-invitation-code")
+            .temperature(100f)
+            .build();
+
         assertThat(couple.getTemperature()).isEqualTo(100f);
+
         // when
         couple.increaseTemperature();
 
         // then
         assertThat(couple.getTemperature()).isEqualTo(100f);
+    }
+
+    @DisplayName("30일을 초과하지 않았을 경우 isExpired의 결과값은 false")
+    @Test
+    void isExpired_false() {
+        // given
+        Couple couple = Couple.builder()
+                .boyId(1L)
+                .girlId(2L)
+                .invitationCode("sampleInvitationCode")
+                .deleted(true)
+                .deletedDate(LocalDate.of(2022, 7, 1))
+                .build();
+
+        // when
+        boolean result = couple.isExpired(LocalDate.of(2022, 7,31));
+
+        // then
+        assertThat(result).isFalse();
     }
 }

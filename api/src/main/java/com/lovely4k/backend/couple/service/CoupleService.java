@@ -2,7 +2,9 @@ package com.lovely4k.backend.couple.service;
 
 import com.lovely4k.backend.common.ExceptionMessage;
 import com.lovely4k.backend.couple.Couple;
+import com.lovely4k.backend.couple.Recovery;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
+import com.lovely4k.backend.couple.repository.RecoveryRepository;
 import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,6 +27,7 @@ public class CoupleService {
 
     private final CoupleRepository coupleRepository;
     private final MemberRepository memberRepository;
+    private final RecoveryRepository recoveryRepository;
 
     @Transactional
     public InvitationCodeCreateResponse
@@ -75,16 +79,34 @@ public class CoupleService {
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
         couple.increaseTemperature();
     }
-  
+
     @Transactional
     public void deleteCouple(Long coupleId, Long memberId) {
         Couple couple = findCouple(coupleId);
+        checkAuthority(coupleId, memberId, couple);
+        coupleRepository.delete(couple);
+    }
+
+    @Transactional
+    public void reCouple(LocalDate requestedDate, Long coupleId, Long memberId) {
+        Couple couple = findDeletedCouple(coupleId);
+        checkAuthority(coupleId, memberId, couple);
+        checkExpiration(requestedDate, couple);
+        recoveryRepository.save(Recovery.of(coupleId, requestedDate));
+    }
+
+    private void checkAuthority(Long coupleId, Long memberId, Couple couple) {
         if (!couple.hasAuthority(memberId)) {
             throw new IllegalArgumentException(ExceptionMessage.noAuthorityMessage("member", memberId, "couple", coupleId));
         }
-        coupleRepository.delete(couple);
     }
-  
+
+    private void checkExpiration(LocalDate requestedDate, Couple couple) {
+        if (couple.isExpired(requestedDate)) {
+            throw new IllegalStateException("커플을 끊은 지 30일이 지났기 때문에 복원을 할 수 없습니다.");
+        }
+    }
+
     private Optional<Member> findMemberOptional(Optional<Long> memberId) {
         return memberRepository.findById(memberId.orElse(-1L));
     }
@@ -96,6 +118,11 @@ public class CoupleService {
 
     private Couple findCouple(Long coupleId) {
         return coupleRepository.findById(coupleId)
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
+    }
+
+    private Couple findDeletedCouple(Long coupleId) {
+        return coupleRepository.findDeletedById(coupleId)
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
     }
 

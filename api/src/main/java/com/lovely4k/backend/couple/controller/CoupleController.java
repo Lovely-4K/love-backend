@@ -17,6 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -78,11 +80,14 @@ public class CoupleController {
     }
 
     @SneakyThrows
-    @PostMapping("recouple/{coupleId}")
+    @PostMapping("/recouple/{coupleId}")
     public ResponseEntity<ApiResponse<Void>> reCouple(
         @PathVariable Long coupleId,
         @LoginUser SessionUser sessionUser
     ) {
+        LocalDate requestedDate = LocalDate.now();
+        coupleService.reCouple(requestedDate, coupleId, sessionUser.memberId());
+
         return ApiResponse.ok(
             linkTo(methodOn(CoupleController.class).reCouple(coupleId, sessionUser)).withSelfRel(),
             linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile"),
@@ -91,7 +96,7 @@ public class CoupleController {
     }
 
     @SneakyThrows
-    @PostMapping(value = "recouple-decide/{recoveryId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/recouple-decide/{recoveryId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Void>> decideReCoupleApproval(
         @PathVariable Long recoveryId,
         @LoginUser SessionUser sessionUser,

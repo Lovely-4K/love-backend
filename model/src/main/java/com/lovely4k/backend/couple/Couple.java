@@ -48,12 +48,14 @@ public class Couple extends BaseTimeEntity {
     private LocalDate deletedDate;
 
     @Builder
-    public Couple(Long boyId, Long girlId, LocalDate meetDay, String invitationCode, Float temperature) {
+    private Couple(Long boyId, Long girlId, LocalDate meetDay, String invitationCode,Float temperature, boolean deleted, LocalDate deletedDate) {
         this.boyId = boyId;
         this.girlId = girlId;
         this.meetDay = meetDay;
         this.invitationCode = invitationCode;
         this.temperature = temperature;
+        this.deleted = deleted;
+        this.deletedDate = deletedDate;
     }
 
     public static Couple create(Long requestedMemberId, Sex sex, String invitationCode) {
@@ -111,5 +113,10 @@ public class Couple extends BaseTimeEntity {
 
     public boolean hasAuthority(Long memberId) {
         return (this.boyId.equals(memberId) || this.girlId.equals(memberId));
+    }
+
+    public boolean isExpired(LocalDate requestedDate) {
+        LocalDate limitedDate = this.deletedDate.plusDays(30);
+        return requestedDate.isAfter(limitedDate);
     }
 }

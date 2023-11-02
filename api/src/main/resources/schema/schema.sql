@@ -117,3 +117,12 @@ CREATE TABLE calendar(
      INDEX idx_calendar_start_date (start_date),
      INDEX idx_calendar_end_Date (end_date)
 );
+-- Recovery 테이블
+CREATE TABLE recovery(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    couple_id BIGINT,
+    requested_date datetime,
+    created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_recovery_couple_id (couple_id)
+)
