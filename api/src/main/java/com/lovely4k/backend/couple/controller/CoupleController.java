@@ -71,7 +71,7 @@ public class CoupleController {
     public ResponseEntity<Void> deleteCouple(
             @PathVariable Long coupleId,
             @RequestParam Long memberId) {
-
+        coupleService.deleteCouple(coupleId, memberId);
         return ResponseEntity.noContent().build();
     }
 }
