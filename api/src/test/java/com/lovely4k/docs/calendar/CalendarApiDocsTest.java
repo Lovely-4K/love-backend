@@ -141,11 +141,12 @@ class CalendarApiDocsTest extends RestDocsSupport {
 
         mockMvc.perform(post("/v1/calendars")
                         .queryParam("coupleId", "1")
+                        .queryParam("memberId", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(request))
                         .characterEncoding("UTF-8"))
-                .andExpect(status().isCreated())
                 .andDo(print())
+                .andExpect(status().isCreated())
                 .andDo(document("create-schedules",
                         queryParameters(
                                 parameterWithName("coupleId").description("커플 ID"),
@@ -176,7 +177,7 @@ class CalendarApiDocsTest extends RestDocsSupport {
     void editScheduleById() throws Exception {
         // Given
         Long scheduleId = 1L;
-        UpdateCalendarRequest updateRequest = new UpdateCalendarRequest(LocalDate.now(), LocalDate.now(), "updated details", ScheduleType.DATE);
+        UpdateCalendarRequest updateRequest = new UpdateCalendarRequest(LocalDate.now(), LocalDate.now(), "updated details", "DATE");
         UpdateCalendarResponse updateResponse = new UpdateCalendarResponse(LocalDate.now(), LocalDate.now(), "updated details", ScheduleType.DATE);
 
         given(calendarCommandService.updateCalendarById(eq(scheduleId), any(UpdateCalendarServiceRequest.class)))

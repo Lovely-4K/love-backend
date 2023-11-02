@@ -2,6 +2,7 @@ package com.lovely4k.backend.calendar.controller;
 
 import com.lovely4k.backend.ControllerTestSupport;
 import com.lovely4k.backend.calendar.controller.request.CreateCalendarRequest;
+import com.lovely4k.backend.calendar.controller.request.UpdateCalendarRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -11,6 +12,7 @@ import org.springframework.http.MediaType;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,6 +41,29 @@ class CalendarControllerTest extends ControllerTestSupport {
                 Arguments.of(new CreateCalendarRequest(LocalDate.now(), null, "Details", "TRAVEL")),
                 Arguments.of(new CreateCalendarRequest(LocalDate.now(), LocalDate.now(), "", "TRAVEL")),
                 Arguments.of(new CreateCalendarRequest(LocalDate.now(), LocalDate.now(), "Details", "INVALID_TYPE"))
+        );
+    }
+
+    @DisplayName("일정을 잘못된 값으로 업데이트 할 수 없다.")
+    @ParameterizedTest
+    @MethodSource("provideInvalidUpdateCalendarRequests")
+    void editScheduleById(UpdateCalendarRequest request) throws Exception {
+        mockMvc.perform(
+                        patch("/v1/calendars/{id}", 1L)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"));
+    }
+
+    static Stream<Arguments> provideInvalidUpdateCalendarRequests() {
+        return Stream.of(
+                Arguments.of(new UpdateCalendarRequest(null, LocalDate.now(), "Details", "TRAVEL")),
+                Arguments.of(new UpdateCalendarRequest(LocalDate.now(), null, "Details", "TRAVEL")),
+                Arguments.of(new UpdateCalendarRequest(LocalDate.now(), LocalDate.now(), "", "TRAVEL")),
+                Arguments.of(new UpdateCalendarRequest(LocalDate.now(), LocalDate.now(), "Details", "INVALID_TYPE"))
         );
     }
 
