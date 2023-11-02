@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS member;
 DROP TABLE IF EXISTS location;
 DROP TABLE IF EXISTS diary;
 DROP TABLE IF EXISTS couple;
+DROP TABLE IF EXISTS game;
 
 -- Couple 테이블
 CREATE TABLE couple (
@@ -97,4 +98,16 @@ CREATE TABLE question_form (
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_question_form_member_id (member_id),
     INDEX idx_question_form_question_day (question_day)
+);
+
+-- game 테이블
+CREATE TABLE question_form (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    couple_id BIGINT,
+    question_id BIGINT,
+    boy_answer_status VARCHAR(15),
+    girl_answer_status VARCHAR(15),
+    penalty VARCHAR(15),
+    created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 );
