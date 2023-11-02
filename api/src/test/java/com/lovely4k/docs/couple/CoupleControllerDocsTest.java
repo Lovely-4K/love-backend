@@ -2,6 +2,7 @@ package com.lovely4k.docs.couple;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lovely4k.backend.couple.controller.CoupleController;
+import com.lovely4k.backend.couple.controller.request.DecideReCoupleRequest;
 import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
@@ -53,28 +54,27 @@ class CoupleControllerDocsTest extends RestDocsSupport {
             .andDo(print())
             .andExpect(status().isCreated())
             .andDo(document("get-invitationCode",
-                    preprocessResponse(prettyPrint()),
-                    responseHeaders(
-                        headerWithName("Location").description("리소스 저장 경로")
-                    ),
-                    responseFields(
-                        fieldWithPath("code").type(JsonFieldType.NUMBER)
-                            .description("응답 코드"),
-                        fieldWithPath("body.coupleId").type(JsonFieldType.NUMBER)
-                            .description("커플 id"),
-                        fieldWithPath("body.invitationCode").type(JsonFieldType.STRING)
-                            .description("초대 코드"),
-                        fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
-                            .description("relation of url"),
-                        fieldWithPath("links[0].href").type(JsonFieldType.STRING)
-                            .description("url of relation"),
-                        fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
-                            .description("relation of url"),
-                        fieldWithPath("links[1].href").type(JsonFieldType.STRING)
-                            .description("url of relation")
-                    )
+                preprocessResponse(prettyPrint()),
+                responseHeaders(
+                    headerWithName("Location").description("리소스 저장 경로")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                        .description("응답 코드"),
+                    fieldWithPath("body.coupleId").type(JsonFieldType.NUMBER)
+                        .description("커플 id"),
+                    fieldWithPath("body.invitationCode").type(JsonFieldType.STRING)
+                        .description("초대 코드"),
+                    fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
+                        .description("relation of url"),
+                    fieldWithPath("links[0].href").type(JsonFieldType.STRING)
+                        .description("url of relation"),
+                    fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
+                        .description("relation of url"),
+                    fieldWithPath("links[1].href").type(JsonFieldType.STRING)
+                        .description("url of relation")
                 )
-            );
+            ));
     }
 
     @Test
@@ -89,23 +89,22 @@ class CoupleControllerDocsTest extends RestDocsSupport {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("couple-register",
-                    preprocessResponse(prettyPrint()),
-                    responseFields(
-                        fieldWithPath("code").type(JsonFieldType.NUMBER)
-                            .description("응답 코드"),
-                        fieldWithPath("body").type(JsonFieldType.NULL)
-                            .description("응답 바디"),
-                        fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
-                            .description("relation of url"),
-                        fieldWithPath("links[0].href").type(JsonFieldType.STRING)
-                            .description("url of relation"),
-                        fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
-                            .description("relation of url"),
-                        fieldWithPath("links[1].href").type(JsonFieldType.STRING)
-                            .description("url of relation")
-                    )
+                preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                        .description("응답 코드"),
+                    fieldWithPath("body").type(JsonFieldType.NULL)
+                        .description("응답 바디"),
+                    fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
+                        .description("relation of url"),
+                    fieldWithPath("links[0].href").type(JsonFieldType.STRING)
+                        .description("url of relation"),
+                    fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
+                        .description("relation of url"),
+                    fieldWithPath("links[1].href").type(JsonFieldType.STRING)
+                        .description("url of relation")
                 )
-            );
+            ));
     }
 
     @Test
@@ -132,39 +131,38 @@ class CoupleControllerDocsTest extends RestDocsSupport {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("couple-profile-get",
-                    preprocessResponse(prettyPrint()),
-                    responseFields(
-                        fieldWithPath("code").type(JsonFieldType.NUMBER)
-                            .description("응답 코드"),
-                        fieldWithPath("body.boyNickname").type(JsonFieldType.STRING)
-                            .description("남자친구 별명"),
-                        fieldWithPath("body.boyMbti").type(JsonFieldType.STRING)
-                            .description("남자친구 MBTI"),
-                        fieldWithPath("body.boyImageUrl").type(JsonFieldType.STRING)
-                            .description("남자친구 프로필 사진 url"),
-                        fieldWithPath("body.boyId").type(JsonFieldType.NUMBER)
-                            .description("남자친구 id"),
-                        fieldWithPath("body.girlNickname").type(JsonFieldType.STRING)
-                            .description("여자친구 별명"),
-                        fieldWithPath("body.girlMbti").type(JsonFieldType.STRING)
-                            .description("여자친구 MBTI"),
-                        fieldWithPath("body.girlImageUrl").type(JsonFieldType.STRING)
-                            .description("여자친구 프로필 사진 url"),
-                        fieldWithPath("body.girlId").type(JsonFieldType.NUMBER)
-                            .description("여자친구 id"),
-                        fieldWithPath("body.meetDay").type(JsonFieldType.STRING)
-                            .description("만난날"),
-                        fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
-                            .description("relation of url"),
-                        fieldWithPath("links[0].href").type(JsonFieldType.STRING)
-                            .description("url of relation"),
-                        fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
-                            .description("relation of url"),
-                        fieldWithPath("links[1].href").type(JsonFieldType.STRING)
-                            .description("url of relation")
-                    )
+                preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                        .description("응답 코드"),
+                    fieldWithPath("body.boyNickname").type(JsonFieldType.STRING)
+                        .description("남자친구 별명"),
+                    fieldWithPath("body.boyMbti").type(JsonFieldType.STRING)
+                        .description("남자친구 MBTI"),
+                    fieldWithPath("body.boyImageUrl").type(JsonFieldType.STRING)
+                        .description("남자친구 프로필 사진 url"),
+                    fieldWithPath("body.boyId").type(JsonFieldType.NUMBER)
+                        .description("남자친구 id"),
+                    fieldWithPath("body.girlNickname").type(JsonFieldType.STRING)
+                        .description("여자친구 별명"),
+                    fieldWithPath("body.girlMbti").type(JsonFieldType.STRING)
+                        .description("여자친구 MBTI"),
+                    fieldWithPath("body.girlImageUrl").type(JsonFieldType.STRING)
+                        .description("여자친구 프로필 사진 url"),
+                    fieldWithPath("body.girlId").type(JsonFieldType.NUMBER)
+                        .description("여자친구 id"),
+                    fieldWithPath("body.meetDay").type(JsonFieldType.STRING)
+                        .description("만난날"),
+                    fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
+                        .description("relation of url"),
+                    fieldWithPath("links[0].href").type(JsonFieldType.STRING)
+                        .description("url of relation"),
+                    fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
+                        .description("relation of url"),
+                    fieldWithPath("links[1].href").type(JsonFieldType.STRING)
+                        .description("url of relation")
                 )
-            );
+            ));
     }
 
     @Test
@@ -207,21 +205,81 @@ class CoupleControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("커플을 삭제하는 API")
     @Test
-    void deleteCouple() throws Exception{
+    void deleteCouple() throws Exception {
         // when && then
         this.mockMvc.perform(
-                        delete("/v1/couples/{coupleId}", 1)
-                                .queryParam("memberId", "1")
+                delete("/v1/couples/{coupleId}", 1)
+                    .queryParam("memberId", "1")
+            )
+            .andDo(print())
+            .andExpect(status().isNoContent())
+            .andDo(document("couple-delete",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                queryParameters(
+                    parameterWithName("memberId").description("회원 아이디")
                 )
-                .andDo(print())
-                .andExpect(status().isNoContent())
-                .andDo(document("couple-delete",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        queryParameters(
-                                parameterWithName("memberId").description("회원 아이디")
-                        )
-                ))
+            ))
+        ;
+    }
+
+    @DisplayName("커플을 복구하는 API")
+    @Test
+    void restoreCouple() throws Exception {
+        // when && then
+        this.mockMvc.perform(
+                post("/v1/couples/recouple/{coupleId}", 1)
+                    .queryParam("memberId", "1")
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("couple-recouple",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                queryParameters(
+                    parameterWithName("memberId").description("회원 아이디")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+                    fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디"),
+                    fieldWithPath("links[0].rel").type(JsonFieldType.STRING).description("relation of url"),
+                    fieldWithPath("links[0].href").type(JsonFieldType.STRING).description("url of relation")
+                )
+            ))
+        ;
+    }
+
+    @DisplayName("커플 복구 승인 / 거절 API")
+    @Test
+    void restoreConfirm() throws Exception {
+        // given
+        DecideReCoupleRequest decideReCoupleRequest = new DecideReCoupleRequest("true");
+
+        // when && then
+        this.mockMvc.perform(
+                post("/v1/couples/recouple-decide/{recoveryId}", 1)
+                    .queryParam("memberId", "1")
+                    .content(objectMapper.writeValueAsString(decideReCoupleRequest))
+                    .contentType(APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("couple-recouple-confirm",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                queryParameters(
+                    parameterWithName("memberId").description("회원 아이디")
+                ),
+                requestFields(
+                    fieldWithPath("decision").type(JsonFieldType.STRING).description("결정 여부")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+                    fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디"),
+                    fieldWithPath("links[0].rel").type(JsonFieldType.STRING).description("relation of url"),
+                    fieldWithPath("links[0].href").type(JsonFieldType.STRING).description("url of relation")
+                )
+            ))
         ;
     }
 }
