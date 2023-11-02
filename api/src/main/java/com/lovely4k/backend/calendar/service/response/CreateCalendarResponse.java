@@ -28,5 +28,6 @@ public record CreateCalendarResponse(
                 calendar.getScheduleType(),
                 calendar.getOwnerId()
         );
+
     }
 }
