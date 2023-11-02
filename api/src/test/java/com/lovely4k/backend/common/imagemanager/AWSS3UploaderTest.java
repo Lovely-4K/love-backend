@@ -1,4 +1,4 @@
-package com.lovely4k.backend.common.imageuploader;
+package com.lovely4k.backend.common.imagemanager;
 
 import com.lovely4k.backend.IntegrationTestSupport;
 import org.junit.jupiter.api.Disabled;
@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AWSS3UploaderTest extends IntegrationTestSupport {
 
     @Autowired
-    ImageUploader imageUploader;
+    ImageManager imageManager;
 
     @Disabled(value = "본 테스트의 경우 AWS S3 테스트를 하고자 할 때 사용하면 됩니다.")
     @DisplayName("upload method를 통해 이미지를 업로드 할 수 있다.")
@@ -22,10 +22,10 @@ class AWSS3UploaderTest extends IntegrationTestSupport {
     void upload() {
         // given
         MockMultipartFile mockMultipartFile =
-                new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
+            new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
 
         // when
-        List<String> uploadedImageUrls = imageUploader.upload("test/", List.of(mockMultipartFile));
+        List<String> uploadedImageUrls = imageManager.upload("test/", List.of(mockMultipartFile));
 
         // then
         assertThat(uploadedImageUrls).isNotEmpty();

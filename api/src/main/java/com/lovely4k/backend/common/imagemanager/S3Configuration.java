@@ -1,4 +1,4 @@
-package com.lovely4k.backend.common.imageuploader;
+package com.lovely4k.backend.common.imagemanager;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
