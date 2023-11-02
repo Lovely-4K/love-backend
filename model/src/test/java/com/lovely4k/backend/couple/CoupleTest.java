@@ -65,9 +65,9 @@ class CoupleTest {
                 .isEqualTo(meetDay);
     }
 
-    @DisplayName("커플의 기본 온도는 0도이다.")
+    @DisplayName("커플의 기본 온도는 0도이다. (남자가 커플을 만드는 경우)")
     @Test
-    void couple_temperature() {
+    void couple_temperature_boy() {
         // given
         Long requestMemberId = 1L;
         Sex sex = Sex.MALE;
@@ -81,6 +81,63 @@ class CoupleTest {
                 () -> assertThat(couple.getTemperature()).isEqualTo(0f),
                 () -> assertThat(couple.getBoyId()).isNotNull()
         );
+    }
+
+    @DisplayName("커플의 기본 온도는 0도이다. (여자가 커플을 만드는 경우)")
+    @Test
+    void couple_temperature_girl() {
+        // given
+        Long requestMemberId = 1L;
+        Sex sex = Sex.FEMALE;
+        String invitationCode = "test-invitation-code";
+
+        // when
+        Couple couple = Couple.create(requestMemberId, sex, invitationCode);
+
+        // then
+        assertAll(
+                () -> assertThat(couple.getTemperature()).isEqualTo(0f),
+                () -> assertThat(couple.getGirlId()).isNotNull()
+        );
+    }
+
+    @DisplayName("increaseTemperature를 통해 커플의 온도를 올릴 수 있다.")
+    @Test
+    void increaseTemperature() {
+        // given
+        Couple couple = Couple.builder()
+                .boyId(1L)
+                .girlId(2L)
+                .meetDay(LocalDate.of(2020, 10, 20))
+                .invitationCode("test-invitation-code")
+                .temperature(0f)
+                .build();
+
+        assertThat(couple.getTemperature()).isEqualTo(0f);
+        // when
+        couple.increaseTemperature();
+
+        // then
+        assertThat(couple.getTemperature()).isEqualTo(1f);
+    }
+
+    @DisplayName("커플의 온도는 최대 100도 이다.")
+    @Test
+    void increaseTemperature_max100() {
+        // given
+        Couple couple = Couple.builder()
+                .boyId(1L)
+                .girlId(2L)
+                .meetDay(LocalDate.of(2020, 10, 20))
+                .invitationCode("test-invitation-code")
+                .temperature(100f)
+                .build();
+        assertThat(couple.getTemperature()).isEqualTo(100f);
+        // when
+        couple.increaseTemperature();
+
+        // then
+        assertThat(couple.getTemperature()).isEqualTo(100f);
     }
 
 }

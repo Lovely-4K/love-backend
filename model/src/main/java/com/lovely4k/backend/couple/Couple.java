@@ -82,4 +82,17 @@ public class Couple extends BaseTimeEntity {
     public void update(LocalDate meetDay) {
         this.meetDay = meetDay;
     }
+
+    /*
+     * Demo day 이후 사랑의 온도 비중 얘기 나눈 후 비중 관련 Calculator 추가 예정
+     * 현재는 단순하게 건당 +1 도
+     * 최소 온도는 0도, 최대 온도는 100도
+     */
+    public void increaseTemperature() {
+        if (this.temperature >= 100f) {
+            this.temperature = 100f;
+        } else {
+            this.temperature += 1f;
+        }
+    }
 }

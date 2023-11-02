@@ -66,6 +66,12 @@ public class CoupleService {
         couple.update(request.meetDay());
     }
 
+    @Transactional
+    public void increaseTemperature(Long coupleId) {
+        Couple couple = findCouple(coupleId);
+        couple.increaseTemperature();
+    }
+
     private Member findMember(Long memberId) {
         return memberRepository.findById(memberId)
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원 id 입니다."));

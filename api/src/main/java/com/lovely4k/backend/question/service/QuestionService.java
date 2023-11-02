@@ -1,5 +1,6 @@
 package com.lovely4k.backend.question.service;
 
+import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
@@ -29,6 +30,7 @@ public class QuestionService {
     private final QuestionFormRepository questionFormRepository;
     private final QuestionValidator questionValidator;
     private final QuestionServiceSupporter questionServiceSupporter;
+    private final CoupleService coupleService;
     private static final int LOCK_TIME_OUT = 3;
 
     @Transactional(timeout = LOCK_TIME_OUT)
@@ -62,6 +64,7 @@ public class QuestionService {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(notFoundEntityMessage("question", id)));  // NOSONAR
         question.updateAnswer(answer, sex);
+        coupleService.increaseTemperature(question.getCoupleId());
     }
 
     public DailyQuestionResponse findDailyQuestion(Long coupleId) {

@@ -1,6 +1,7 @@
 package com.lovely4k.backend.diary.service;
 
 import com.lovely4k.backend.common.imageuploader.ImageUploader;
+import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepositoryAdapter;
 import com.lovely4k.backend.diary.Photos;
@@ -28,6 +29,7 @@ public class DiaryService {
 
     private final ImageUploader imageUploader;
     private final MemberRepository memberRepository;
+    private final CoupleService coupleService;
     private final DiaryRepositoryAdapter diaryRepositoryAdapter;
 
     @Transactional
@@ -38,6 +40,7 @@ public class DiaryService {
         Diary diary = diaryCreateRequest.toEntity(member);
         diary.addPhoto(Photos.create(uploadedImageUrls));
         Diary savedDiary = diaryRepositoryAdapter.save(diary);
+        coupleService.increaseTemperature(member.getCoupleId());
 
         return savedDiary.getId();
     }
