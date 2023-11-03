@@ -10,7 +10,6 @@ import com.lovely4k.backend.member.Sex;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -118,7 +117,9 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                 "듬직이",
                 "ESTJ",
                 "깜찍이",
-                "INFP"
+                "INFP",
+                "boyProfileUrl",
+                "girlProfileUrl"
             )
         );
 
@@ -142,6 +143,10 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                             .description("여자친구 별명"),
                         fieldWithPath("body.girlMbti").type(JsonFieldType.STRING)
                             .description("여자친구 MBTI"),
+                        fieldWithPath("body.boyImageUrl").type(JsonFieldType.STRING)
+                            .description("남자친구 프로필 사진 url"),
+                        fieldWithPath("body.girlImageUrl").type(JsonFieldType.STRING)
+                            .description("여자친구 프로필 사진 url"),
                         fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
                             .description("relation of url"),
                         fieldWithPath("links[0].href").type(JsonFieldType.STRING)
