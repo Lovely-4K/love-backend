@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-import static com.lovely4k.backend.member.Sex.MALE;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -27,7 +26,6 @@ class MemberControllerTest extends ControllerTestSupport {
 
         given(memberService.findMemberProfile(memberId))
             .willReturn(new MemberProfileGetResponse(
-                    MALE,
                     "sampleImageUrl",
                     "김철수",
                     "듬직이",
@@ -43,7 +41,7 @@ class MemberControllerTest extends ControllerTestSupport {
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.code").value(200))
-            .andExpect(jsonPath("$.body.sex").value("MALE"))
+            .andExpect(jsonPath("$.body.mbti").value("ESFJ"))
             .andExpect(jsonPath("$.body.name").value("김철수"));
     }
 

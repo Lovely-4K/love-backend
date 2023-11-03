@@ -40,8 +40,8 @@ class MemberServiceTest {
 
         //then
         assertThat(memberProfileGetResponse)
-            .extracting("sex", "name")
-            .contains(MALE, "김철수");
+            .extracting("imageUrl", "name")
+            .contains("http://www.imageUrlSample.com", "김철수");
     }
 
     @Test
