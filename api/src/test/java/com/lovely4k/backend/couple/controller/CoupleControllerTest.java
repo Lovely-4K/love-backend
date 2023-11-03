@@ -69,7 +69,9 @@ class CoupleControllerTest extends ControllerTestSupport {
                 "듬직이",
                 "ESTJ",
                 "깜찍이",
-                "INFP"
+                "INFP",
+                "boyProfileUrl",
+                "girlProfile,Url"
             ));
 
         //when //then
