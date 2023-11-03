@@ -8,8 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public record MemberProfileEditRequest(
-    @NotBlank(message = "image url을 입력해주세요.")
-    String imageUrl,
 
     @NotBlank(message = "이름을 입력해주세요.")
     String name,
@@ -29,7 +27,6 @@ public record MemberProfileEditRequest(
 ) {
     public MemberProfileEditServiceRequest toServiceRequest() {
         return new MemberProfileEditServiceRequest(
-            this.imageUrl,
             this.name,
             this.nickname,
             this.birthday,
