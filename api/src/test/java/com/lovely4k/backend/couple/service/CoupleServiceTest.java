@@ -2,10 +2,12 @@ package com.lovely4k.backend.couple.service;
 
 import com.lovely4k.backend.IntegrationTestSupport;
 import com.lovely4k.backend.couple.Couple;
+import com.lovely4k.backend.couple.Decision;
 import com.lovely4k.backend.couple.Recovery;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.couple.repository.RecoveryRepository;
 import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
+import com.lovely4k.backend.couple.service.request.DecideReCoupleServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import com.lovely4k.backend.member.Member;
@@ -250,6 +252,66 @@ class CoupleServiceTest extends IntegrationTestSupport {
             () -> assertThat(recovery.getRequestedDate()).isEqualTo(requestedDate)
         );
 
+    }
+
+    @DisplayName("decideReCoupleApproval를 통해 커플 재결합을 할 수 있다. ")
+    @Test
+    void decideReCoupleApproval_ok() {
+        // given
+        Couple couple = Couple.builder()
+            .boyId(1L)
+            .girlId(2L)
+            .meetDay(LocalDate.of(2020, 10, 20))
+            .invitationCode("test-code")
+            .deleted(true)
+            .deletedDate(LocalDate.of(2022, 10, 20))
+            .build();
+        Couple savedCouple = coupleRepository.save(couple);
+        LocalDate requestedDate = LocalDate.of(2022, 10, 30);
+
+        Recovery recovery = Recovery.of(savedCouple.getId(), requestedDate);
+        Recovery savedRecovery = recoveryRepository.save(recovery);
+
+        // when
+        coupleService.decideReCoupleApproval(savedRecovery.getId(), 1L, new DecideReCoupleServiceRequest(Decision.YES));
+
+        // then
+        Couple findCouple = coupleRepository.findById(savedCouple.getId()).orElseThrow();
+        assertAll(
+            () -> assertThat(recoveryRepository.findAll()).isEmpty(),
+            () -> assertThat(findCouple.isDeleted()).isFalse(),
+            () -> assertThat(findCouple.getDeletedDate()).isNull()
+        );
+    }
+
+    @DisplayName("decideReCoupleApproval에서 만약 응답이 NO 라면 재결합 되지 않는다.")
+    @Test
+    void decideReCoupleApproval_deny() {
+        // given
+        Couple couple = Couple.builder()
+            .boyId(1L)
+            .girlId(2L)
+            .meetDay(LocalDate.of(2020, 10, 20))
+            .invitationCode("test-code")
+            .deleted(true)
+            .deletedDate(LocalDate.of(2022, 10, 20))
+            .build();
+        Couple savedCouple = coupleRepository.save(couple);
+        LocalDate requestedDate = LocalDate.of(2022, 10, 30);
+
+        Recovery recovery = Recovery.of(savedCouple.getId(), requestedDate);
+        Recovery savedRecovery = recoveryRepository.save(recovery);
+
+        // when
+        coupleService.decideReCoupleApproval(savedRecovery.getId(), 1L, new DecideReCoupleServiceRequest(Decision.NO));
+
+        // then
+        Couple findCouple = coupleRepository.findDeletedById(savedCouple.getId()).orElseThrow();
+        assertAll(
+            () -> assertThat(recoveryRepository.findAll()).isEmpty(),
+            () -> assertThat(findCouple.isDeleted()).isTrue(),
+            () -> assertThat(findCouple.getDeletedDate()).isNotNull()
+        );
     }
 
     private Member createMember(Sex sex, String mbti, String nickname) {

@@ -1,6 +1,7 @@
 package com.lovely4k.docs.couple;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.lovely4k.backend.couple.Decision;
 import com.lovely4k.backend.couple.controller.CoupleController;
 import com.lovely4k.backend.couple.controller.request.DecideReCoupleRequest;
 import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditRequest;
@@ -253,7 +254,7 @@ class CoupleControllerDocsTest extends RestDocsSupport {
     @Test
     void restoreConfirm() throws Exception {
         // given
-        DecideReCoupleRequest decideReCoupleRequest = new DecideReCoupleRequest("true");
+        DecideReCoupleRequest decideReCoupleRequest = new DecideReCoupleRequest("yes");
 
         // when && then
         this.mockMvc.perform(

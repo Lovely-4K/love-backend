@@ -133,4 +133,22 @@ class CoupleControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"));
     }
 
+    @DisplayName("decideReCoupleApproval에서 YES나 NO로 들어와야 한다. (대소문자는 상관없다.)")
+    @Test
+    void decideReCoupleApproval_InvalidValue() throws Exception{
+        // given
+        DecideReCoupleRequest decideReCoupleRequest = new DecideReCoupleRequest("nor");
+
+        // when
+        this.mockMvc.perform(
+                post("/v1/couples/recouple-decide/{recoveryId}", 1)
+                    .queryParam("memberId", "1")
+                    .content(objectMapper.writeValueAsString(decideReCoupleRequest))
+                    .contentType(APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"));
+    }
+
 }

@@ -102,6 +102,7 @@ public class CoupleController {
         @LoginUser SessionUser sessionUser,
         @RequestBody @Valid DecideReCoupleRequest request
     ) {
+        coupleService.decideReCoupleApproval(recoveryId, sessionUser.memberId(), request.toServiceRequest());
         return ApiResponse.ok(
             linkTo(methodOn(CoupleController.class).decideReCoupleApproval(recoveryId, sessionUser, request)).withSelfRel(),
             linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile"),

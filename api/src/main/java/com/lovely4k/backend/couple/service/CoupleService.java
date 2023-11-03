@@ -2,10 +2,12 @@ package com.lovely4k.backend.couple.service;
 
 import com.lovely4k.backend.common.ExceptionMessage;
 import com.lovely4k.backend.couple.Couple;
+import com.lovely4k.backend.couple.Decision;
 import com.lovely4k.backend.couple.Recovery;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.couple.repository.RecoveryRepository;
 import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
+import com.lovely4k.backend.couple.service.request.DecideReCoupleServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import com.lovely4k.backend.member.Member;
@@ -83,21 +85,42 @@ public class CoupleService {
     @Transactional
     public void deleteCouple(Long coupleId, Long memberId) {
         Couple couple = findCouple(coupleId);
-        checkAuthority(coupleId, memberId, couple);
+        checkAuthority(memberId, couple);
         coupleRepository.delete(couple);
     }
 
     @Transactional
     public void reCouple(LocalDate requestedDate, Long coupleId, Long memberId) {
         Couple couple = findDeletedCouple(coupleId);
-        checkAuthority(coupleId, memberId, couple);
+        checkAuthority(memberId, couple);
         checkExpiration(requestedDate, couple);
         recoveryRepository.save(Recovery.of(coupleId, requestedDate));
     }
 
-    private void checkAuthority(Long coupleId, Long memberId, Couple couple) {
+    @Transactional
+    public void decideReCoupleApproval(Long recoveryId, Long memberId, DecideReCoupleServiceRequest serviceRequest) {
+        Recovery recovery = findRecovery(recoveryId);
+        Couple couple = findDeletedCouple(recovery.getCoupleId());
+        checkAuthority(memberId, couple);
+        recoupleOnCondition(serviceRequest, couple);
+        recoveryRepository.delete(recovery);
+    }
+
+    private Recovery findRecovery(Long recoveryId) {
+        return recoveryRepository.findById(recoveryId).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionMessage.notFoundEntityMessage("recovery", recoveryId))
+        );
+    }
+
+    private void recoupleOnCondition(DecideReCoupleServiceRequest serviceRequest, Couple couple) {
+        if (serviceRequest.decision() == Decision.YES) {
+            couple.recouple();
+        }
+    }
+
+    private void checkAuthority(Long memberId, Couple couple) {
         if (!couple.hasAuthority(memberId)) {
-            throw new IllegalArgumentException(ExceptionMessage.noAuthorityMessage("member", memberId, "couple", coupleId));
+            throw new IllegalArgumentException(ExceptionMessage.noAuthorityMessage("member", memberId, "couple", couple.getId()));
         }
     }
 

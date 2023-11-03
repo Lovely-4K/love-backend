@@ -119,4 +119,9 @@ public class Couple extends BaseTimeEntity {
         LocalDate limitedDate = this.deletedDate.plusDays(30);
         return requestedDate.isAfter(limitedDate);
     }
+
+    public void recouple() {
+        this.deleted = false;
+        this.deletedDate = null;
+    }
 }
