@@ -55,7 +55,7 @@ public class CoupleService {
         Member boy = findMember(couple.getBoyId());
         Member girl = findMember(couple.getGirlId());
 
-        return CoupleProfileGetResponse.from(boy, girl);
+        return CoupleProfileGetResponse.from(boy, girl, couple.getMeetDay());
     }
 
     @Transactional

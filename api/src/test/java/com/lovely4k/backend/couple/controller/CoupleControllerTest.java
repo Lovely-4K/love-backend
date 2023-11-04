@@ -8,6 +8,7 @@ import com.lovely4k.backend.member.Sex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.mockito.BDDMockito.given;
@@ -71,7 +72,8 @@ class CoupleControllerTest extends ControllerTestSupport {
                 "깜찍이",
                 "INFP",
                 "boyProfileUrl",
-                "girlProfile,Url"
+                "girlProfile,Url",
+                LocalDate.of(2020, 7, 23)
             ));
 
         //when //then

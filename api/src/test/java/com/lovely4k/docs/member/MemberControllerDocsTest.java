@@ -64,7 +64,7 @@ class MemberControllerDocsTest extends RestDocsSupport {
                             .description("이름"),
                         fieldWithPath("body.nickname").type(JsonFieldType.STRING)
                             .description("별명"),
-                        fieldWithPath("body.birthday").type(JsonFieldType.ARRAY)
+                        fieldWithPath("body.birthday").type(JsonFieldType.STRING)
                             .description("생년월일"),
                         fieldWithPath("body.mbti").type(JsonFieldType.STRING)
                             .description("MBTI"),

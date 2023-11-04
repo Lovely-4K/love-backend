@@ -12,6 +12,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import java.time.LocalDate;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -119,7 +121,8 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                 "깜찍이",
                 "INFP",
                 "boyProfileUrl",
-                "girlProfileUrl"
+                "girlProfileUrl",
+                LocalDate.of(2020, 7, 23)
             )
         );
 
@@ -147,6 +150,8 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                             .description("남자친구 프로필 사진 url"),
                         fieldWithPath("body.girlImageUrl").type(JsonFieldType.STRING)
                             .description("여자친구 프로필 사진 url"),
+                        fieldWithPath("body.meetDay").type(JsonFieldType.STRING)
+                            .description("만난날"),
                         fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
                             .description("relation of url"),
                         fieldWithPath("links[0].href").type(JsonFieldType.STRING)
