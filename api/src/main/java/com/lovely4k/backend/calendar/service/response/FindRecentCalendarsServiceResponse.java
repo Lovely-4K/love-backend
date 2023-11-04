@@ -28,6 +28,7 @@ public record FindRecentCalendarsServiceResponse(
     }
 
     private record ScheduleServiceResponse(
+        long calendarId,
 
         @JsonFormat(pattern = "yyyy-MM-dd")
         LocalDate startDate,
@@ -40,6 +41,7 @@ public record FindRecentCalendarsServiceResponse(
     ) {
         private static ScheduleServiceResponse from(FindRecentCalendarsResponse response) {
             return new ScheduleServiceResponse(
+                response.calendarId(),
                 response.startDate(),
                 response.endDate(),
                 response.scheduleDetails(),
@@ -48,14 +50,14 @@ public record FindRecentCalendarsServiceResponse(
         }
     }
 
-    public static FindRecentCalendarsServiceResponse from(List<FindRecentCalendarsResponse> response) {
-        List<ScheduleServiceResponse> scheduleServiceResponses = response
+    public static FindRecentCalendarsServiceResponse from(List<FindRecentCalendarsResponse> responses) {
+        List<ScheduleServiceResponse> scheduleServiceResponses = responses
             .stream()
             .map(ScheduleServiceResponse::from)
             .toList();
 
         return new FindRecentCalendarsServiceResponse(
-            ColorResponse.from(response.get(0)),
+            ColorResponse.from(responses.get(0)),
             scheduleServiceResponses
         );
     }

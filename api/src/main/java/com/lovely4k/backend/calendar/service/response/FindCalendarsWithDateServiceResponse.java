@@ -2,12 +2,12 @@ package com.lovely4k.backend.calendar.service.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lovely4k.backend.calendar.ScheduleType;
-import com.lovely4k.backend.calendar.repository.response.FindAllCalendarsWithDateResponse;
+import com.lovely4k.backend.calendar.repository.response.FindCalendarsWithDateResponse;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public record FindAllCalendarsWithDateServiceResponse(
+public record FindCalendarsWithDateServiceResponse(
     ColorResponse colorInfo,
     List<ScheduleServiceResponse> schedules
 ) {
@@ -17,7 +17,7 @@ public record FindAllCalendarsWithDateServiceResponse(
         long girlId,
         String girlCalendarColor
     ) {
-        private static ColorResponse from(FindAllCalendarsWithDateResponse response) {
+        private static ColorResponse from(FindCalendarsWithDateResponse response) {
             return new ColorResponse(
                 response.boyId(),
                 response.boyCalendarColor(),
@@ -28,6 +28,7 @@ public record FindAllCalendarsWithDateServiceResponse(
     }
 
     private record ScheduleServiceResponse(
+        long calendarId,
 
         @JsonFormat(pattern = "yyyy-MM-dd")
         LocalDate startDate,
@@ -38,8 +39,9 @@ public record FindAllCalendarsWithDateServiceResponse(
         String scheduleDetails,
         ScheduleType scheduleType
     ) {
-        private static ScheduleServiceResponse from(FindAllCalendarsWithDateResponse response) {
+        private static ScheduleServiceResponse from(FindCalendarsWithDateResponse response) {
             return new ScheduleServiceResponse(
+                response.calendarId(),
                 response.startDate(),
                 response.endDate(),
                 response.scheduleDetails(),
@@ -48,13 +50,13 @@ public record FindAllCalendarsWithDateServiceResponse(
         }
     }
 
-    public static FindAllCalendarsWithDateServiceResponse from(List<FindAllCalendarsWithDateResponse> response) {
+    public static FindCalendarsWithDateServiceResponse from(List<FindCalendarsWithDateResponse> response) {
         List<ScheduleServiceResponse> scheduleServiceResponses = response
             .stream()
             .map(ScheduleServiceResponse::from)
             .toList();
 
-        return new FindAllCalendarsWithDateServiceResponse(
+        return new FindCalendarsWithDateServiceResponse(
             ColorResponse.from(response.get(0)),
             scheduleServiceResponses
         );

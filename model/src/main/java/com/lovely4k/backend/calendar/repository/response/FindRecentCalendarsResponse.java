@@ -5,6 +5,7 @@ import com.lovely4k.backend.calendar.ScheduleType;
 import java.time.LocalDate;
 
 public record FindRecentCalendarsResponse(
+    long calendarId,
     long boyId,
     String boyCalendarColor,
     long girlId,

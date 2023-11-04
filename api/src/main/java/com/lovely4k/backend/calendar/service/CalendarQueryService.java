@@ -1,17 +1,15 @@
 package com.lovely4k.backend.calendar.service;
 
-import com.lovely4k.backend.calendar.ScheduleType;
 import com.lovely4k.backend.calendar.repository.CalendarQueryRepository;
-import com.lovely4k.backend.calendar.repository.response.FindAllCalendarsWithDateResponse;
+import com.lovely4k.backend.calendar.repository.FindCalendarsWithDateRepositoryRequest;
+import com.lovely4k.backend.calendar.repository.response.FindCalendarsWithDateResponse;
 import com.lovely4k.backend.calendar.repository.response.FindRecentCalendarsResponse;
-import com.lovely4k.backend.calendar.service.response.FindAllCalendarsWithDateServiceRequest;
-import com.lovely4k.backend.calendar.service.response.FindAllCalendarsWithDateServiceResponse;
+import com.lovely4k.backend.calendar.service.response.FindCalendarsWithDateServiceResponse;
 import com.lovely4k.backend.calendar.service.response.FindRecentCalendarsServiceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Transactional(readOnly = true)
@@ -21,26 +19,13 @@ public class CalendarQueryService {
 
     private final CalendarQueryRepository calendarQueryRepository;
 
-    public FindAllCalendarsWithDateServiceResponse findAllCalendarsWithDate(FindAllCalendarsWithDateServiceRequest request) {
-
-        return FindAllCalendarsWithDateServiceResponse
-            .from(
-                List.of(
-                    new FindAllCalendarsWithDateResponse(
-                        1L,
-                        "RED",
-                        2L,
-                        "BLUE",
-                        LocalDate.now(),
-                        LocalDate.now(),
-                        "영화보기",
-                        ScheduleType.DATE)
-                )
-            );
+    public FindCalendarsWithDateServiceResponse findCalendarsWithDate(FindCalendarsWithDateRepositoryRequest request) {
+        List<FindCalendarsWithDateResponse> responses = calendarQueryRepository.findCalendarsWithDate(request);
+        return FindCalendarsWithDateServiceResponse.from(responses);
     }
 
     public FindRecentCalendarsServiceResponse findRecentCalendars(Long coupleId, int limit) {
-        List<FindRecentCalendarsResponse> result = calendarQueryRepository.findRecentCalendarsWithColors(coupleId, limit);
-        return FindRecentCalendarsServiceResponse.from(result);
+        List<FindRecentCalendarsResponse> responses = calendarQueryRepository.findRecentCalendarsWithColors(coupleId, limit);
+        return FindRecentCalendarsServiceResponse.from(responses);
     }
 }
