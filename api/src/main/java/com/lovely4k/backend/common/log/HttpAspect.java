@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -19,10 +20,15 @@ import java.util.Objects;
 @Aspect
 @Component
 @Slf4j
-public class AspectControllerAdvice {
+public class HttpAspect {
 
     private final ObjectMapper objectMapper;
 
+    @Value("${love.system.max-affordable-time}")
+    private double maxAffordableTime;
+
+    @Value("${love.system.milli-seconds-to-second-unit}")
+    private double milliSecondToSecondUnit;
     private static final double MILLI_SECOND_TO_SECOND_UNIT = 0.001;
     private static final double MAX_AFFORDABLE_TIME = 3;
 
@@ -39,12 +45,12 @@ public class AspectControllerAdvice {
         long startTime = System.currentTimeMillis();
         Object proceed = joinPoint.proceed();
         long endTime = System.currentTimeMillis();
-        double elapsedTime = (endTime - startTime) * MILLI_SECOND_TO_SECOND_UNIT;
+        double elapsedTime = (endTime - startTime) * milliSecondToSecondUnit;
 
         HttpServletResponse response = sra.getResponse();
         HttpLog httpLog = HttpLog.of(request, Objects.requireNonNull(response), objectMapper, proceed);
 
-        if (elapsedTime > MAX_AFFORDABLE_TIME) {
+        if (elapsedTime > maxAffordableTime) {
             log.warn(objectMapper.writeValueAsString(httpLog));
             return proceed;
         }
