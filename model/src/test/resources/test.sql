@@ -25,7 +25,7 @@ CREATE TABLE diary (
     couple_id BIGINT,
     boy_text TEXT,
     girl_text TEXT,
-    score INT,e
+    score INT,
     dating_day DATE,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -67,6 +67,7 @@ CREATE TABLE question (
     boy_choice_index int,
     girl_choice_index int,
     question_day BIGINT,
+    question_form_type VARCHAR(31),
     version BIGINT NOT NULL default 0,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

@@ -5,6 +5,8 @@ import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.controller.request.AnswerQuestionRequest;
 import com.lovely4k.backend.question.controller.request.AnsweredQuestionParamRequest;
 import com.lovely4k.backend.question.controller.request.CreateQuestionFormRequest;
+import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse;
+import com.lovely4k.backend.question.service.QuestionQueryService;
 import com.lovely4k.backend.question.service.QuestionService;
 import com.lovely4k.backend.question.service.response.*;
 import jakarta.validation.Valid;
@@ -25,6 +27,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class QuestionController {
 
     private final QuestionService questionService;
+    private final QuestionQueryService questionQueryService;
 
     private static final String CREATE_QUESTION_FORM = "createQuestionForm";
     private static final String GET_DAILY_QUESTION = "getDailyQuestion";
@@ -32,8 +35,6 @@ public class QuestionController {
     private static final String ANSWER_QUESTION = "answerQuestion";
     private static final String GET_ANSWERED_QUESTIONS = "getAnsweredQuestions";
     private static final String GET_QUESTION_DETAILS = "getQuestionDetails";
-
-
 
     @SneakyThrows
     @GetMapping("/daily")
@@ -76,25 +77,31 @@ public class QuestionController {
         return ApiResponse.ok(
                 linkTo(methodOn(getClass()).answerQuestion(id, sex, request)).withSelfRel(),
                 linkTo(getClass().getMethod(GET_ANSWERED_QUESTIONS, AnsweredQuestionParamRequest.class)).withRel(GET_ANSWERED_QUESTIONS),
-                linkTo(getClass().getMethod(GET_QUESTION_DETAILS, Long.class)).withRel(GET_QUESTION_DETAILS));
+                linkTo(getClass().getMethod(GET_QUESTION_DETAILS, Long.class, Long.class, Sex.class)).withRel(GET_QUESTION_DETAILS));
     }
-
 
     @SneakyThrows
     @GetMapping
     public ResponseEntity<ApiResponse<AnsweredQuestionResponse>> getAnsweredQuestions(@ModelAttribute @Valid AnsweredQuestionParamRequest params) {
         return ApiResponse.ok(questionService.findAllAnsweredQuestionByCoupleId(params.getId(), params.getCoupleId(), params.getLimit()),
                 linkTo(methodOn(getClass()).getAnsweredQuestions(params)).withSelfRel(),
-                linkTo(getClass().getMethod(GET_QUESTION_DETAILS, Long.class)).withRel(GET_QUESTION_DETAILS));
+                linkTo(getClass().getMethod(GET_QUESTION_DETAILS, Long.class, Long.class, Sex.class)).withRel(GET_QUESTION_DETAILS));
     }
 
 
     @SneakyThrows
     @GetMapping("/details/{id}")
-    public ResponseEntity<ApiResponse<QuestionDetailsResponse>> getQuestionDetails(@PathVariable("id") Long id) {
-        return ApiResponse.ok(questionService.findQuestionDetails(id),
-                linkTo(methodOn(getClass()).getQuestionDetails(id)).withSelfRel(),
+    public ResponseEntity<ApiResponse<QuestionDetailsResponse>> getQuestionDetails(@PathVariable("id") Long id, @RequestParam("memberId") Long memberId, @RequestParam("sex") Sex sex) {
+        return ApiResponse.ok(questionQueryService.findQuestionDetails(id, memberId, sex),
+                linkTo(methodOn(getClass()).getQuestionDetails(id, memberId, sex)).withSelfRel(),
                 linkTo(getClass().getMethod(GET_ANSWERED_QUESTIONS, AnsweredQuestionParamRequest.class)).withRel(GET_ANSWERED_QUESTIONS));
+    }
+
+    //관리자용 엔드포인트
+    @DeleteMapping
+    public ResponseEntity<Void> init() {
+        questionService.deleteQuestion();
+        return ResponseEntity.noContent().build();
     }
 
 }
