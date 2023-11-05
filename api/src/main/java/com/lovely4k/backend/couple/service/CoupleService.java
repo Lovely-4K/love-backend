@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -52,10 +53,10 @@ public class CoupleService {
 
         Couple couple = findCouple(coupleId);
 
-        Member boy = findMember(couple.getBoyId());
-        Member girl = findMember(couple.getGirlId());
+        Optional<Member> boy = findMemberOptional(Optional.ofNullable(couple.getBoyId()));
+        Optional<Member> girl = findMemberOptional(Optional.ofNullable(couple.getGirlId()));
 
-        return CoupleProfileGetResponse.from(boy, girl);
+        return CoupleProfileGetResponse.from(boy, girl, couple.getMeetDay());
     }
 
     @Transactional
@@ -64,6 +65,10 @@ public class CoupleService {
         Couple couple = findCouple(coupleId);
 
         couple.update(request.meetDay());
+    }
+
+    private Optional<Member> findMemberOptional(Optional<Long> memberId) {
+        return memberRepository.findById(memberId.orElse(-1L));
     }
 
     private Member findMember(Long memberId) {

@@ -123,7 +123,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                         responseFields(
                                 fieldWithPath("code").type(NUMBER).description("코드"),
                                 fieldWithPath("body.kakaoMapId").type(NUMBER).description("카카오 장소 id"),
-                                fieldWithPath("body.datingDay").type(ARRAY).description("데이트 날짜"),
+                                fieldWithPath("body.datingDay").type(STRING).description("데이트 날짜"),
                                 fieldWithPath("body.score").type(NUMBER).description("장소에 대한 평점"),
                                 fieldWithPath("body.category").type(STRING).description("장소 카테고리"),
                                 fieldWithPath("body.boyText").type(STRING).description("남자친구 다이어리 내용"),
