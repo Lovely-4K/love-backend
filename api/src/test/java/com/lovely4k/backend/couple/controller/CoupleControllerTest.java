@@ -8,6 +8,7 @@ import com.lovely4k.backend.member.Sex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.mockito.BDDMockito.given;
@@ -28,7 +29,7 @@ class CoupleControllerTest extends ControllerTestSupport {
         Long coupleId = 2L;
         String invitationCode = UUID.randomUUID().toString();
 
-        given(coupleService.createInvitationCode(requestedMemberId,sex))
+        given(coupleService.createInvitationCode(requestedMemberId, sex))
             .willReturn(new InvitationCodeCreateResponse(coupleId, invitationCode));
 
         //when //then
@@ -50,7 +51,7 @@ class CoupleControllerTest extends ControllerTestSupport {
         //when //then
         mockMvc.perform(post("/v1/couples")
                 .queryParam(
-                        "invitationCode", invitationCode)
+                    "invitationCode", invitationCode)
                 .queryParam("receivedMemberId", "2")
                 .contentType(APPLICATION_JSON)
             )
@@ -68,10 +69,13 @@ class CoupleControllerTest extends ControllerTestSupport {
             .willReturn(new CoupleProfileGetResponse(
                 "듬직이",
                 "ESTJ",
+                "boyProfileUrl",
+                1L,
                 "깜찍이",
                 "INFP",
-                "boyProfileUrl",
-                "girlProfile,Url"
+                "girlProfile,Url",
+                2L,
+                LocalDate.of(2020, 7, 23)
             ));
 
         //when //then
