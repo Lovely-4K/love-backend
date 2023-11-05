@@ -67,7 +67,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
     @DisplayName("createDiary 메서드를 통해 다이어리를 생성할 수 있다.")
     @Test
-    void createDiary() {
+    void createDiary() throws InterruptedException {
         // given
         Member member = Member.builder()
                 .name("tommy")
@@ -142,7 +142,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
     @DisplayName("이미지가 없는 경우 이미지업로드가 되지 않고, emptyList를 반환한다.")
     @Test
-    void createDiaryNoImage() {
+    void createDiaryNoImage() throws InterruptedException {
         // given
         Member member = Member.builder()
                 .name("tommy")

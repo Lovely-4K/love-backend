@@ -34,6 +34,9 @@ public class Couple extends BaseTimeEntity {
     @Column(name = "temperature")
     private Float temperature;
 
+    @Version
+    private Long version;
+
     @Builder
     public Couple(Long boyId, Long girlId, LocalDate meetDay, String invitationCode, Float temperature) {
         this.boyId = boyId;
