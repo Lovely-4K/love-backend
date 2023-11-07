@@ -47,10 +47,21 @@ public class AWSS3Uploader implements ImageUploader {
                     log.warn("[Warning] Image Upload to S3 has some exception", e);
                     throw new AmazonServiceException("Some Error occurred during Upload Image to S3 Server", e);
                 }
-                uploadedImageUrl.add(amazonS3.getUrl(bucket, originalFilename).toString());
+                uploadedImageUrl.add(convertURL(amazonS3.getUrl(bucket, originalFilename).toString(), directory));
             }
         );
         return uploadedImageUrl;
+    }
+
+    // 원하는 부분을 찾아 새 경로를 추가
+    public static String convertURL(String url, String directory) {
+
+        String searchPattern = ".com/";
+        int index = url.indexOf(searchPattern) + searchPattern.length();
+        String newPart = DEFAULT_DIRECTORY + directory;
+        String modifiedURL = url.substring(0, index) + newPart + url.substring(index);
+
+        return modifiedURL;
     }
 
     @Override
