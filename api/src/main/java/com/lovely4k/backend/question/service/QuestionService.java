@@ -4,6 +4,7 @@ import com.lovely4k.backend.couple.service.IncreaseTemperatureFacade;
 import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
+import com.lovely4k.backend.question.QuestionFormType;
 import com.lovely4k.backend.question.repository.QuestionFormRepository;
 import com.lovely4k.backend.question.repository.QuestionRepository;
 import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
@@ -98,6 +99,12 @@ public class QuestionService {
     public AnsweredQuestionResponse findAllAnsweredQuestionByCoupleId(Long id, Long coupleId, int limit) {
         List<Question> questions= questionRepository.findQuestionsByCoupleIdWithLimit(id, coupleId, limit);
         return AnsweredQuestionResponse.from(questions);
+    }
+
+    @Transactional
+    public void deleteQuestion() {
+        questionRepository.deleteAll();
+        questionFormRepository.deleteAllByQuestionFormType(QuestionFormType.CUSTOM);
     }
 
 }

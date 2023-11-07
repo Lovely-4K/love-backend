@@ -4,8 +4,6 @@ import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.controller.request.CreateQuestionFormRequest;
 import com.lovely4k.backend.question.repository.QuestionRepository;
-import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
-import jakarta.persistence.OptimisticLockException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
