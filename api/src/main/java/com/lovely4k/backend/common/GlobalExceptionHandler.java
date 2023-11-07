@@ -2,6 +2,7 @@ package com.lovely4k.backend.common;
 
 
 import com.amazonaws.AmazonClientException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,5 +37,12 @@ public class GlobalExceptionHandler {
         ProblemDetail problemDetail = ProblemDetailCreator.create(e, request, HttpStatus.INTERNAL_SERVER_ERROR);
 
         return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, problemDetail);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ApiResponse<ProblemDetail>> handleEntityNotFoundException(EntityNotFoundException e, HttpServletRequest request) {
+        ProblemDetail problemDetail = ProblemDetailCreator.create(e, request, HttpStatus.BAD_REQUEST);
+
+        return ApiResponse.fail(HttpStatus.BAD_REQUEST, problemDetail);
     }
 }

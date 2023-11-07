@@ -2,6 +2,10 @@ package com.lovely4k.backend.couple;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 
@@ -63,4 +67,21 @@ class CoupleTest {
             .isEqualTo(meetDay);
     }
 
+    @DisplayName("hasAuthority를 통해 couple에 대한 권한이 있는 지 검증 할 수 있다.")
+    @CsvSource(value = {"1,true", "2,true", "3,false"})
+    @ParameterizedTest
+    void hasAuthority(Long memberId, boolean expected) {
+        // given
+        Couple couple = Couple.builder()
+                .boyId(1L)
+                .girlId(2L)
+                .invitationCode("sampleInvitationCode")
+                .build();
+
+        // when
+        boolean result = couple.hasAuthority(memberId);
+
+        // then
+        assertThat(result).isEqualTo(expected);
+    }
 }

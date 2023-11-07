@@ -1,5 +1,6 @@
 package com.lovely4k.backend.couple.service;
 
+import com.lovely4k.backend.common.ExceptionMessage;
 import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
@@ -67,6 +68,15 @@ public class CoupleService {
         couple.update(request.meetDay());
     }
 
+    @Transactional
+    public void deleteCouple(Long coupleId, Long memberId) {
+        Couple couple = findCouple(coupleId);
+        if (!couple.hasAuthority(memberId)) {
+            throw new IllegalArgumentException(ExceptionMessage.noAuthorityMessage("member", memberId, "couple", coupleId));
+        }
+        coupleRepository.delete(couple);
+    }
+  
     private Optional<Member> findMemberOptional(Optional<Long> memberId) {
         return memberRepository.findById(memberId.orElse(-1L));
     }

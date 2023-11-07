@@ -13,6 +13,8 @@ CREATE TABLE couple (
     girl_id BIGINT,
     meet_day date,
     invitation_code VARCHAR(255),
+    deleted BOOLEAN DEFAULT FALSE,
+    deleted_date DATE,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_couple_boy_id (boy_id),
