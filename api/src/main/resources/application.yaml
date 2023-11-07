@@ -18,4 +18,6 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
 
-
+love:
+  system:
+    max-affordable-time: 3
