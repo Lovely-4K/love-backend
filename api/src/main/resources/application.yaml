@@ -17,21 +17,5 @@ logging:
     root: info
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
-# prod
----
-spring:
-  config:
-    activate:
-      on-profile: prod1
 
-server:
-  port: 8081
 
----
-spring:
-  config:
-    activate:
-      on-profile: prod2
-
-server:
-  port: 8082
