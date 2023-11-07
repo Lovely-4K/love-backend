@@ -8,6 +8,7 @@ import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.member.controller.MemberController;
 import com.lovely4k.backend.member.service.MemberService;
 import com.lovely4k.backend.question.controller.QuestionController;
+import com.lovely4k.backend.question.service.QuestionQueryService;
 import com.lovely4k.backend.question.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -41,4 +42,7 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected CoupleService coupleService;
+
+    @MockBean
+    protected QuestionQueryService questionQueryService;
 }

@@ -95,6 +95,7 @@ CREATE TABLE question_form (
     third_choice VARCHAR(255),
     fourth_choice VARCHAR(255),
     question_day BIGINT,
+    question_form_type VARCHAR(31) NOT NULL ,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_question_form_member_id (member_id),

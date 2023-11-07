@@ -10,8 +10,9 @@ import com.lovely4k.backend.member.Sex;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+
+import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -119,8 +120,13 @@ class CoupleControllerDocsTest extends RestDocsSupport {
             new CoupleProfileGetResponse(
                 "듬직이",
                 "ESTJ",
+                "boyProfileUrl",
+                1L,
                 "깜찍이",
-                "INFP"
+                "INFP",
+                "girlProfile,Url",
+                2L,
+                LocalDate.of(2020, 7, 23)
             )
         );
 
@@ -140,10 +146,20 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                             .description("남자친구 별명"),
                         fieldWithPath("body.boyMbti").type(JsonFieldType.STRING)
                             .description("남자친구 MBTI"),
+                        fieldWithPath("body.boyImageUrl").type(JsonFieldType.STRING)
+                            .description("남자친구 프로필 사진 url"),
+                        fieldWithPath("body.boyId").type(JsonFieldType.NUMBER)
+                            .description("남자친구 id"),
                         fieldWithPath("body.girlNickname").type(JsonFieldType.STRING)
                             .description("여자친구 별명"),
                         fieldWithPath("body.girlMbti").type(JsonFieldType.STRING)
                             .description("여자친구 MBTI"),
+                        fieldWithPath("body.girlImageUrl").type(JsonFieldType.STRING)
+                            .description("여자친구 프로필 사진 url"),
+                        fieldWithPath("body.girlId").type(JsonFieldType.NUMBER)
+                            .description("여자친구 id"),
+                        fieldWithPath("body.meetDay").type(JsonFieldType.STRING)
+                            .description("만난날"),
                         fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
                             .description("relation of url"),
                         fieldWithPath("links[0].href").type(JsonFieldType.STRING)

@@ -29,15 +29,20 @@ public class QuestionForm extends BaseTimeEntity {
     @Column(name = "question_day")
     private Long questionDay;
 
-    private QuestionForm(Long memberId, String questionContent, QuestionChoices questionChoices, Long questionDay) {
+    @Enumerated(EnumType.STRING)
+    @Column(name = "question_form_type")
+    private QuestionFormType questionFormType;
+
+    private QuestionForm(Long memberId, String questionContent, QuestionChoices questionChoices, Long questionDay, QuestionFormType questionFormType) {
         this.memberId = memberId;
         this.questionContent = Objects.requireNonNull(questionContent);
         this.questionChoices = Objects.requireNonNull(questionChoices);
         this.questionDay = Objects.requireNonNull(questionDay);
+        this.questionFormType = Objects.requireNonNull(questionFormType);
     }
 
-    public static QuestionForm create(Long memberId, String questionContent, QuestionChoices questionChoices, Long questionDay) {
-        return new QuestionForm(memberId, questionContent, questionChoices, questionDay);
+    public static QuestionForm create(Long memberId, String questionContent, QuestionChoices questionChoices, Long questionDay, QuestionFormType questionFormType) {
+        return new QuestionForm(memberId, questionContent, questionChoices, questionDay, questionFormType);
     }
 
 }
