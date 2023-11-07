@@ -34,4 +34,3 @@ logging:
 love:
   system:
     max-affordable-time: 3
-    milli-seconds-to-second-unit: 0.001

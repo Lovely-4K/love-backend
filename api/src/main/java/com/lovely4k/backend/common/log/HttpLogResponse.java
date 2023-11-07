@@ -7,7 +7,7 @@ import lombok.SneakyThrows;
 
 import java.util.Map;
 
-public record HttpLog(
+public record HttpLogResponse(
     String ipAddress,
     String header,
     String uri,
@@ -19,7 +19,7 @@ public record HttpLog(
 ) {
 
     @SneakyThrows
-    public static HttpLog of(HttpServletRequest request, HttpServletResponse response, ObjectMapper objectMapper, Object proceed) {
+    public static HttpLogResponse of(HttpServletRequest request, HttpServletResponse response, ObjectMapper objectMapper, Object proceed) {
         String header = request.getHeader("User-Agent");
 
         String uri = request.getRequestURI();
@@ -30,7 +30,7 @@ public record HttpLog(
         int status = response.getStatus();
         String responseBody = proceed != null ? proceed.toString() : null;
 
-        return new HttpLog(getIpAddress(request), header, uri, requestBody, responseBody, parameter, httpMethod, status);
+        return new HttpLogResponse(getIpAddress(request), header, uri, requestBody, responseBody, parameter, httpMethod, status);
     }
 
     private static String getIpAddress(HttpServletRequest request) {
@@ -41,8 +41,8 @@ public record HttpLog(
         return ipAddress;
     }
 
-    public HttpLog removeBody() {
-        return new HttpLog(ipAddress, header, uri, "", "", parameter, httpMethod, status);
+    public HttpLogResponse removeBody() {
+        return new HttpLogResponse(ipAddress, header, uri, "", "", parameter, httpMethod, status);
     }
 
 }

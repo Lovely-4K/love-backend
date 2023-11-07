@@ -45,7 +45,7 @@ public class HttpAspect {
         double elapsedTime = (endTime - startTime) * MILLI_SECOND_TO_SECOND_UNIT;
 
         HttpServletResponse response = sra.getResponse();
-        HttpLog httpLog = HttpLog.of(request, Objects.requireNonNull(response), objectMapper, proceed);
+        HttpLogResponse httpLog = HttpLogResponse.of(request, Objects.requireNonNull(response), objectMapper, proceed);
 
         if (elapsedTime > maxAffordableTime) {
             log.warn(objectMapper.writeValueAsString(httpLog));
@@ -70,7 +70,7 @@ public class HttpAspect {
         Object proceed = joinPoint.proceed();
         HttpServletResponse response = sra.getResponse();
 
-        log.warn(objectMapper.writeValueAsString(HttpLog.of(request, Objects.requireNonNull(response), objectMapper, proceed)));
+        log.warn(objectMapper.writeValueAsString(HttpLogResponse.of(request, Objects.requireNonNull(response), objectMapper, proceed)));
 
         return proceed;
     }
