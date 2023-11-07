@@ -1,5 +1,6 @@
 package com.lovely4k.backend.question.service;
 
+import com.lovely4k.backend.couple.service.IncreaseTemperatureFacade;
 import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
@@ -10,6 +11,7 @@ import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRe
 import com.lovely4k.backend.question.service.response.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -21,6 +23,7 @@ import java.util.NoSuchElementException;
 
 import static com.lovely4k.backend.common.ExceptionMessage.notFoundEntityMessage;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -30,6 +33,7 @@ public class QuestionService {
     private final QuestionFormRepository questionFormRepository;
     private final QuestionValidator questionValidator;
     private final QuestionServiceSupporter questionServiceSupporter;
+    private final IncreaseTemperatureFacade facade;
     private static final int LOCK_TIME_OUT = 3;
 
     @Transactional(timeout = LOCK_TIME_OUT)
@@ -63,6 +67,16 @@ public class QuestionService {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(notFoundEntityMessage("question", id)));  // NOSONAR
         question.updateAnswer(answer, sex);
+        increaseTemperature(question);
+    }
+
+    private void increaseTemperature(Question question) {
+        try {
+            facade.increaseTemperature(question.getCoupleId());
+        } catch (InterruptedException e) {  // NOSONAR
+            log.warn("[System Error] Something went wrong during increasing temperature", e);
+            throw new IllegalStateException("System Error Occurred",e);
+        }
     }
 
     public DailyQuestionResponse findDailyQuestion(Long coupleId) {

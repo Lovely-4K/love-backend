@@ -41,9 +41,9 @@ public class QuestionController {
     public ResponseEntity<ApiResponse<DailyQuestionResponse>> getDailyQuestion(@RequestParam("coupleId") Long coupleId) {
 
         return ApiResponse.ok(questionService.findDailyQuestion(coupleId),
-                linkTo(methodOn(getClass()).getDailyQuestion(coupleId)).withSelfRel(),
-                linkTo(getClass().getMethod(CREATE_QUESTION, Long.class)).withRel(CREATE_QUESTION),
-                linkTo(getClass().getMethod(CREATE_QUESTION_FORM, CreateQuestionFormRequest.class, Long.class, Long.class)).withRel(CREATE_QUESTION_FORM));
+            linkTo(methodOn(getClass()).getDailyQuestion(coupleId)).withSelfRel(),
+            linkTo(getClass().getMethod(CREATE_QUESTION, Long.class)).withRel(CREATE_QUESTION),
+            linkTo(getClass().getMethod(CREATE_QUESTION_FORM, CreateQuestionFormRequest.class, Long.class, Long.class)).withRel(CREATE_QUESTION_FORM));
     }
 
     @SneakyThrows
@@ -52,9 +52,9 @@ public class QuestionController {
         CreateQuestionFormResponse response = questionService.createQuestionForm(request.toServiceDto(), coupleId, memberId);
 
         return ApiResponse.created(response, response.questionId(),
-                linkTo(methodOn(getClass()).createQuestionForm(request, memberId, coupleId)).withSelfRel(),
-                linkTo(getClass().getMethod(ANSWER_QUESTION, Long.class, Sex.class, AnswerQuestionRequest.class)).withRel(ANSWER_QUESTION),
-                linkTo(getClass().getMethod(GET_DAILY_QUESTION, Long.class)).withRel(GET_DAILY_QUESTION));
+            linkTo(methodOn(getClass()).createQuestionForm(request, memberId, coupleId)).withSelfRel(),
+            linkTo(getClass().getMethod(ANSWER_QUESTION, Long.class, Sex.class, AnswerQuestionRequest.class)).withRel(ANSWER_QUESTION),
+            linkTo(getClass().getMethod(GET_DAILY_QUESTION, Long.class)).withRel(GET_DAILY_QUESTION));
     }
 
 
@@ -64,8 +64,8 @@ public class QuestionController {
         CreateQuestionResponse response = questionService.createQuestion(coupleId);
 
         return ApiResponse.created(response, response.questionId(),
-                linkTo(methodOn(getClass()).createQuestion(coupleId)).withSelfRel(),
-                linkTo(getClass().getMethod(GET_DAILY_QUESTION, Long.class)).withRel(GET_DAILY_QUESTION));
+            linkTo(methodOn(getClass()).createQuestion(coupleId)).withSelfRel(),
+            linkTo(getClass().getMethod(GET_DAILY_QUESTION, Long.class)).withRel(GET_DAILY_QUESTION));
     }
 
 
@@ -75,17 +75,17 @@ public class QuestionController {
         questionService.updateQuestionAnswer(id, sex, request.choiceNumber());
 
         return ApiResponse.ok(
-                linkTo(methodOn(getClass()).answerQuestion(id, sex, request)).withSelfRel(),
-                linkTo(getClass().getMethod(GET_ANSWERED_QUESTIONS, AnsweredQuestionParamRequest.class)).withRel(GET_ANSWERED_QUESTIONS),
-                linkTo(getClass().getMethod(GET_QUESTION_DETAILS, Long.class, Long.class, Sex.class)).withRel(GET_QUESTION_DETAILS));
+            linkTo(methodOn(getClass()).answerQuestion(id, sex, request)).withSelfRel(),
+            linkTo(getClass().getMethod(GET_ANSWERED_QUESTIONS, AnsweredQuestionParamRequest.class)).withRel(GET_ANSWERED_QUESTIONS),
+            linkTo(getClass().getMethod(GET_QUESTION_DETAILS, Long.class, Long.class, Sex.class)).withRel(GET_QUESTION_DETAILS));
     }
 
     @SneakyThrows
     @GetMapping
     public ResponseEntity<ApiResponse<AnsweredQuestionResponse>> getAnsweredQuestions(@ModelAttribute @Valid AnsweredQuestionParamRequest params) {
         return ApiResponse.ok(questionService.findAllAnsweredQuestionByCoupleId(params.getId(), params.getCoupleId(), params.getLimit()),
-                linkTo(methodOn(getClass()).getAnsweredQuestions(params)).withSelfRel(),
-                linkTo(getClass().getMethod(GET_QUESTION_DETAILS, Long.class, Long.class, Sex.class)).withRel(GET_QUESTION_DETAILS));
+            linkTo(methodOn(getClass()).getAnsweredQuestions(params)).withSelfRel(),
+            linkTo(getClass().getMethod(GET_QUESTION_DETAILS, Long.class, Long.class, Sex.class)).withRel(GET_QUESTION_DETAILS));
     }
 
 
@@ -93,8 +93,8 @@ public class QuestionController {
     @GetMapping("/details/{id}")
     public ResponseEntity<ApiResponse<QuestionDetailsResponse>> getQuestionDetails(@PathVariable("id") Long id, @RequestParam("memberId") Long memberId, @RequestParam("sex") Sex sex) {
         return ApiResponse.ok(questionQueryService.findQuestionDetails(id, memberId, sex),
-                linkTo(methodOn(getClass()).getQuestionDetails(id, memberId, sex)).withSelfRel(),
-                linkTo(getClass().getMethod(GET_ANSWERED_QUESTIONS, AnsweredQuestionParamRequest.class)).withRel(GET_ANSWERED_QUESTIONS));
+            linkTo(methodOn(getClass()).getQuestionDetails(id, memberId, sex)).withSelfRel(),
+            linkTo(getClass().getMethod(GET_ANSWERED_QUESTIONS, AnsweredQuestionParamRequest.class)).withRel(GET_ANSWERED_QUESTIONS));
     }
 
     //관리자용 엔드포인트

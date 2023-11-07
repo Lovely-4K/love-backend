@@ -1,6 +1,8 @@
 package com.lovely4k.backend.question.service;
 
 import com.lovely4k.TestData;
+import com.lovely4k.backend.couple.service.CoupleService;
+import com.lovely4k.backend.couple.service.IncreaseTemperatureFacade;
 import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
@@ -41,6 +43,9 @@ class QuestionServiceTest {
 
     @Mock
     QuestionFormRepository questionFormRepository;
+
+    @Mock
+    IncreaseTemperatureFacade facade;
 
     @InjectMocks
     QuestionService questionService;

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static com.lovely4k.backend.member.Sex.FEMALE;
 import static com.lovely4k.backend.member.Sex.MALE;
@@ -170,6 +171,52 @@ class CoupleServiceTest extends IntegrationTestSupport {
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
 
         assertThat(findCouple.getMeetDay()).isEqualTo(request.meetDay());
+    }
+
+    @DisplayName("커플을 삭제할 경우 다이어리를 조회할 수 없어야 한다.")
+    @Test
+    void deleteCouple() {
+        // given
+        Couple couple = Couple.builder()
+                .boyId(1L)
+                .girlId(2L)
+                .meetDay(LocalDate.of(2020, 10, 20))
+                .invitationCode("test-code")
+                .build();
+        Couple savedCouple = coupleRepository.save(couple);
+
+        Couple findCouple = coupleRepository.findById(savedCouple.getId()).orElseThrow();
+        assertAll(
+                () -> assertThat(findCouple.isDeleted()).isFalse(),
+                () -> assertThat(findCouple.getDeletedDate()).isNull()
+        );
+
+        // when
+        coupleService.deleteCouple(savedCouple.getId(), 1L);
+
+        // then
+        Optional<Couple> optionalCouple = coupleRepository.findById(savedCouple.getId());
+        assertThat(optionalCouple).isNotPresent();
+
+    }
+
+    @DisplayName("삭제 권한이 없는 경우 IllegalArgumentException이 발생한다.")
+    @Test
+    void deleteCouple_noAuthority() {
+        // given
+        Couple couple = Couple.builder()
+                .boyId(1L)
+                .girlId(2L)
+                .meetDay(LocalDate.of(2020, 10, 20))
+                .invitationCode("test-code")
+                .build();
+        Couple savedCouple = coupleRepository.save(couple);
+        Long coupleId = savedCouple.getId();
+        // when && then
+        assertThatThrownBy(
+                () -> coupleService.deleteCouple(coupleId, 3L)
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(String.format("%s %d은 %s %d에 대한 권한이 없음", "member", 3, "couple", couple.getId()));
     }
 
     private Member createMember(Sex sex, String name, String mbti, String nickname) {

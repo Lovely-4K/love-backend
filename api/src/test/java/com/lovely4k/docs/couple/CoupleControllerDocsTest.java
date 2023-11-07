@@ -25,6 +25,8 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -208,5 +210,25 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                     )
                 )
             );
+    }
+
+    @DisplayName("커플을 삭제하는 API")
+    @Test
+    void deleteCouple() throws Exception{
+        // when && then
+        this.mockMvc.perform(
+                        delete("/v1/couples/{coupleId}", 1)
+                                .queryParam("memberId", "1")
+                )
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andDo(document("couple-delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("memberId").description("회원 아이디")
+                        )
+                ))
+        ;
     }
 }

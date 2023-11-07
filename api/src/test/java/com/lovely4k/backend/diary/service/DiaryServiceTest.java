@@ -2,6 +2,8 @@ package com.lovely4k.backend.diary.service;
 
 import com.lovely4k.backend.IntegrationTestSupport;
 import com.lovely4k.backend.common.imageuploader.ImageUploader;
+import com.lovely4k.backend.couple.Couple;
+import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
@@ -50,6 +52,9 @@ class DiaryServiceTest extends IntegrationTestSupport {
     @Autowired
     LocationRepository locationRepository;
 
+    @Autowired
+    CoupleRepository coupleRepository;
+
     @MockBean
     ImageUploader imageUploader;
 
@@ -62,13 +67,19 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
     @DisplayName("createDiary 메서드를 통해 다이어리를 생성할 수 있다.")
     @Test
-    void createDiary() {
+    void createDiary() throws InterruptedException {
         // given
         Member member = Member.builder()
                 .name("tommy")
                 .sex(MALE)
                 .build();
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
+
+        Couple couple = Couple.create(savedMember.getId(), MALE, "test-code");
+        Couple savedCouple = coupleRepository.save(couple);
+
+        savedMember.registerCoupleId(savedCouple.getId());
+        memberRepository.save(savedMember);
 
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
@@ -82,11 +93,12 @@ class DiaryServiceTest extends IntegrationTestSupport {
         ).willReturn(List.of("first-image-url", "second-image-url"));
 
         // when
-        Long diaryId = diaryService.createDiary(multipartFileList, diaryCreateRequest, member.getId());
+        Long diaryId = diaryService.createDiary(multipartFileList, diaryCreateRequest, savedMember.getId());
 
         // then
         Diary findDiary = diaryRepository.findById(diaryId).orElseThrow();
         Location findLocation = locationRepository.findById(findDiary.getLocation().getId()).orElseThrow();
+        Couple findCouple = coupleRepository.findById(savedCouple.getId()).orElseThrow();
 
         assertAll(
                 () -> assertThat(findDiary.getId()).isEqualTo(diaryId),
@@ -94,9 +106,9 @@ class DiaryServiceTest extends IntegrationTestSupport {
                 () -> assertThat(findLocation.getKakaoMapId()).isEqualTo(1L),
                 () -> assertThat(findDiary.getPhotos()).isNotNull(),
                 () -> assertThat(findDiary.getPhotos().getFirstImage()).isEqualTo("first-image-url"),
-                () -> assertThat(findDiary.getPhotos().getSecondImage()).isEqualTo("second-image-url")
+                () -> assertThat(findDiary.getPhotos().getSecondImage()).isEqualTo("second-image-url"),
+                () -> assertThat(findCouple.getTemperature()).isEqualTo(1f)
         );
-
     }
 
     @DisplayName("유효하지 않은 Member Id로 다이어리 생성하려고 할 경우 EntityNotFoundException이 발생한다.")
@@ -130,24 +142,34 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
     @DisplayName("이미지가 없는 경우 이미지업로드가 되지 않고, emptyList를 반환한다.")
     @Test
-    void createDiaryNoImage() {
+    void createDiaryNoImage() throws InterruptedException {
         // given
         Member member = Member.builder()
                 .name("tommy")
                 .sex(MALE)
                 .build();
-        memberRepository.save(member);
-        Long memberId = member.getId();
+        Member savedMember = memberRepository.save(member);
+
+
+        Couple couple = Couple.create(savedMember.getId(), MALE, "test-code");
+        Couple savedCouple = coupleRepository.save(couple);
+
+        savedMember.registerCoupleId(savedCouple.getId());
+        memberRepository.save(savedMember);
 
         DiaryCreateRequest diaryCreateRequest =
                 new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
 
         // when
-        Long savedDiaryId = diaryService.createDiary(Collections.emptyList(), diaryCreateRequest, memberId);
+        Long savedDiaryId = diaryService.createDiary(Collections.emptyList(), diaryCreateRequest, savedMember.getId());
 
         // then
         Diary findDiary = diaryRepository.findById(savedDiaryId).orElseThrow();
-        assertThat(findDiary.getPhotos()).isNull();
+        Couple findCouple = coupleRepository.findById(savedCouple.getId()).orElseThrow();
+        assertAll(
+                () -> assertThat(findDiary.getPhotos()).isNull(),
+                () -> assertThat(findCouple.getTemperature()).isEqualTo(1f)
+        );
     }
 
     @DisplayName("5개 이상의 이미지를 업로드 하려고 하는 경우 IllegalArgumentException이 발생한다.")
