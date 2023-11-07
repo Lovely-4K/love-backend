@@ -194,8 +194,6 @@ class CoupleServiceTest extends IntegrationTestSupport {
         // when
         coupleService.deleteCouple(savedCouple.getId(), 1L);
 
-        coupleRepository.flush();
-
         // then
         Optional<Couple> optionalCouple = coupleRepository.findById(savedCouple.getId());
         assertThat(optionalCouple).isNotPresent();
