@@ -27,10 +27,7 @@ public class HttpAspect {
     @Value("${love.system.max-affordable-time}")
     private double maxAffordableTime;
 
-    @Value("${love.system.milli-seconds-to-second-unit}")
-    private double milliSecondToSecondUnit;
     private static final double MILLI_SECOND_TO_SECOND_UNIT = 0.001;
-    private static final double MAX_AFFORDABLE_TIME = 3;
 
     /*
      * Controller Log
@@ -45,7 +42,7 @@ public class HttpAspect {
         long startTime = System.currentTimeMillis();
         Object proceed = joinPoint.proceed();
         long endTime = System.currentTimeMillis();
-        double elapsedTime = (endTime - startTime) * milliSecondToSecondUnit;
+        double elapsedTime = (endTime - startTime) * MILLI_SECOND_TO_SECOND_UNIT;
 
         HttpServletResponse response = sra.getResponse();
         HttpLog httpLog = HttpLog.of(request, Objects.requireNonNull(response), objectMapper, proceed);
