@@ -125,12 +125,13 @@ class ArchTests {
     @Test
     void serviceDependencyInjectionTest() {
         ArchRule serviceDependencyInjectRule = classes().that().haveSimpleNameEndingWith("Service")
-            .should(new ArchCondition<>("have 5 or fewer final fields for dependency injection") {
-                @Override
-                public void check(JavaClass item, ConditionEvents events) {
-                    long finalFieldCount = item.getFields().stream()
-                        .filter(field -> field.getModifiers().contains(JavaModifier.FINAL))
-                        .count();
+                .should(new ArchCondition<>("have 5 or fewer final fields for dependency injection") {
+                    @Override
+                    public void check(JavaClass item, ConditionEvents events) {
+                        long finalFieldCount = item.getFields().stream()
+                                .filter(field -> field.getModifiers().contains(JavaModifier.FINAL))
+                                .filter(field -> !field.getModifiers().contains(JavaModifier.STATIC))  // static 필드 제외
+                                .count();
 
                     boolean satisfied = finalFieldCount <= 5;
 

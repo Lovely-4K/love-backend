@@ -69,6 +69,13 @@ public class CoupleService {
     }
 
     @Transactional
+    public void increaseTemperature(Long coupleId) {
+        Couple couple = coupleRepository.findByIdWithOptimisticLock(coupleId)
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
+        couple.increaseTemperature();
+    }
+  
+    @Transactional
     public void deleteCouple(Long coupleId, Long memberId) {
         Couple couple = findCouple(coupleId);
         if (!couple.hasAuthority(memberId)) {
