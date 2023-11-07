@@ -24,7 +24,7 @@ class DiaryTest {
         LocalDate localDate = LocalDate.of(2023, 10, 20);
         String text = "안녕하세요";
         Member member = Member.builder()
-                .name("tommy")
+                .nickname("tommy")
                 .sex(MALE)
                 .coupleId(1L)
                 .build();
@@ -52,7 +52,7 @@ class DiaryTest {
         LocalDate localDate = LocalDate.of(2023, 10, 20);
         String text = "안녕하세요";
         Member member = Member.builder()
-                .name("tommy")
+                .nickname("tommy")
                 .sex(FEMALE)
                 .coupleId(1L)
                 .build();
@@ -80,7 +80,7 @@ class DiaryTest {
         LocalDate localDate = LocalDate.of(2023, 10, 20);
         String text = "안녕하세요";
         Member member = Member.builder()
-                .name("tommy")
+                .nickname("tommy")
                 .sex(MALE)
                 .build();
 
@@ -102,7 +102,7 @@ class DiaryTest {
         LocalDate localDate = LocalDate.of(2023, 10, 20);
         String text = "안녕하세요";
         Member member = Member.builder()
-                .name("tommy")
+                .nickname("tommy")
                 .sex(MALE)
                 .build();
 

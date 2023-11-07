@@ -14,7 +14,7 @@ public class QuestionQueryService {
 
     private final QuestionQueryRepository questionQueryRepository;
 
-    public QuestionDetailsResponse findQuestionDetails(long questionId, long memberId, Sex sex) {
+    public QuestionDetailsResponse findQuestionDetails(Long questionId, Long memberId, Sex sex) {
         return questionQueryRepository.findQuestionDetails(questionId, sex, memberId);
     }
 }

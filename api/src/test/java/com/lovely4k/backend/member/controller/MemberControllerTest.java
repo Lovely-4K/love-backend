@@ -30,7 +30,6 @@ class MemberControllerTest extends ControllerTestSupport {
         given(memberService.findMemberProfile(memberId))
             .willReturn(new MemberProfileGetResponse(
                     "sampleImageUrl",
-                    "김철수",
                     "듬직이",
                     LocalDate.of(1996, 7, 30),
                     "ESFJ",
@@ -39,13 +38,12 @@ class MemberControllerTest extends ControllerTestSupport {
             );
 
         //when //then
-        mockMvc.perform(get("/v1/members")
-                .queryParam("memberId", "1"))
+        mockMvc.perform(get("/v1/members"))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.code").value(200))
             .andExpect(jsonPath("$.body.mbti").value("ESFJ"))
-            .andExpect(jsonPath("$.body.name").value("김철수"));
+            .andExpect(jsonPath("$.body.nickname").value("듬직이"));
     }
 
     @Test
@@ -53,7 +51,6 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfile() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "김동수",
             "길쭉이",
             LocalDate.of(1996, 7, 31),
             "ENFP",
@@ -68,7 +65,6 @@ class MemberControllerTest extends ControllerTestSupport {
                 multipart(HttpMethod.PATCH, "/v1/members")
                     .file(images)
                     .file(texts)
-                    .queryParam("memberId", "1")
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .characterEncoding("UTF-8"))
             .andDo(print())
@@ -76,41 +72,12 @@ class MemberControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.body").isEmpty());
     }
 
-    @Test
-    @DisplayName("회원 프로필을 수정할 경우 이름이 반드시 입력되어야 한다.")
-    void editMemberProfileWithout() throws Exception {
-        //given
-        MemberProfileEditRequest request = new MemberProfileEditRequest(
-            null,
-            "길쭉이",
-            LocalDate.of(1996, 7, 31),
-            "ENFP",
-            "blue"
-        );
-
-        MockMultipartFile images = new MockMultipartFile("images", "profileImage.png", "image/png", "profileImage data".getBytes());
-        MockMultipartFile texts = new MockMultipartFile("texts", "", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
-
-        //when //then
-        mockMvc.perform(
-                multipart(HttpMethod.PATCH, "/v1/members")
-                    .file(images)
-                    .file(texts)
-                    .queryParam("memberId", "1")
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
-                    .characterEncoding("UTF-8"))
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.code").value("400"))
-            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"));
-    }
 
     @Test
     @DisplayName("회원 프로필을 수정할 경우 별명이 반드시 입력되어야 한다.")
     void editMemberProfileWithoutNickname() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "김동수",
             null,
             LocalDate.of(1996, 7, 31),
             "ENFP",
@@ -139,7 +106,6 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithoutBirthday() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "김동수",
             "길쭉이",
             null,
             "ENFP",
@@ -154,7 +120,6 @@ class MemberControllerTest extends ControllerTestSupport {
                 multipart(HttpMethod.PATCH, "/v1/members")
                     .file(images)
                     .file(texts)
-                    .queryParam("memberId", "1")
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .characterEncoding("UTF-8"))
             .andDo(print())
@@ -168,7 +133,6 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithoutMBTI() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "김동수",
             "길쭉이",
             LocalDate.of(1996, 7, 31),
             null,
@@ -183,7 +147,6 @@ class MemberControllerTest extends ControllerTestSupport {
                 multipart(HttpMethod.PATCH, "/v1/members")
                     .file(images)
                     .file(texts)
-                    .queryParam("memberId", "1")
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .characterEncoding("UTF-8"))
             .andDo(print())
@@ -197,7 +160,6 @@ class MemberControllerTest extends ControllerTestSupport {
     void editMemberProfileWithoutColor() throws Exception {
         //given
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "김동수",
             "길쭉이",
             LocalDate.of(1996, 7, 31),
             "ENFP",
@@ -212,7 +174,6 @@ class MemberControllerTest extends ControllerTestSupport {
                 multipart(HttpMethod.PATCH, "/v1/members")
                     .file(images)
                     .file(texts)
-                    .queryParam("memberId", "1")
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .characterEncoding("UTF-8"))
             .andDo(print())

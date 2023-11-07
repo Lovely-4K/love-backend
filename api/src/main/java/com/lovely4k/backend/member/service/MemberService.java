@@ -66,7 +66,6 @@ public class MemberService {
     private void updateMemberProfile(String profileImageUrl, MemberProfileEditServiceRequest serviceRequest, Member findMember) {
         findMember.updateProfile(
             profileImageUrl,
-            serviceRequest.name(),
             serviceRequest.nickname(),
             serviceRequest.birthday(),
             serviceRequest.mbti(),

@@ -6,7 +6,6 @@ import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditReque
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
-import com.lovely4k.backend.member.Sex;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -42,13 +40,11 @@ class CoupleControllerDocsTest extends RestDocsSupport {
     @DisplayName("초대코드를 생성하는 API")
     void createInvitationCode() throws Exception {
 
-        given(coupleService.createInvitationCode(anyLong(), any(Sex.class)))
+        given(coupleService.createInvitationCode(any(), any()))
             .willReturn(new InvitationCodeCreateResponse(1L, "SampleInvitationCode"));
 
         mockMvc.perform(
                 post("/v1/couples/invitation-code")
-                    .param("requestedMemberId", "1")
-                    .param("sex", "MALE")
                     .characterEncoding("utf-8")
                     .contentType(APPLICATION_JSON)
             )
@@ -85,7 +81,6 @@ class CoupleControllerDocsTest extends RestDocsSupport {
         mockMvc.perform(
                 post("/v1/couples")
                     .param("invitationCode", "invitationCodeSample")
-                    .param("receivedMemberId", "1")
                     .characterEncoding("utf-8")
                     .contentType(APPLICATION_JSON)
             )
@@ -114,7 +109,7 @@ class CoupleControllerDocsTest extends RestDocsSupport {
     @Test
     @DisplayName("커플 프로필을 조회하는 API")
     void getCoupleProfile() throws Exception {
-        given(coupleService.findCoupleProfile(1L)).willReturn(
+        given(coupleService.findCoupleProfile(any())).willReturn(
             new CoupleProfileGetResponse(
                 "듬직이",
                 "ESTJ",
@@ -130,7 +125,6 @@ class CoupleControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                 get("/v1/couples")
-                    .param("memberId", "1")
                     .characterEncoding("utf-8")
             )
             .andDo(print())
@@ -179,7 +173,6 @@ class CoupleControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                 patch("/v1/couples")
-                    .param("memberId", "1")
                     .content(objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(request))
                     .contentType(APPLICATION_JSON)
                     .characterEncoding("utf-8"))

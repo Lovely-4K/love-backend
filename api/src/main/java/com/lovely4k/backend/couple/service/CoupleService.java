@@ -25,7 +25,8 @@ public class CoupleService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public InvitationCodeCreateResponse createInvitationCode(Long requestedMemberId, Sex sex) {
+    public InvitationCodeCreateResponse
+    createInvitationCode(Long requestedMemberId, Sex sex) {
         String invitationCode = UUID.randomUUID().toString();
 
         Couple couple = Couple.create(requestedMemberId, sex, invitationCode);

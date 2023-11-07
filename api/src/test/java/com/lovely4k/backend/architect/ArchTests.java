@@ -153,6 +153,7 @@ class ArchTests {
             .that().areAnnotatedWith(Service.class)
             .and().haveSimpleNameNotEndingWith("QueryService")
             .and().haveSimpleNameNotEndingWith("CommandService")
+            .and().haveSimpleNameNotStartingWith("OAuth2")
             .should(haveTransactionalReadOnly())
             .andShould(haveOtherMethodsTransactional());
 

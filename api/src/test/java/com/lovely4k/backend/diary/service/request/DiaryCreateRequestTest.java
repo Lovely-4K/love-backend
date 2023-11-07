@@ -18,7 +18,7 @@ class DiaryCreateRequestTest {
     void toEntity() {
         // given
         Member member = Member.builder()
-                .name("tommy")
+                .nickname("tommy")
                 .sex(MALE)
                 .coupleId(1L)
                 .build();

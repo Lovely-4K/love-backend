@@ -18,7 +18,7 @@ class DiaryControllerTest extends ControllerTestSupport {
 
     @DisplayName("다이어리를 작성한다.")
     @Test
-    void createDiary() throws Exception{
+    void createDiary() throws Exception {
         // given
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-files".getBytes());
         MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
@@ -26,35 +26,33 @@ class DiaryControllerTest extends ControllerTestSupport {
 
         // when && then
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.multipart("/v1/diaries")
-                                .file(firstImage)
-                                .file(mockMultipartFile)
-                                .param("memberId", "1")
-                )
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.code").value("201"))
-                .andExpect(jsonPath("$.body").isEmpty())
+                RestDocumentationRequestBuilders.multipart("/v1/diaries")
+                    .file(firstImage)
+                    .file(mockMultipartFile)
+            )
+            .andDo(print())
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.code").value("201"))
+            .andExpect(jsonPath("$.body").isEmpty())
         ;
     }
 
     @DisplayName("다이어리를 작성시 이미지 파일은 필수값이 아니다.")
     @Test
-    void createDiaryWithoutImage() throws Exception{
+    void createDiaryWithoutImage() throws Exception {
         // given
         MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
 
         // when && then
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.multipart("/v1/diaries")
-                                .file(mockMultipartFile)
-                                .param("memberId", "1")
-                )
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.code").value("201"))
-                .andExpect(jsonPath("$.body").isEmpty())
+                RestDocumentationRequestBuilders.multipart("/v1/diaries")
+                    .file(mockMultipartFile)
+            )
+            .andDo(print())
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.code").value("201"))
+            .andExpect(jsonPath("$.body").isEmpty())
         ;
     }
 
@@ -69,15 +67,14 @@ class DiaryControllerTest extends ControllerTestSupport {
 
         // when && then
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.multipart("/v1/diaries")
-                                .file(firstImage)
-                                .file(mockMultipartFile)
-                                .param("memberId", "1")
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+                RestDocumentationRequestBuilders.multipart("/v1/diaries")
+                    .file(firstImage)
+                    .file(mockMultipartFile)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
         ;
     }
 
@@ -89,15 +86,14 @@ class DiaryControllerTest extends ControllerTestSupport {
         MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, null, 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.multipart("/v1/diaries")
-                                .file(firstImage)
-                                .file(mockMultipartFile)
-                                .param("memberId", "1")
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+                RestDocumentationRequestBuilders.multipart("/v1/diaries")
+                    .file(firstImage)
+                    .file(mockMultipartFile)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
         ;
     }
 
@@ -109,15 +105,14 @@ class DiaryControllerTest extends ControllerTestSupport {
         MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", -1, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.multipart("/v1/diaries")
-                                .file(firstImage)
-                                .file(mockMultipartFile)
-                                .param("memberId", "1")
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+                RestDocumentationRequestBuilders.multipart("/v1/diaries")
+                    .file(firstImage)
+                    .file(mockMultipartFile)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
         ;
     }
 
@@ -128,15 +123,14 @@ class DiaryControllerTest extends ControllerTestSupport {
         MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 6, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.multipart("/v1/diaries")
-                                .file(firstImage)
-                                .file(mockMultipartFile)
-                                .param("memberId", "1")
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+                RestDocumentationRequestBuilders.multipart("/v1/diaries")
+                    .file(firstImage)
+                    .file(mockMultipartFile)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
         ;
     }
 
@@ -147,15 +141,14 @@ class DiaryControllerTest extends ControllerTestSupport {
         MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, null, "ACCOMODATION", "여기 숙소 좋았어..!");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.multipart("/v1/diaries")
-                                .file(firstImage)
-                                .file(mockMultipartFile)
-                                .param("memberId", "1")
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+                RestDocumentationRequestBuilders.multipart("/v1/diaries")
+                    .file(firstImage)
+                    .file(mockMultipartFile)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
         ;
     }
 
@@ -166,14 +159,13 @@ class DiaryControllerTest extends ControllerTestSupport {
         MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-1-2", "ACCOMODATION", "여기 숙소 좋았어..!");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.multipart("/v1/diaries")
-                                .file(firstImage)
-                                .file(mockMultipartFile)
-                                .param("memberId", "1")
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
+                RestDocumentationRequestBuilders.multipart("/v1/diaries")
+                    .file(firstImage)
+                    .file(mockMultipartFile)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
         ;
     }
 
@@ -184,15 +176,14 @@ class DiaryControllerTest extends ControllerTestSupport {
         MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-10-20", "LEISURE", "여기 숙소 좋았어..!");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.multipart("/v1/diaries")
-                                .file(firstImage)
-                                .file(mockMultipartFile)
-                                .param("memberId", "1")
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+                RestDocumentationRequestBuilders.multipart("/v1/diaries")
+                    .file(firstImage)
+                    .file(mockMultipartFile)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
         ;
     }
 
@@ -203,15 +194,14 @@ class DiaryControllerTest extends ControllerTestSupport {
         MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-10-20", "ACCOMODATION", null);
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.multipart("/v1/diaries")
-                                .file(firstImage)
-                                .file(mockMultipartFile)
-                                .param("memberId", "1")
-                )
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+                RestDocumentationRequestBuilders.multipart("/v1/diaries")
+                    .file(firstImage)
+                    .file(mockMultipartFile)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
         ;
     }
 }

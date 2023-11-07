@@ -2,6 +2,7 @@ package com.lovely4k.backend.member.service;
 
 import com.lovely4k.backend.common.imageuploader.ImageUploader;
 import com.lovely4k.backend.member.Member;
+import com.lovely4k.backend.member.Role;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import com.lovely4k.backend.member.service.request.MemberProfileEditServiceRequest;
 import com.lovely4k.backend.member.service.response.MemberProfileGetResponse;
@@ -50,8 +51,8 @@ class MemberServiceTest {
 
         //then
         assertThat(memberProfileGetResponse)
-            .extracting("imageUrl", "name")
-            .contains("http://www.imageUrlSample.com", "김철수");
+            .extracting("imageUrl","nickname")
+            .contains("http://www.imageUrlSample.com", "듬직이");
     }
 
     @Test
@@ -75,7 +76,6 @@ class MemberServiceTest {
         Member savedMember = memberRepository.save(member);
 
         MemberProfileEditServiceRequest serviceRequest = new MemberProfileEditServiceRequest(
-            "김동수",
             "길쭉이",
             LocalDate.of(1996, 7, 31),
             "ENFP",
@@ -95,8 +95,8 @@ class MemberServiceTest {
         Member updatedMember = memberRepository.findById(savedMember.getId())
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 id 입니다."));
 
-        assertThat(updatedMember).extracting("name", "nickname", "birthday", "imageUrl")
-            .contains("김동수", "길쭉이", LocalDate.of(1996, 7, 31), "profile-image-url");
+        assertThat(updatedMember).extracting( "nickname", "birthday", "imageUrl")
+            .contains("길쭉이", LocalDate.of(1996, 7, 31), "profile-image-url");
     }
 
     @Test
@@ -108,7 +108,6 @@ class MemberServiceTest {
         Long savedMemberId = savedMember.getId();
 
         MemberProfileEditServiceRequest serviceRequest = new MemberProfileEditServiceRequest(
-            "김동수",
             "길쭉이",
             LocalDate.of(1996, 7, 31),
             "ENFP",
@@ -132,7 +131,6 @@ class MemberServiceTest {
         Member savedMember = memberRepository.save(member);
 
         MemberProfileEditServiceRequest serviceRequest = new MemberProfileEditServiceRequest(
-            "김동수",
             "길쭉이",
             LocalDate.of(1996, 7, 31),
             "ENFP",
@@ -146,20 +144,20 @@ class MemberServiceTest {
         Member updatedMember = memberRepository.findById(savedMember.getId())
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 id 입니다."));
 
-        assertThat(updatedMember).extracting("name", "nickname", "birthday", "imageUrl")
-            .contains("김동수", "길쭉이", LocalDate.of(1996, 7, 31), "http://www.imageUrlSample.com");
+        assertThat(updatedMember).extracting("nickname", "birthday", "imageUrl")
+            .contains("길쭉이", LocalDate.of(1996, 7, 31), "http://www.imageUrlSample.com");
     }
 
     private Member createMember() {
         return Member.builder()
             .coupleId(1L)
             .sex(MALE)
-            .name("김철수")
             .nickname("듬직이")
             .birthday(LocalDate.of(1996, 7, 30))
             .mbti("ESFJ")
             .calendarColor("white")
             .imageUrl("http://www.imageUrlSample.com")
+            .role(Role.USER)
             .build();
     }
 }
