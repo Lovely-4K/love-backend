@@ -8,19 +8,24 @@ import com.lovely4k.backend.member.service.response.MemberProfileGetResponse;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,7 +69,7 @@ class MemberControllerDocsTest extends RestDocsSupport {
                             .description("이름"),
                         fieldWithPath("body.nickname").type(JsonFieldType.STRING)
                             .description("별명"),
-                        fieldWithPath("body.birthday").type(JsonFieldType.ARRAY)
+                        fieldWithPath("body.birthday").type(JsonFieldType.STRING)
                             .description("생년월일"),
                         fieldWithPath("body.mbti").type(JsonFieldType.STRING)
                             .description("MBTI"),
@@ -87,27 +92,28 @@ class MemberControllerDocsTest extends RestDocsSupport {
     @DisplayName("회원 프로필을 수정하는 API")
     void editProfile() throws Exception {
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "imageUrlSample",
             "김영희",
             "이쁜이",
             LocalDate.of(1997, 3, 20),
             "INTP",
             "blue");
 
+        MockMultipartFile images = new MockMultipartFile("images", "profileImage.png", "image/png", "profileImage data".getBytes());
+        MockMultipartFile texts = new MockMultipartFile("texts", "", MediaType.APPLICATION_JSON_VALUE, objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(request).getBytes(StandardCharsets.UTF_8));
+
         mockMvc.perform(
-                patch("/v1/members")
-                    .content(objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(request))
+                multipart(HttpMethod.PATCH, "/v1/members")
+                    .file(images)
+                    .file(texts)
                     .queryParam("memberId", "1")
-                    .contentType(APPLICATION_JSON)
-                    .characterEncoding("utf-8"))
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .characterEncoding("UTF-8"))
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("member-profile-edit",
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
-                    requestFields(
-                        fieldWithPath("imageUrl").type(JsonFieldType.STRING)
-                            .description("프로필 사진 url"),
+                    requestPartFields("texts",
                         fieldWithPath("name").type(JsonFieldType.STRING)
                             .description("이름"),
                         fieldWithPath("nickname").type(JsonFieldType.STRING)
@@ -118,6 +124,10 @@ class MemberControllerDocsTest extends RestDocsSupport {
                             .description("MBTI"),
                         fieldWithPath("calendarColor").type(JsonFieldType.STRING)
                             .description("개인 색상")
+                    ),
+                    requestParts(
+                        partWithName("texts").description("회원 프로필 수정 정보"),
+                        partWithName("images").description("수정할 프로필 이미지").optional()
                     ),
                     responseFields(
                         fieldWithPath("code").type(JsonFieldType.NUMBER)

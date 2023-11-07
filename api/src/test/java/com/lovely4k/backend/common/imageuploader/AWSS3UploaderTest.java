@@ -22,7 +22,7 @@ class AWSS3UploaderTest extends IntegrationTestSupport {
     void upload() {
         // given
         MockMultipartFile mockMultipartFile =
-                new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
+            new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
 
         // when
         List<String> uploadedImageUrls = imageUploader.upload("test/", List.of(mockMultipartFile));
