@@ -67,4 +67,12 @@ public class CoupleController {
             linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile")
             );
     }
+
+    @DeleteMapping("/{coupleId}")
+    public ResponseEntity<Void> deleteCouple(
+            @PathVariable Long coupleId,
+            @RequestParam Long memberId) {
+        coupleService.deleteCouple(coupleId, memberId);
+        return ResponseEntity.noContent().build();
+    }
 }

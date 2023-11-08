@@ -2,6 +2,8 @@ package com.lovely4k.backend.diary.service;
 
 import com.lovely4k.backend.IntegrationTestSupport;
 import com.lovely4k.backend.common.imageuploader.ImageUploader;
+import com.lovely4k.backend.couple.Couple;
+import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
@@ -50,6 +52,9 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
     @Autowired
     LocationRepository locationRepository;
+
+    @Autowired
+    CoupleRepository coupleRepository;
 
     @MockBean
     ImageUploader imageUploader;
@@ -125,7 +130,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
     @DisplayName("이미지가 없는 경우 이미지업로드가 되지 않고, emptyList를 반환한다.")
     @Test
-    void createDiaryNoImage() {
+    void createDiaryNoImage() throws InterruptedException {
         // given
         Member member = buildMember();
         memberRepository.save(member);

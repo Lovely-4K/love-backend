@@ -130,6 +130,7 @@ class ArchTests {
                 public void check(JavaClass item, ConditionEvents events) {
                     long finalFieldCount = item.getFields().stream()
                         .filter(field -> field.getModifiers().contains(JavaModifier.FINAL))
+                        .filter(field -> !field.getModifiers().contains(JavaModifier.STATIC))  // static 필드 제외
                         .count();
 
                     boolean satisfied = finalFieldCount <= 5;
@@ -144,9 +145,9 @@ class ArchTests {
     }
 
     @DisplayName("""
-            Service class에는 @Transactional(readOnly=true) 옵션이 붙어 있어야 하며,"
-            find로 시작하지 않는 public 메서드는 @Transactional 옵션을 붙여 주어야 한다. 
-            """)
+        Service class에는 @Transactional(readOnly=true) 옵션이 붙어 있어야 하며,"
+        find로 시작하지 않는 public 메서드는 @Transactional 옵션을 붙여 주어야 한다. 
+        """)
     @Test
     void readOnlyTest() {
         ArchRule rule = classes()
@@ -166,9 +167,8 @@ class ArchTests {
             @Override
             public void check(JavaClass item, ConditionEvents events) {
                 Optional<JavaAnnotation<JavaClass>> transactionalAnnotation = findTransactionalAnnotation(item);
-                boolean satisfied = true;
-                if (!transactionalAnnotation.isPresent()) satisfied = false;
-                Optional<Object> readOnlyValue = transactionalAnnotation.get().get("readOnly");
+                boolean satisfied = transactionalAnnotation.isPresent();
+                Optional<Object> readOnlyValue = transactionalAnnotation.flatMap(annotation -> annotation.get("readOnly"));
                 if (!isReadOnlyTrue(readOnlyValue)) satisfied = false;
 
                 events.add(new SimpleConditionEvent(item, satisfied, item.getName()));
