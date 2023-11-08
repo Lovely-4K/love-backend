@@ -49,12 +49,8 @@ logging:
   level:
     root: info
     org.hibernate.SQL: debug
-<<<<<<< HEAD
     org.hibernate.type.descriptor.sql.BasicBinder: trace
 
 love:
   system:
     max-affordable-time: 3
-=======
-    org.hibernate.type.descriptor.sql.BasicBinder: trace
->>>>>>> 76fd5f5 (docs : calendar api 문서 작성)
