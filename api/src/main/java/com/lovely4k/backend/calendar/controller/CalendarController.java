@@ -41,7 +41,7 @@ public class CalendarController {
         return ApiResponse.ok(
                 calendarQueryService.findAllCalendarsWithDate(request.toServiceDto()),
                 linkTo(methodOn(getClass()).findAllSchedulesWithDate(request)).withSelfRel(),
-                linkTo(getClass().getMethod(CREATE_SCHEDULE, Long.class, CreateCalendarRequest.class)).withRel(CREATE_SCHEDULE),
+                linkTo(getClass().getMethod(CREATE_SCHEDULE, Long.class, Long.class, CreateCalendarRequest.class)).withRel(CREATE_SCHEDULE),
                 linkTo(getClass().getMethod(EDIT_SCHEDULE_BY_ID, Long.class, UpdateCalendarRequest.class)).withRel(EDIT_SCHEDULE_BY_ID),
                 linkTo(getClass().getMethod(DELETE_SCHEDULE_BY_ID, Long.class)).withRel(DELETE_SCHEDULE_BY_ID)
         );
