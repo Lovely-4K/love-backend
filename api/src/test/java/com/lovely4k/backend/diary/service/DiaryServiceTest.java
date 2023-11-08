@@ -71,7 +71,13 @@ class DiaryServiceTest extends IntegrationTestSupport {
     void createDiary() {
         // given
         Member member = buildMember();
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
+
+        Couple couple = Couple.create(savedMember.getId(), MALE, "test-code");
+        Couple savedCouple = coupleRepository.save(couple);
+
+        savedMember.registerCoupleId(savedCouple.getId());
+        memberRepository.save(savedMember);
 
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
