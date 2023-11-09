@@ -9,9 +9,6 @@ import java.time.LocalDate;
 
 public record MemberProfileEditRequest(
 
-    @NotBlank(message = "이름을 입력해주세요.")
-    String name,
-
     @NotBlank(message = "별명을 입력해주세요.")
     String nickname,
 
@@ -27,7 +24,6 @@ public record MemberProfileEditRequest(
 ) {
     public MemberProfileEditServiceRequest toServiceRequest() {
         return new MemberProfileEditServiceRequest(
-            this.name,
             this.nickname,
             this.birthday,
             this.mbti,

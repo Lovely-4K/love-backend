@@ -41,10 +41,9 @@ class MemberControllerDocsTest extends RestDocsSupport {
     @Test
     @DisplayName("회원 프로필을 조회하는 API")
     void getProfile() throws Exception {
-        given(memberService.findMemberProfile(any(Long.class)))
+        given(memberService.findMemberProfile(any()))
             .willReturn(new MemberProfileGetResponse(
                 "sampleImageUrl",
-                "김철수",
                 "듬직이",
                 LocalDate.of(1996, 7, 30),
                 "ESFJ",
@@ -53,7 +52,6 @@ class MemberControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                 get("/v1/members")
-                    .queryParam("memberId", "1")
                     .characterEncoding("utf-8")
             )
             .andDo(print())
@@ -65,8 +63,6 @@ class MemberControllerDocsTest extends RestDocsSupport {
                             .description("응답 코드"),
                         fieldWithPath("body.imageUrl").type(JsonFieldType.STRING)
                             .description("프로필 사진 url"),
-                        fieldWithPath("body.name").type(JsonFieldType.STRING)
-                            .description("이름"),
                         fieldWithPath("body.nickname").type(JsonFieldType.STRING)
                             .description("별명"),
                         fieldWithPath("body.birthday").type(JsonFieldType.STRING)
@@ -92,7 +88,6 @@ class MemberControllerDocsTest extends RestDocsSupport {
     @DisplayName("회원 프로필을 수정하는 API")
     void editProfile() throws Exception {
         MemberProfileEditRequest request = new MemberProfileEditRequest(
-            "김영희",
             "이쁜이",
             LocalDate.of(1997, 3, 20),
             "INTP",
@@ -105,7 +100,6 @@ class MemberControllerDocsTest extends RestDocsSupport {
                 multipart(HttpMethod.PATCH, "/v1/members")
                     .file(images)
                     .file(texts)
-                    .queryParam("memberId", "1")
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .characterEncoding("UTF-8"))
             .andDo(print())
@@ -114,8 +108,6 @@ class MemberControllerDocsTest extends RestDocsSupport {
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     requestPartFields("texts",
-                        fieldWithPath("name").type(JsonFieldType.STRING)
-                            .description("이름"),
                         fieldWithPath("nickname").type(JsonFieldType.STRING)
                             .description("별명"),
                         fieldWithPath("birthday").type(JsonFieldType.STRING)

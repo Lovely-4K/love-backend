@@ -22,12 +22,12 @@ public abstract class RestDocsSupport {
     @BeforeEach
     void setUp(RestDocumentationContextProvider provider) {
         this.mockMvc = MockMvcBuilders.standaloneSetup(initController())
-                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-                .apply(documentationConfiguration(provider)
-                        .operationPreprocessors()
-                        .withRequestDefaults(prettyPrint())
-                        .withResponseDefaults(prettyPrint()))
-                .build();
+            .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+            .apply(documentationConfiguration(provider)
+                .operationPreprocessors()
+                .withRequestDefaults(prettyPrint())
+                .withResponseDefaults(prettyPrint()))
+            .build();
     }
 
     protected abstract Object initController();
