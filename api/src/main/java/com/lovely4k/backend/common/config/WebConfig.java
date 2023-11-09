@@ -1,4 +1,4 @@
-package com.lovely4k.backend.config;
+package com.lovely4k.backend.common.config;
 
 import com.lovely4k.backend.common.sessionuser.LoginUserArgumentResolver;
 import lombok.RequiredArgsConstructor;

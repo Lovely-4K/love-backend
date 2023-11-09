@@ -1,6 +1,6 @@
 package com.lovely4k.backend.authentication;
 
-import com.lovely4k.backend.common.sessionuser.UserDetails;
+import com.lovely4k.backend.common.sessionuser.MemberInfo;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.Sex;
 import lombok.EqualsAndHashCode;
@@ -19,7 +19,7 @@ import java.util.*;
 @EqualsAndHashCode
 @ToString
 @Getter
-public class MyOAuth2Member implements OAuth2User, Serializable, UserDetails {
+public class MyOAuth2Member implements OAuth2User, Serializable, MemberInfo {
 
     @Serial
     private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;

@@ -30,10 +30,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
             return null;
         }
 
-        System.out.println("------"+authentication.getPrincipal());
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        var s = SessionUser.from(userDetails);
-        System.out.println(s);
-        return SessionUser.from(userDetails);
+        MemberInfo memberInfo = (MemberInfo) authentication.getPrincipal();
+        return SessionUser.from(memberInfo);
     }
 }

@@ -1,6 +1,6 @@
 package com.lovely4k.backend.common.sessionuser;
 
-public interface UserDetails {
+public interface MemberInfo {
     Long getMemberId();
     Long getCoupleId();
     String getSex();

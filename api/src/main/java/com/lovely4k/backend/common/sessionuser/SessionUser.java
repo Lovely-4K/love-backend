@@ -10,7 +10,7 @@ public record SessionUser (
 
 )  {
 
-    public static SessionUser from(UserDetails userDetails) {
-        return new SessionUser(userDetails.getMemberId(), userDetails.getCoupleId(), userDetails.getSex(), userDetails.getNickName(), userDetails.getPicture());
+    public static SessionUser from(MemberInfo memberInfo) {
+        return new SessionUser(memberInfo.getMemberId(), memberInfo.getCoupleId(), memberInfo.getSex(), memberInfo.getNickName(), memberInfo.getPicture());
     }
 }
