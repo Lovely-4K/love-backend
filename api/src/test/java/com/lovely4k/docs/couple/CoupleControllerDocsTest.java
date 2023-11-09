@@ -6,15 +6,14 @@ import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditReque
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
-import com.lovely4k.backend.member.Sex;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import java.time.LocalDate;
+
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -24,6 +23,8 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,13 +42,11 @@ class CoupleControllerDocsTest extends RestDocsSupport {
     @DisplayName("초대코드를 생성하는 API")
     void createInvitationCode() throws Exception {
 
-        given(coupleService.createInvitationCode(anyLong(), any(Sex.class)))
+        given(coupleService.createInvitationCode(any(), any()))
             .willReturn(new InvitationCodeCreateResponse(1L, "SampleInvitationCode"));
 
         mockMvc.perform(
                 post("/v1/couples/invitation-code")
-                    .param("requestedMemberId", "1")
-                    .param("sex", "MALE")
                     .characterEncoding("utf-8")
                     .contentType(APPLICATION_JSON)
             )
@@ -84,7 +83,6 @@ class CoupleControllerDocsTest extends RestDocsSupport {
         mockMvc.perform(
                 post("/v1/couples")
                     .param("invitationCode", "invitationCodeSample")
-                    .param("receivedMemberId", "1")
                     .characterEncoding("utf-8")
                     .contentType(APPLICATION_JSON)
             )
@@ -113,18 +111,22 @@ class CoupleControllerDocsTest extends RestDocsSupport {
     @Test
     @DisplayName("커플 프로필을 조회하는 API")
     void getCoupleProfile() throws Exception {
-        given(coupleService.findCoupleProfile(1L)).willReturn(
+        given(coupleService.findCoupleProfile(any())).willReturn(
             new CoupleProfileGetResponse(
                 "듬직이",
                 "ESTJ",
+                "boyProfileUrl",
+                1L,
                 "깜찍이",
-                "INFP"
+                "INFP",
+                "girlProfile,Url",
+                2L,
+                LocalDate.of(2020, 7, 23)
             )
         );
 
         mockMvc.perform(
                 get("/v1/couples")
-                    .param("memberId", "1")
                     .characterEncoding("utf-8")
             )
             .andDo(print())
@@ -138,10 +140,20 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                             .description("남자친구 별명"),
                         fieldWithPath("body.boyMbti").type(JsonFieldType.STRING)
                             .description("남자친구 MBTI"),
+                        fieldWithPath("body.boyImageUrl").type(JsonFieldType.STRING)
+                            .description("남자친구 프로필 사진 url"),
+                        fieldWithPath("body.boyId").type(JsonFieldType.NUMBER)
+                            .description("남자친구 id"),
                         fieldWithPath("body.girlNickname").type(JsonFieldType.STRING)
                             .description("여자친구 별명"),
                         fieldWithPath("body.girlMbti").type(JsonFieldType.STRING)
                             .description("여자친구 MBTI"),
+                        fieldWithPath("body.girlImageUrl").type(JsonFieldType.STRING)
+                            .description("여자친구 프로필 사진 url"),
+                        fieldWithPath("body.girlId").type(JsonFieldType.NUMBER)
+                            .description("여자친구 id"),
+                        fieldWithPath("body.meetDay").type(JsonFieldType.STRING)
+                            .description("만난날"),
                         fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
                             .description("relation of url"),
                         fieldWithPath("links[0].href").type(JsonFieldType.STRING)
@@ -163,7 +175,6 @@ class CoupleControllerDocsTest extends RestDocsSupport {
 
         mockMvc.perform(
                 patch("/v1/couples")
-                    .param("memberId", "1")
                     .content(objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(request))
                     .contentType(APPLICATION_JSON)
                     .characterEncoding("utf-8"))
@@ -192,5 +203,25 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                     )
                 )
             );
+    }
+
+    @DisplayName("커플을 삭제하는 API")
+    @Test
+    void deleteCouple() throws Exception{
+        // when && then
+        this.mockMvc.perform(
+                        delete("/v1/couples/{coupleId}", 1)
+                                .queryParam("memberId", "1")
+                )
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andDo(document("couple-delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        queryParameters(
+                                parameterWithName("memberId").description("회원 아이디")
+                        )
+                ))
+        ;
     }
 }

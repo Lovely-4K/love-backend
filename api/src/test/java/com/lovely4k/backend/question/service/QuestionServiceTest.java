@@ -1,6 +1,8 @@
 package com.lovely4k.backend.question.service;
 
 import com.lovely4k.TestData;
+import com.lovely4k.backend.couple.service.CoupleService;
+import com.lovely4k.backend.couple.service.IncreaseTemperatureFacade;
 import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
@@ -19,7 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -42,6 +43,9 @@ class QuestionServiceTest {
 
     @Mock
     QuestionFormRepository questionFormRepository;
+
+    @Mock
+    IncreaseTemperatureFacade facade;
 
     @InjectMocks
     QuestionService questionService;
@@ -138,7 +142,7 @@ class QuestionServiceTest {
         given(questionRepository.findById(questionId)).willReturn(Optional.of(mockQuestion));
 
         // When
-        questionService.updateQuestionAnswer(questionId, sex, answer);
+        questionService.updateQuestionAnswer(questionId, sex.name(), answer);
 
         // Then
         verify(mockQuestion, times(1)).updateAnswer(answer, sex);
@@ -159,7 +163,7 @@ class QuestionServiceTest {
         doThrow(OptimisticLockException.class).when(mockQuestion).updateAnswer(answer, sex);
 
         // When & Then
-        Assertions.assertThatThrownBy(() -> questionService.updateQuestionAnswer(questionId, sex, answer))
+        Assertions.assertThatThrownBy(() -> questionService.updateQuestionAnswer(questionId, sex.name(), answer))
                 .isInstanceOf(OptimisticLockException.class);
     }
 

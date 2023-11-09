@@ -1,9 +1,9 @@
 spring:
   profiles:
     active: local   # 기본 환경
-    include: credential # 비밀 정보들 관리 관련 yaml
+    include: credential, oauth # 비밀 정보들 관리 관련 yaml
 
-# == 공통 설정 영역 == #
+  # == 공통 설정 영역 == #
   jpa:
     open-in-view: false
     properties:
@@ -17,21 +17,7 @@ logging:
     root: info
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
-# prod
----
-spring:
-  config:
-    activate:
-      on-profile: prod1
 
-server:
-  port: 8081
-
----
-spring:
-  config:
-    activate:
-      on-profile: prod2
-
-server:
-  port: 8082
+love:
+  system:
+    max-affordable-time: 3

@@ -39,7 +39,7 @@ public class CalendarQueryService {
             );
     }
 
-    public FindRecentCalendarsServiceResponse findRecentCalendars(Long coupleId, int limit) {
+    public FindRecentCalendarsServiceResponse findRecentCalendars(Long coupleId, Integer limit) {
         List<FindRecentCalendarsResponse> result = calendarQueryRepository.findRecentCalendarsWithColors(coupleId, limit);
         return FindRecentCalendarsServiceResponse.from(result);
     }

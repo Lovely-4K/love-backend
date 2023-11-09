@@ -2,11 +2,12 @@ package com.lovely4k.backend.couple.controller;
 
 
 import com.lovely4k.backend.common.ApiResponse;
+import com.lovely4k.backend.common.sessionuser.LoginUser;
+import com.lovely4k.backend.common.sessionuser.SessionUser;
 import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
-import com.lovely4k.backend.member.Sex;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -28,42 +29,50 @@ public class CoupleController {
 
     @SneakyThrows
     @PostMapping(value = "/invitation-code")
-    public ResponseEntity<ApiResponse<InvitationCodeCreateResponse>> createInvitationCode(@RequestParam Long requestedMemberId, @RequestParam Sex sex) {
-        InvitationCodeCreateResponse response = coupleService.createInvitationCode(requestedMemberId, sex);
+    public ResponseEntity<ApiResponse<InvitationCodeCreateResponse>> createInvitationCode(@LoginUser SessionUser sessionUser) {
+        InvitationCodeCreateResponse response = coupleService.createInvitationCode(sessionUser.memberId(), sessionUser.sex());
 
         return ApiResponse.created(response, response.coupleId(),
-            linkTo(methodOn(CoupleController.class).createInvitationCode(requestedMemberId, sex)).withSelfRel(),
-            linkTo(CoupleController.class.getMethod("registerCouple", String.class, Long.class)).withRel("register couple"));
+            linkTo(methodOn(CoupleController.class).createInvitationCode(sessionUser)).withSelfRel(),
+            linkTo(CoupleController.class.getMethod("registerCouple", String.class, SessionUser.class)).withRel("register couple"));
     }
 
     @SneakyThrows
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<Void>> registerCouple(@RequestParam String invitationCode, @RequestParam Long receivedMemberId) {
-        coupleService.registerCouple(invitationCode, receivedMemberId);
+    public ResponseEntity<ApiResponse<Void>> registerCouple(@RequestParam String invitationCode, @LoginUser SessionUser sessionUser) {
+        coupleService.registerCouple(invitationCode, sessionUser.memberId());
 
         return ApiResponse.ok(
-            linkTo(methodOn(CoupleController.class).registerCouple(invitationCode, receivedMemberId)).withSelfRel(),
-            linkTo(CoupleController.class.getMethod("getCoupleProfile", Long.class)).withRel("get couple profile")
+            linkTo(methodOn(CoupleController.class).registerCouple(invitationCode, sessionUser)).withSelfRel(),
+            linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile")
         );
     }
 
     @SneakyThrows
     @GetMapping
-    public ResponseEntity<ApiResponse<CoupleProfileGetResponse>> getCoupleProfile(@RequestParam Long memberId) {
+    public ResponseEntity<ApiResponse<CoupleProfileGetResponse>> getCoupleProfile(@LoginUser SessionUser sessionUser) {
 
-        return ApiResponse.ok(coupleService.findCoupleProfile(memberId),
-            linkTo(methodOn(CoupleController.class).getCoupleProfile(memberId)).withSelfRel(),
-            linkTo(CoupleController.class.getMethod("editCoupleProfile", CoupleProfileEditRequest.class, Long.class)).withRel("edit couple profile"));
+        return ApiResponse.ok(coupleService.findCoupleProfile(sessionUser.memberId()),
+            linkTo(methodOn(CoupleController.class).getCoupleProfile(sessionUser)).withSelfRel(),
+            linkTo(CoupleController.class.getMethod("editCoupleProfile", CoupleProfileEditRequest.class, SessionUser.class)).withRel("edit couple profile"));
     }
 
     @SneakyThrows
     @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<Void>> editCoupleProfile(@Valid @RequestBody CoupleProfileEditRequest request, @RequestParam Long memberId) {
-        coupleService.updateCoupleProfile(request.toServiceRequest(), memberId);
+    public ResponseEntity<ApiResponse<Void>> editCoupleProfile(@Valid @RequestBody CoupleProfileEditRequest request, @LoginUser SessionUser sessionUser) {
+        coupleService.updateCoupleProfile(request.toServiceRequest(), sessionUser.memberId());
 
         return ApiResponse.ok(
-            linkTo(methodOn(CoupleController.class).editCoupleProfile(request, memberId)).withSelfRel(),
-            linkTo(CoupleController.class.getMethod("getCoupleProfile", Long.class)).withRel("get couple profile")
-            );
+            linkTo(methodOn(CoupleController.class).editCoupleProfile(request, sessionUser)).withSelfRel(),
+            linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile")
+        );
+    }
+
+    @DeleteMapping("/{coupleId}")
+    public ResponseEntity<Void> deleteCouple(
+        @PathVariable Long coupleId,
+        @RequestParam Long memberId) {
+        coupleService.deleteCouple(coupleId, memberId);
+        return ResponseEntity.noContent().build();
     }
 }

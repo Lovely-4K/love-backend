@@ -2,6 +2,8 @@ package com.lovely4k.backend.diary.service;
 
 import com.lovely4k.backend.IntegrationTestSupport;
 import com.lovely4k.backend.common.imageuploader.ImageUploader;
+import com.lovely4k.backend.couple.Couple;
+import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
@@ -11,6 +13,7 @@ import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.location.Location;
 import com.lovely4k.backend.location.LocationRepository;
 import com.lovely4k.backend.member.Member;
+import com.lovely4k.backend.member.Role;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.AfterEach;
@@ -50,6 +53,9 @@ class DiaryServiceTest extends IntegrationTestSupport {
     @Autowired
     LocationRepository locationRepository;
 
+    @Autowired
+    CoupleRepository coupleRepository;
+
     @MockBean
     ImageUploader imageUploader;
 
@@ -64,18 +70,21 @@ class DiaryServiceTest extends IntegrationTestSupport {
     @Test
     void createDiary() {
         // given
-        Member member = Member.builder()
-                .name("tommy")
-                .sex(MALE)
-                .build();
-        memberRepository.save(member);
+        Member member = buildMember();
+        Member savedMember = memberRepository.save(member);
+
+        Couple couple = Couple.create(savedMember.getId(), MALE, "test-code");
+        Couple savedCouple = coupleRepository.save(couple);
+
+        savedMember.registerCoupleId(savedCouple.getId());
+        memberRepository.save(savedMember);
 
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
         List<MultipartFile> multipartFileList = List.of(firstImage, secondImage);
 
         DiaryCreateRequest diaryCreateRequest =
-                new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
+            new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
 
         // stubbing
         given(imageUploader.upload(any(String.class), any())
@@ -89,12 +98,12 @@ class DiaryServiceTest extends IntegrationTestSupport {
         Location findLocation = locationRepository.findById(findDiary.getLocation().getId()).orElseThrow();
 
         assertAll(
-                () -> assertThat(findDiary.getId()).isEqualTo(diaryId),
-                () -> assertThat(findDiary.getBoyText()).isNotNull().isEqualTo("테스트 다이어리"),
-                () -> assertThat(findLocation.getKakaoMapId()).isEqualTo(1L),
-                () -> assertThat(findDiary.getPhotos()).isNotNull(),
-                () -> assertThat(findDiary.getPhotos().getFirstImage()).isEqualTo("first-image-url"),
-                () -> assertThat(findDiary.getPhotos().getSecondImage()).isEqualTo("second-image-url")
+            () -> assertThat(findDiary.getId()).isEqualTo(diaryId),
+            () -> assertThat(findDiary.getBoyText()).isNotNull().isEqualTo("테스트 다이어리"),
+            () -> assertThat(findLocation.getKakaoMapId()).isEqualTo(1L),
+            () -> assertThat(findDiary.getPhotos()).isNotNull(),
+            () -> assertThat(findDiary.getPhotos().getFirstImage()).isEqualTo("first-image-url"),
+            () -> assertThat(findDiary.getPhotos().getSecondImage()).isEqualTo("second-image-url")
         );
 
     }
@@ -103,12 +112,9 @@ class DiaryServiceTest extends IntegrationTestSupport {
     @Test
     void createDiaryInvalidMemberId() {
         // given
-        Member member = Member.builder()
-                .name("tommy")
-                .sex(MALE)
-                .build();
-        memberRepository.save(member);
-        Long invalidMemberId = member.getId() + 1;
+        Member member = buildMember();
+        Member savedMember = memberRepository.save(member);
+        Long invalidMemberId = savedMember.getId() + 1;
 
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
@@ -119,28 +125,26 @@ class DiaryServiceTest extends IntegrationTestSupport {
         ).willReturn(List.of("first-image-url", "second-image-url"));
 
         DiaryCreateRequest diaryCreateRequest =
-                new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
+            new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
 
         // when && then
         assertThatThrownBy(
-                () -> diaryService.createDiary(multipartFileList, diaryCreateRequest, invalidMemberId)
+            () -> diaryService.createDiary(multipartFileList, diaryCreateRequest, invalidMemberId)
         ).isInstanceOf(EntityNotFoundException.class)
-                .hasMessage("invalid member id");
+            .hasMessage("invalid member id");
     }
 
     @DisplayName("이미지가 없는 경우 이미지업로드가 되지 않고, emptyList를 반환한다.")
     @Test
-    void createDiaryNoImage() {
+    void createDiaryNoImage() throws InterruptedException {
         // given
-        Member member = Member.builder()
-                .name("tommy")
-                .sex(MALE)
-                .build();
+        Member member = buildMember();
         memberRepository.save(member);
+
         Long memberId = member.getId();
 
         DiaryCreateRequest diaryCreateRequest =
-                new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
+            new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
 
         // when
         Long savedDiaryId = diaryService.createDiary(Collections.emptyList(), diaryCreateRequest, memberId);
@@ -154,10 +158,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
     @Test
     void createDiaryTooMuchImage() {
         // given
-        Member member = Member.builder()
-                .name("tommy")
-                .sex(MALE)
-                .build();
+        Member member = buildMember();
         memberRepository.save(member);
         Long memberId = member.getId();
 
@@ -165,16 +166,16 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // stubbing
         given(imageUploader.upload(any(String.class), any())
-        ).willReturn(List.of("first-image-url", "second-image-url","third-image-url", "fourth-image-url", "fifth-image-url", "sixth-image-url"));
+        ).willReturn(List.of("first-image-url", "second-image-url", "third-image-url", "fourth-image-url", "fifth-image-url", "sixth-image-url"));
 
         DiaryCreateRequest diaryCreateRequest =
-                new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
+            new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
 
         // when && then
         assertThatThrownBy(
-                () -> diaryService.createDiary(multipartFileList, diaryCreateRequest, memberId)
+            () -> diaryService.createDiary(multipartFileList, diaryCreateRequest, memberId)
         ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Image file can be uploaded maximum 5");
+            .hasMessage("Image file can be uploaded maximum 5");
     }
 
     private static List<MultipartFile> getMultipartFiles() {
@@ -201,14 +202,14 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // when
         DiaryDetailResponse diaryDetailResponse =
-                diaryService.findDiaryDetail(diary.getId(), member.getCoupleId());
+            diaryService.findDiaryDetail(diary.getId(), member.getCoupleId());
 
         // then
         assertAll(
-                () -> assertThat(diaryDetailResponse.kakaoMapId()).isEqualTo(10L),
-                () -> assertThat(diaryDetailResponse.boyText()).isEqualTo("hello"),
-                () -> assertThat(diaryDetailResponse.girlText()).isEqualTo("hi"),
-                () -> assertThat(diaryDetailResponse.score()).isEqualTo(4)
+            () -> assertThat(diaryDetailResponse.kakaoMapId()).isEqualTo(10L),
+            () -> assertThat(diaryDetailResponse.boyText()).isEqualTo("hello"),
+            () -> assertThat(diaryDetailResponse.girlText()).isEqualTo("hi"),
+            () -> assertThat(diaryDetailResponse.score()).isEqualTo(4)
         );
     }
 
@@ -229,9 +230,9 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // when && then
         assertThatThrownBy(
-                () -> diaryService.findDiaryDetail(invalidDiaryId, memberId)
+            () -> diaryService.findDiaryDetail(invalidDiaryId, memberId)
         ).isInstanceOf(EntityNotFoundException.class)
-                .hasMessage("invalid diary id");
+            .hasMessage("invalid diary id");
 
     }
 
@@ -252,9 +253,9 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // when && then
         assertThatThrownBy(
-                () -> diaryService.findDiaryDetail(diaryId, memberId)
+            () -> diaryService.findDiaryDetail(diaryId, memberId)
         ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("you can only manage your couple's diary");
+            .hasMessage("you can only manage your couple's diary");
     }
 
     @DisplayName("deleteDiary 메서드를 통해 다이어리를 삭제할 수 있다. ")
@@ -291,12 +292,12 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // when
         Page<DiaryListResponse> diaryList =
-                diaryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")));
+            diaryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")));
 
         // then
         assertAll(
-                () -> assertThat(diaryList.getNumberOfElements()).isEqualTo(1),
-                () -> assertThat(diaryList.getTotalPages()).isEqualTo(1)
+            () -> assertThat(diaryList.getNumberOfElements()).isEqualTo(1),
+            () -> assertThat(diaryList.getTotalPages()).isEqualTo(1)
         );
     }
 
@@ -305,12 +306,12 @@ class DiaryServiceTest extends IntegrationTestSupport {
     void findDiaryListNoDiary() {
         // when
         Page<DiaryListResponse> diaryList =
-                diaryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")));
+            diaryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")));
 
         // then
         assertAll(
-                () -> assertThat(diaryList.getNumberOfElements()).isZero(),
-                () -> assertThat(diaryList.getTotalPages()).isEqualTo(1)
+            () -> assertThat(diaryList.getNumberOfElements()).isZero(),
+            () -> assertThat(diaryList.getTotalPages()).isEqualTo(1)
         );
     }
 
@@ -330,39 +331,40 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // when && then
         assertThatThrownBy(
-                () -> diaryService.deleteDiary(diaryId, memberId)
+            () -> diaryService.deleteDiary(diaryId, memberId)
         ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("you can only manage your couple's diary");
+            .hasMessage("you can only manage your couple's diary");
 
     }
 
     private static Diary buildDiary(Location location, long coupleId) {
         return Diary.builder()
-                .coupleId(coupleId)
-                .location(location)
-                .boyText("hello")
-                .girlText("hi")
-                .score(4)
-                .datingDay(LocalDate.of(2023, 10, 20))
-                .build();
+            .coupleId(coupleId)
+            .location(location)
+            .boyText("hello")
+            .girlText("hi")
+            .score(4)
+            .datingDay(LocalDate.of(2023, 10, 20))
+            .build();
     }
 
     private static Diary buildDiary(Category category, long coupleId) {
         return Diary.builder()
-                .coupleId(coupleId)
-                .location(Location.create(1L, "경기도 고양", category))
-                .boyText("hello")
-                .girlText("hi")
-                .score(4)
-                .datingDay(LocalDate.of(2023, 10, 20))
-                .build();
+            .coupleId(coupleId)
+            .location(Location.create(1L, "경기도 고양", category))
+            .boyText("hello")
+            .girlText("hi")
+            .score(4)
+            .datingDay(LocalDate.of(2023, 10, 20))
+            .build();
     }
 
     private static Member buildMember() {
         return Member.builder()
-                .sex(MALE)
-                .coupleId(1L)
-                .name("Tommy")
-                .build();
+            .sex(MALE)
+            .coupleId(1L)
+            .nickname("Tommy")
+            .role(Role.USER)
+            .build();
     }
 }

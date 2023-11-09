@@ -6,8 +6,11 @@
 ==== Http Request
 include::{snippets}/member-profile-edit/http-request.adoc[]
 
-회원의 프로필을 수정할 경우 하단의 값들이 모두 요청 body에 담겨져있어야 합니다.
-include::{snippets}/member-profile-edit/request-fields.adoc[]
+회원의 프로필을 수정할 경우 하단의 값들이 모두 form-data형식으로 요청되어야 합니다.
+include::{snippets}/member-profile-edit/request-part-texts-fields.adoc[]
+
+프로필 사진을 수정할 경우에만 이미지 데이터를 포함하여 요청할 수 있습니다.
+include::{snippets}/member-profile-edit/request-parts.adoc[]
 
 ==== Http Response
 

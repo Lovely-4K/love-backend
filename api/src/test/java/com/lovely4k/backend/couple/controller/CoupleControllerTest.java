@@ -8,6 +8,7 @@ import com.lovely4k.backend.member.Sex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.mockito.BDDMockito.given;
@@ -28,13 +29,11 @@ class CoupleControllerTest extends ControllerTestSupport {
         Long coupleId = 2L;
         String invitationCode = UUID.randomUUID().toString();
 
-        given(coupleService.createInvitationCode(requestedMemberId,sex))
+        given(coupleService.createInvitationCode(requestedMemberId, sex.name()))
             .willReturn(new InvitationCodeCreateResponse(coupleId, invitationCode));
 
         //when //then
-        mockMvc.perform(post("/v1/couples/invitation-code")
-                .queryParam("requestedMemberId", requestedMemberId.toString())
-                .queryParam("sex", "MALE"))
+        mockMvc.perform(post("/v1/couples/invitation-code"))
             .andDo(print())
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.body.coupleId").value(coupleId))
@@ -50,8 +49,7 @@ class CoupleControllerTest extends ControllerTestSupport {
         //when //then
         mockMvc.perform(post("/v1/couples")
                 .queryParam(
-                        "invitationCode", invitationCode)
-                .queryParam("receivedMemberId", "2")
+                    "invitationCode", invitationCode)
                 .contentType(APPLICATION_JSON)
             )
             .andDo(print())
@@ -68,13 +66,17 @@ class CoupleControllerTest extends ControllerTestSupport {
             .willReturn(new CoupleProfileGetResponse(
                 "듬직이",
                 "ESTJ",
+                "boyProfileUrl",
+                1L,
                 "깜찍이",
-                "INFP"
+                "INFP",
+                "girlProfile,Url",
+                2L,
+                LocalDate.of(2020, 7, 23)
             ));
 
         //when //then
-        mockMvc.perform(get("/v1/couples")
-                .queryParam("memberId", memberId.toString()))
+        mockMvc.perform(get("/v1/couples"))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.body.boyNickname").value("듬직이"))
@@ -91,7 +93,6 @@ class CoupleControllerTest extends ControllerTestSupport {
 
         //when //then
         mockMvc.perform(patch("/v1/couples")
-                .queryParam("memberId", "1")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(APPLICATION_JSON))
             .andDo(print())
@@ -106,7 +107,6 @@ class CoupleControllerTest extends ControllerTestSupport {
 
         //when //then
         mockMvc.perform(patch("/v1/couples")
-                .queryParam("memberId", "1")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(APPLICATION_JSON))
             .andDo(print())

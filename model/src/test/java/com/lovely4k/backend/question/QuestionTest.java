@@ -17,7 +17,7 @@ class QuestionTest {
     @Test
     void validateAnswer_BothEmpty() {
         QuestionChoices questionChoices = QuestionChoices.create("choice1", "choice2", null, null);
-        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L);
+        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L, QuestionFormType.SERVER);
         Question question = Question.create(1L, questionForm, 1L);
 
         assertThatThrownBy(question::validateAnswer)
@@ -29,7 +29,7 @@ class QuestionTest {
     @Test
     void validateAnswer_OneEmpty() {
         QuestionChoices questionChoices = QuestionChoices.create("choice1", "choice2", null, null);
-        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L);
+        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L, QuestionFormType.SERVER);
 
         Question question1 = Question.create(1L, questionForm, 1L);
         question1.updateAnswer(1, Sex.MALE);
@@ -49,7 +49,7 @@ class QuestionTest {
     @Test
     void validateAnswer_BothFilled() {
         QuestionChoices questionChoices = QuestionChoices.create("choice1", "choice2", null, null);
-        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L);
+        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L, QuestionFormType.SERVER);
         Question question = Question.create(1L, questionForm, 1L);
         question.updateAnswer(1, Sex.MALE);
         question.updateAnswer(2, Sex.FEMALE);
@@ -61,7 +61,7 @@ class QuestionTest {
     @Test
     void updateAnswer_BySex() {
         QuestionChoices questionChoices = QuestionChoices.create("choice1", "choice2", null, null);
-        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L);
+        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L, QuestionFormType.SERVER);
         Question question = Question.create(1L, questionForm, 1L);
 
         question.updateAnswer(1, Sex.MALE);
@@ -75,7 +75,7 @@ class QuestionTest {
     @Test
     void updateAnswer_InvalidChoice() {
         QuestionChoices questionChoices = QuestionChoices.create("choice1", "choice2", null, null);
-        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L);
+        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L, QuestionFormType.SERVER);
         Question question = Question.create(1L, questionForm, 1L);
 
         assertThatThrownBy(() -> question.updateAnswer(5, Sex.MALE))
@@ -111,7 +111,7 @@ class QuestionTest {
     @Test
     void getChoiceAnswerByIndex_ValidIndex() {
         QuestionChoices questionChoices = QuestionChoices.create("choice1", "choice2", "choice3", "choice4");
-        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L);
+        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L, QuestionFormType.SERVER);
         Question question = Question.create(1L, questionForm, 1L);
 
         question.updateAnswer(1, Sex.MALE);
@@ -125,7 +125,7 @@ class QuestionTest {
     @Test
     void getChoiceAnswerByIndex_InvalidIndex() {
         QuestionChoices questionChoices = QuestionChoices.create("choice1", "choice2", "choice3", "choice4");
-        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L);
+        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L, QuestionFormType.SERVER);
         Question question = Question.create(1L, questionForm, 1L);
 
         assertThatThrownBy(question::getBoyChoiceAnswer)
@@ -141,7 +141,7 @@ class QuestionTest {
     @Test
     void updateAnswer_ValidChoice_Case3_4() {
         QuestionChoices questionChoices = QuestionChoices.create("choice1", "choice2", "choice3", "choice4");
-        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L);
+        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L, QuestionFormType.SERVER);
         Question question = Question.create(1L, questionForm, 1L);
 
         question.updateAnswer(3, Sex.MALE);
@@ -155,7 +155,7 @@ class QuestionTest {
     @Test
     void updateAnswer_InvalidChoice_EmptyChoice() {
         QuestionChoices questionChoices = QuestionChoices.create("choice1", "choice2", null, null);
-        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L);
+        QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L, QuestionFormType.SERVER);
         Question question = Question.create(1L, questionForm, 1L);
 
         assertThatThrownBy(() -> question.updateAnswer(3, Sex.MALE))

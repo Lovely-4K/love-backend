@@ -8,6 +8,10 @@ CREATE TABLE couple (
     girl_id BIGINT,
     meet_day date,
     invitation_code VARCHAR(255),
+    deleted BOOLEAN DEFAULT FALSE,
+    deleted_date DATE,
+    temperature FLOAT,
+    version BIGINT NOT NULL DEFAULT 0,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_couple_boy_id (boy_id),
@@ -50,10 +54,10 @@ insert into member (couple_id, sex, calendar_color) values (1, 'MALE', 'RED');
 insert into member (couple_id, sex, calendar_color) values (1, 'FEMALE', 'BLUE');
 insert into couple (boy_id, girl_id) values (1, 2);
 
-insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2023-11-05', 1, 'DATE', '영화');
-insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2023-11-06', 1, 'DATE', '영화');
-insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2023-11-07', 1, 'DATE', '영화');
-insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2023-11-08', 1, 'DATE', '영화');
-insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2023-11-09', 1, 'DATE', '영화');
-insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2023-11-10', 1, 'DATE', '영화');
-insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2023-11-11', 1, 'DATE', '영화');
+insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2123-11-05', 1, 'DATE', '영화');
+insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2123-11-06', 1, 'DATE', '영화');
+insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2123-11-07', 1, 'DATE', '영화');
+insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2123-11-08', 1, 'DATE', '영화');
+insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2123-11-09', 1, 'DATE', '영화');
+insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2123-11-10', 1, 'DATE', '영화');
+insert into calendar (start_date, couple_id, schedule_type, schedule_details) values ('2123-11-11', 1, 'DATE', '영화');

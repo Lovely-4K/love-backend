@@ -70,6 +70,7 @@ include::{snippets}/get-question-details/response-fields.adoc[]
 
 커플이 답변한 질문에 대해 조회를 합니다. 페이지네이션 처리 시 마지막 응답한 아이디를 기억해두고 해당 id를 쿼리 파라미터에 넣어주면 됩니다.
 
+
 ==== Request
 include::{snippets}/get-answered-questions/http-request.adoc[]
 include::{snippets}/get-answered-questions/query-parameters.adoc[]
@@ -77,3 +78,12 @@ include::{snippets}/get-answered-questions/query-parameters.adoc[]
 ==== Response (Success)
 include::{snippets}/get-answered-questions/http-response.adoc[]
 include::{snippets}/get-answered-questions/response-fields.adoc[]
+
+[[delete-questions]]
+=== 커스텀해서 만든 질문지 삭제 및 사용자와 연결되어 있는 전체 질문 전체 삭제(관리자용)
+
+==== Request
+include::{snippets}/delete-custom-questions-and-questionForm/http-request.adoc[]
+
+==== Response
+include::{snippets}/delete-custom-questions-and-questionForm/http-response.adoc[]

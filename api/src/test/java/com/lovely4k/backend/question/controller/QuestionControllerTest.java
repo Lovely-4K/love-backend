@@ -30,8 +30,6 @@ class QuestionControllerTest extends ControllerTestSupport {
         mockMvc.perform(
                 post("/v1/questions/question-forms")
                     .content(objectMapper.writeValueAsString(request))
-                    .queryParam("userId", "1")
-                    .queryParam("coupleId", "1")
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andDo(print())
@@ -53,8 +51,6 @@ class QuestionControllerTest extends ControllerTestSupport {
         mockMvc.perform(
                 post("/v1/questions/question-forms")
                     .content(objectMapper.writeValueAsString(request))
-                    .queryParam("userId", "1")
-                    .queryParam("coupleId", "1")
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andDo(print())
@@ -77,8 +73,6 @@ class QuestionControllerTest extends ControllerTestSupport {
         mockMvc.perform(
                 post("/v1/questions/question-forms")
                     .content(objectMapper.writeValueAsString(request))
-                    .queryParam("userId", "1")
-                    .queryParam("coupleId", "1")
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andDo(print())
@@ -94,7 +88,6 @@ class QuestionControllerTest extends ControllerTestSupport {
         AnswerQuestionRequest request = new AnswerQuestionRequest(inValidNumber);
 
         mockMvc.perform(patch("/v1/questions/{id}/answers", 1L)
-                .queryParam("sex", "MALE")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -104,18 +97,16 @@ class QuestionControllerTest extends ControllerTestSupport {
     }
 
     @DisplayName("잘못된 쿼리 파라미터로 인해 Bad Request를 반환하는 경우")
-    @ParameterizedTest(name = "id={0}, coupleId={1}, limit={2}")
+    @ParameterizedTest(name = "id={0}, limit={1}")
     @CsvSource({
-            "0, -1, 10",
-            "0, 1, -1",
-            "-1, 1, 10",
+            "0, -1",
+            "-1, 10",
     })
-    void getAnsweredQuestions(Long id, Long coupleId, int limit) throws Exception {
+    void getAnsweredQuestions(Long id, int limit) throws Exception {
 
         mockMvc.perform(
                         get("/v1/questions")
                                 .queryParam("id", String.valueOf(id))
-                                .queryParam("coupleId", String.valueOf(coupleId))
                                 .queryParam("limit", String.valueOf(limit))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )

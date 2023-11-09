@@ -25,9 +25,6 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
-    @Column(length = 15, name = "name")
-    private String name;
-
     @Column(name = "nick_name")
     private String nickname;
 
@@ -43,28 +40,45 @@ public class Member extends BaseTimeEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "age_range")
+    private String ageRange;
+
+    @Column(name = "email")
+    private String email;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     @Builder
-    private Member(Long coupleId, Sex sex, String name, String nickname, LocalDate birthday, String mbti, String calendarColor, String imageUrl) { // NOSONAR
+    private Member(Long coupleId, Sex sex, String nickname, LocalDate birthday, String mbti, String calendarColor, String imageUrl, String ageRange, String email, Role role) { // NOSONAR
         this.coupleId = coupleId;
         this.sex = sex;
-        this.name = name;
         this.nickname = nickname;
         this.birthday = birthday;
         this.mbti = mbti;
         this.calendarColor = calendarColor;
         this.imageUrl = imageUrl;
+        this.ageRange = ageRange;
+        this.email = email;
+        this.role = role;
     }
 
-    public void updateProfile(String imageUrl, String name, String nickname, LocalDate birthday, String mbti, String calendarColor) {
-        this.name = name;
+    public void
+    updateProfile(String imageUrl, String nickname, LocalDate birthday, String mbti, String calendarColor) {
+        this.imageUrl = imageUrl;
         this.nickname = nickname;
         this.birthday = birthday;
         this.mbti = mbti;
         this.calendarColor = calendarColor;
-        this.imageUrl = imageUrl;
     }
 
     public void registerCoupleId(Long id) {
         this.coupleId = id;
+    }
+
+    public Member update(String ageRange) {
+        this.ageRange = ageRange;
+        return this;
     }
 }

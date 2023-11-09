@@ -21,6 +21,23 @@ dependencies {
     // rest docs
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+
+    // spring security
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // spring session jdbc
+    implementation 'org.springframework.session:spring-session-jdbc'
+
+    // sprint security test
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // prometheus
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
 }
 
 ext { // 전역 변수
@@ -40,19 +57,11 @@ asciidoctor {
     outputDir file('build/docs/asciidoc')
 }
 
-task copyAsciidoc(type: Copy) {
-    from "build/docs/asciidoc/"
-    into "src/main/resources/static/docs"
-    include "index.html"
-
-    doFirst {
-        delete "src/main/resources/static/docs/index.html"
-    }
+bootJar {
     dependsOn asciidoctor
-}
-
-build {
-    dependsOn copyAsciidoc
+    from("${asciidoctor.outputDir}") {
+        into "static/docs"
+    }
 }
 
 version '1.0.1-SNAPSHOT-'+new Date().format("yyyyMMddHHmmss")

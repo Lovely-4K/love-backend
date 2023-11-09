@@ -1,14 +1,17 @@
 package com.lovely4k.backend.question.service;
 
+import com.lovely4k.backend.couple.service.IncreaseTemperatureFacade;
 import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
+import com.lovely4k.backend.question.QuestionFormType;
 import com.lovely4k.backend.question.repository.QuestionFormRepository;
 import com.lovely4k.backend.question.repository.QuestionRepository;
 import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
 import com.lovely4k.backend.question.service.response.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -20,6 +23,7 @@ import java.util.NoSuchElementException;
 
 import static com.lovely4k.backend.common.ExceptionMessage.notFoundEntityMessage;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -29,6 +33,7 @@ public class QuestionService {
     private final QuestionFormRepository questionFormRepository;
     private final QuestionValidator questionValidator;
     private final QuestionServiceSupporter questionServiceSupporter;
+    private final IncreaseTemperatureFacade facade;
     private static final int LOCK_TIME_OUT = 3;
 
     @Transactional(timeout = LOCK_TIME_OUT)
@@ -58,10 +63,20 @@ public class QuestionService {
 
     @Retryable(retryFor = ObjectOptimisticLockingFailureException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     @Transactional
-    public void updateQuestionAnswer(Long id, Sex sex, int answer) {
+    public void updateQuestionAnswer(Long id, String sex, int answer) {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(notFoundEntityMessage("question", id)));  // NOSONAR
-        question.updateAnswer(answer, sex);
+        question.updateAnswer(answer, Sex.valueOf(sex));
+        increaseTemperature(question);
+    }
+
+    private void increaseTemperature(Question question) {
+        try {
+            facade.increaseTemperature(question.getCoupleId());
+        } catch (InterruptedException e) {  // NOSONAR
+            log.warn("[System Error] Something went wrong during increasing temperature", e);
+            throw new IllegalStateException("System Error Occurred",e);
+        }
     }
 
     public DailyQuestionResponse findDailyQuestion(Long coupleId) {
@@ -84,6 +99,12 @@ public class QuestionService {
     public AnsweredQuestionResponse findAllAnsweredQuestionByCoupleId(Long id, Long coupleId, int limit) {
         List<Question> questions= questionRepository.findQuestionsByCoupleIdWithLimit(id, coupleId, limit);
         return AnsweredQuestionResponse.from(questions);
+    }
+
+    @Transactional
+    public void deleteQuestion() {
+        questionRepository.deleteAll();
+        questionFormRepository.deleteAllByQuestionFormType(QuestionFormType.CUSTOM);
     }
 
 }

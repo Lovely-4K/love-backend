@@ -38,6 +38,7 @@ out/
 
 ### YAML ###
 /api/src/main/resources/application-credential.yaml
+/api/src/main/resources/application-oauth.yaml
 /api/src/test/resources/application-credential.yaml
 
 ### index.html ###

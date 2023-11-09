@@ -1,6 +1,7 @@
 package com.lovely4k.backend.diary.service;
 
 import com.lovely4k.backend.common.imageuploader.ImageUploader;
+import com.lovely4k.backend.couple.service.IncreaseTemperatureFacade;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepositoryAdapter;
 import com.lovely4k.backend.diary.Photos;
@@ -12,6 +13,7 @@ import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class DiaryService {
 
     private final ImageUploader imageUploader;
     private final MemberRepository memberRepository;
+    private final IncreaseTemperatureFacade facade;
     private final DiaryRepositoryAdapter diaryRepositoryAdapter;
 
     @Transactional
@@ -38,8 +42,18 @@ public class DiaryService {
         Diary diary = diaryCreateRequest.toEntity(member);
         diary.addPhoto(Photos.create(uploadedImageUrls));
         Diary savedDiary = diaryRepositoryAdapter.save(diary);
+        increaseTemperature(savedDiary);
 
         return savedDiary.getId();
+    }
+
+    private void increaseTemperature(Diary savedDiary) {
+        try {
+            facade.increaseTemperature(savedDiary.getCoupleId());
+        } catch (InterruptedException e) {  // NOSONAR
+            log.warn("[System Error] Something went wrong during increasing temperature", e);
+            throw new IllegalStateException("System Error Occurred",e);
+        }
     }
 
     private Member validateMemberId(Long memberId) {
