@@ -97,11 +97,10 @@ class CalendarApiDocsTest extends RestDocsSupport {
             List.of(new ScheduleServiceResponse(LocalDate.now(), LocalDate.now(), "놀러가기", ScheduleType.DATE))
         );
 
-        given(calendarQueryService.findRecentCalendars(anyLong(), anyLong()))
+        given(calendarQueryService.findRecentCalendars(any(), any()))
             .willReturn(response);
 
         mockMvc.perform(get("/v1/calendars/recent")
-                .queryParam("coupleId", "1")
                 .queryParam("limit", "5")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8))
@@ -109,7 +108,6 @@ class CalendarApiDocsTest extends RestDocsSupport {
             .andDo(print())
             .andDo(document("find-recent-schedules",
                 queryParameters(
-                    parameterWithName("coupleId").description("커플 ID"),
                     parameterWithName("limit").description("조회할 개수 default 5")
                 ),
                 responseFields(
@@ -136,12 +134,10 @@ class CalendarApiDocsTest extends RestDocsSupport {
 
         CreateCalendarResponse response = new CreateCalendarResponse(1L, LocalDate.now(), LocalDate.now(), "details", ScheduleType.DATE, 0L);
 
-        given(calendarCommandService.createCalendar(anyLong(), anyLong(), any(CreateCalendarServiceReqeust.class)))
+        given(calendarCommandService.createCalendar(any(), any(), any(CreateCalendarServiceReqeust.class)))
             .willReturn(response);
 
         mockMvc.perform(post("/v1/calendars")
-                .queryParam("coupleId", "1")
-                .queryParam("memberId", "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.registerModule(new JavaTimeModule()).writeValueAsString(request))
                 .characterEncoding("UTF-8"))
@@ -149,10 +145,6 @@ class CalendarApiDocsTest extends RestDocsSupport {
             .andExpect(status().isCreated())
             .andDo(print())
             .andDo(document("create-schedules",
-                queryParameters(
-                    parameterWithName("coupleId").description("커플 ID"),
-                    parameterWithName("memberId").description("일정 기록자 id")
-                ),
                 requestFields(
                     fieldWithPath("startDate").type(JsonFieldType.STRING).description("일정 시작 날짜"),
                     fieldWithPath("endDate").type(JsonFieldType.STRING).description("일정 종료 날짜"),
