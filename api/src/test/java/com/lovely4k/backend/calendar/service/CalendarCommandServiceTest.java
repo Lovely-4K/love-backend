@@ -8,6 +8,7 @@ import com.lovely4k.backend.calendar.service.request.CreateCalendarServiceReqeus
 import com.lovely4k.backend.calendar.service.request.UpdateCalendarServiceRequest;
 import com.lovely4k.backend.calendar.service.response.CreateCalendarResponse;
 import com.lovely4k.backend.calendar.service.response.UpdateCalendarResponse;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -87,5 +89,31 @@ class CalendarCommandServiceTest {
         assertThat(response).isNotNull()
                 .extracting(UpdateCalendarResponse::startDate, UpdateCalendarResponse::endDate, UpdateCalendarResponse::scheduleDetails, UpdateCalendarResponse::scheduleType)
                 .containsExactly(calendar.getStartDate(), calendar.getEndDate(), calendar.getScheduleDetails(), calendar.getScheduleType());
+    }
+
+    @Test
+    @DisplayName("존재하는 일정을 삭제할 수 있다.")
+    void whenDeleteExistingCalendar_thenShouldDeleteSuccessfully() {
+        // Given
+        Long calendarId = 1L;
+        given(calendarCommandRepository.existsById(calendarId)).willReturn(true);
+
+        // When
+        calendarCommandService.deleteCalendarById(calendarId);
+
+        // Then
+        verify(calendarCommandRepository).deleteById(calendarId);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 일정을 삭제하려고 하면 예외가 발생한다.")
+    void whenDeleteNonExistingCalendar_thenShouldThrowException() {
+        // Given
+        Long calendarId = 1L;
+        given(calendarCommandRepository.existsById(calendarId)).willReturn(false);
+
+        // When & Then
+        assertThrows(EntityNotFoundException.class, () -> calendarCommandService.deleteCalendarById(calendarId));
+        verify(calendarCommandRepository, never()).deleteById(anyLong());
     }
 }

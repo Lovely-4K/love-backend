@@ -33,5 +33,10 @@ public class CalendarCommandService {
     }
 
     public void deleteCalendarById(Long id) {
+        if (!calendarCommandRepository.existsById(id)) {
+            throw new EntityNotFoundException((notFoundEntityMessage("calendar", id)));
+        }
+
+        calendarCommandRepository.deleteById(id);
     }
 }
