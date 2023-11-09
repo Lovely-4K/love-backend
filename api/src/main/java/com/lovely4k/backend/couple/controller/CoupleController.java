@@ -2,12 +2,12 @@ package com.lovely4k.backend.couple.controller;
 
 
 import com.lovely4k.backend.common.ApiResponse;
+import com.lovely4k.backend.common.sessionuser.LoginUser;
+import com.lovely4k.backend.common.sessionuser.SessionUser;
 import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
-import com.lovely4k.backend.member.authentication.LoginUser;
-import com.lovely4k.backend.member.authentication.SessionUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -65,13 +65,13 @@ public class CoupleController {
         return ApiResponse.ok(
             linkTo(methodOn(CoupleController.class).editCoupleProfile(request, sessionUser)).withSelfRel(),
             linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile")
-            );
+        );
     }
 
     @DeleteMapping("/{coupleId}")
     public ResponseEntity<Void> deleteCouple(
-            @PathVariable Long coupleId,
-            @RequestParam Long memberId) {
+        @PathVariable Long coupleId,
+        @RequestParam Long memberId) {
         coupleService.deleteCouple(coupleId, memberId);
         return ResponseEntity.noContent().build();
     }

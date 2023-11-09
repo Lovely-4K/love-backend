@@ -27,10 +27,10 @@ public class CoupleService {
 
     @Transactional
     public InvitationCodeCreateResponse
-    createInvitationCode(Long requestedMemberId, Sex sex) {
+    createInvitationCode(Long requestedMemberId, String sex) {
         String invitationCode = UUID.randomUUID().toString();
 
-        Couple couple = Couple.create(requestedMemberId, sex, invitationCode);
+        Couple couple = Couple.create(requestedMemberId, Sex.valueOf(sex), invitationCode);
         Couple savedCouple = coupleRepository.save(couple);
 
         return new InvitationCodeCreateResponse(savedCouple.getId(), invitationCode);

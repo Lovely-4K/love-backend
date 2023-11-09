@@ -46,7 +46,7 @@ class CoupleServiceTest extends IntegrationTestSupport {
         Member savedMember = memberRepository.save(createMember(MALE, "ESFJ", "듬직이"));
 
         //when
-        InvitationCodeCreateResponse response = coupleService.createInvitationCode(savedMember.getId(), savedMember.getSex());
+        InvitationCodeCreateResponse response = coupleService.createInvitationCode(savedMember.getId(), savedMember.getSex().name());
 
         //then
         Couple findCouple = coupleRepository.findById(response.coupleId())
@@ -66,7 +66,7 @@ class CoupleServiceTest extends IntegrationTestSupport {
         Member savedMember = memberRepository.save(createMember(FEMALE, "INFP", "깜찍이"));
 
         //when
-        InvitationCodeCreateResponse response = coupleService.createInvitationCode(savedMember.getId(), savedMember.getSex());
+        InvitationCodeCreateResponse response = coupleService.createInvitationCode(savedMember.getId(), savedMember.getSex().name());
 
         //then
         Couple findCouple = coupleRepository.findById(response.coupleId())
@@ -89,7 +89,7 @@ class CoupleServiceTest extends IntegrationTestSupport {
         Member savedRequestedMember = memberRepository.save(requestedMember);
         Member savedReceivedMember = memberRepository.save(receivedMember);
 
-        InvitationCodeCreateResponse response = coupleService.createInvitationCode(savedRequestedMember.getId(), savedRequestedMember.getSex());
+        InvitationCodeCreateResponse response = coupleService.createInvitationCode(savedRequestedMember.getId(), savedRequestedMember.getSex().name());
 
         //when
         coupleService.registerCouple(response.invitationCode(), savedReceivedMember.getId());
@@ -133,7 +133,7 @@ class CoupleServiceTest extends IntegrationTestSupport {
         Member girl = createMember(FEMALE, "INFP", "깜찍이");
         memberRepository.saveAll(List.of(boy, girl));
 
-        InvitationCodeCreateResponse codeCreateResponse = coupleService.createInvitationCode(boy.getId(), boy.getSex());
+        InvitationCodeCreateResponse codeCreateResponse = coupleService.createInvitationCode(boy.getId(), boy.getSex().name());
 
         coupleService.registerCouple(codeCreateResponse.invitationCode(), girl.getId());
 
@@ -159,7 +159,7 @@ class CoupleServiceTest extends IntegrationTestSupport {
         Member girl = createMember(FEMALE, "INFP", "깜찍이");
         memberRepository.saveAll(List.of(boy, girl));
 
-        InvitationCodeCreateResponse codeCreateResponse = coupleService.createInvitationCode(boy.getId(), boy.getSex());
+        InvitationCodeCreateResponse codeCreateResponse = coupleService.createInvitationCode(boy.getId(), boy.getSex().name());
 
         coupleService.registerCouple(codeCreateResponse.invitationCode(), girl.getId());
 

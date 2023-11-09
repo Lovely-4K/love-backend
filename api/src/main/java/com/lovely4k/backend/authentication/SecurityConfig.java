@@ -1,4 +1,4 @@
-package com.lovely4k.backend.member.authentication;
+package com.lovely4k.backend.authentication;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -36,12 +36,13 @@ public class SecurityConfig {
         http.authorizeHttpRequests(
             authorize -> authorize
                 .requestMatchers(
-                    antMatcher("/h2-console")
+                    antMatcher("/h2-console"),
+                    antMatcher("/v1/**")
                 ).permitAll()
 
-                .requestMatchers(
-                    antMatcher("/v1/**")
-                ).hasRole("USER")
+//                .requestMatchers(
+//                    antMatcher("/v1/**")
+//                ).hasRole(Role.USER.name())
 
                 .anyRequest().permitAll()
         );
@@ -67,7 +68,7 @@ public class SecurityConfig {
             .sessionFixation().changeSessionId() // session fixation 방지
             .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션 생성 전략
             .invalidSessionUrl("/") // 유효하지 않은 세션에서 요청시 리다이렉트 되는 url
-            .maximumSessions(1) // 2개의 로그인만 가능
+            .maximumSessions(2) // 2개의 로그인만 가능
             .maxSessionsPreventsLogin(false))
         );// 새로운 로그인 발생시 기존 로그인이 아닌 새로운 로그인 허용
 

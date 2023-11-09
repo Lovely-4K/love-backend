@@ -29,7 +29,7 @@ class CoupleControllerTest extends ControllerTestSupport {
         Long coupleId = 2L;
         String invitationCode = UUID.randomUUID().toString();
 
-        given(coupleService.createInvitationCode(requestedMemberId, sex))
+        given(coupleService.createInvitationCode(requestedMemberId, sex.name()))
             .willReturn(new InvitationCodeCreateResponse(coupleId, invitationCode));
 
         //when //then

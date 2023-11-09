@@ -1,8 +1,8 @@
 package com.lovely4k.backend.question.controller;
 
 import com.lovely4k.backend.common.ApiResponse;
-import com.lovely4k.backend.member.authentication.LoginUser;
-import com.lovely4k.backend.member.authentication.SessionUser;
+import com.lovely4k.backend.common.sessionuser.LoginUser;
+import com.lovely4k.backend.common.sessionuser.SessionUser;
 import com.lovely4k.backend.question.controller.request.AnswerQuestionRequest;
 import com.lovely4k.backend.question.controller.request.AnsweredQuestionParamRequest;
 import com.lovely4k.backend.question.controller.request.CreateQuestionFormRequest;

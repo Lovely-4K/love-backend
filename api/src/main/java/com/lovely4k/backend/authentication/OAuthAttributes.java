@@ -1,9 +1,8 @@
-package com.lovely4k.backend.member.authentication;
+package com.lovely4k.backend.authentication;
 
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.Role;
 import com.lovely4k.backend.member.Sex;
-import lombok.ToString;
 
 import java.util.Map;
 

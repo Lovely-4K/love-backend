@@ -1,8 +1,8 @@
 package com.lovely4k.backend.member.controller;
 
 import com.lovely4k.backend.common.ApiResponse;
-import com.lovely4k.backend.member.authentication.LoginUser;
-import com.lovely4k.backend.member.authentication.SessionUser;
+import com.lovely4k.backend.common.sessionuser.LoginUser;
+import com.lovely4k.backend.common.sessionuser.SessionUser;
 import com.lovely4k.backend.member.controller.request.MemberProfileEditRequest;
 import com.lovely4k.backend.member.service.MemberService;
 import com.lovely4k.backend.member.service.response.MemberProfileGetResponse;
@@ -32,7 +32,7 @@ public class MemberController {
     @SneakyThrows
     @GetMapping
     public ResponseEntity<ApiResponse<MemberProfileGetResponse>> getMemberProfile(@LoginUser SessionUser sessionUser) {
-
+        System.out.println(sessionUser.memberId());
         return ApiResponse.ok(memberService.findMemberProfile(sessionUser.memberId()),
             linkTo(methodOn(MemberController.class).getMemberProfile(sessionUser)).withSelfRel(),
             linkTo(MemberController.class.getMethod("editMemberProfile", List.class, MemberProfileEditRequest.class, SessionUser.class)).withRel("edit member profile")

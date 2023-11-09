@@ -82,7 +82,7 @@ class QuestionServiceConcurrencyTest {
                 try {
                     int currentRequest = requestCounter.incrementAndGet();
                     int answer = (currentRequest == 1) ? 3 : 4;
-                    questionService.updateQuestionAnswer(questionId, Sex.MALE, answer);
+                    questionService.updateQuestionAnswer(questionId, Sex.MALE.name(), answer);
                     successCounter.incrementAndGet();
                 } finally {
                     latch.countDown();

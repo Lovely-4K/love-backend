@@ -1,4 +1,4 @@
-package com.lovely4k.backend.member.authentication;
+package com.lovely4k.backend.common.sessionuser;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
