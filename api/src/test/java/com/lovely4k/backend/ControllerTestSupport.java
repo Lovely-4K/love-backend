@@ -9,6 +9,8 @@ import com.lovely4k.backend.couple.controller.CoupleController;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.diary.controller.DiaryController;
 import com.lovely4k.backend.diary.service.DiaryService;
+import com.lovely4k.backend.game.controller.GameController;
+import com.lovely4k.backend.game.service.GameQueryService;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.Role;
 import com.lovely4k.backend.member.Sex;
@@ -45,7 +47,8 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
     DiaryController.class,
     MemberController.class,
     QuestionController.class,
-    CoupleController.class
+    CoupleController.class,
+    GameController.class
 })
 public abstract class ControllerTestSupport {
 
@@ -72,6 +75,9 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected QuestionQueryService questionQueryService;
+
+    @MockBean
+    protected GameQueryService gameQueryService;
 
     @MockBean
     OAuth2UserService oAuth2UserService;
