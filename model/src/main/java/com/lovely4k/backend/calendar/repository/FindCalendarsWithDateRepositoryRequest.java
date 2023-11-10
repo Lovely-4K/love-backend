@@ -4,8 +4,7 @@ import java.time.LocalDate;
 
 public record FindCalendarsWithDateRepositoryRequest(
     LocalDate from,
-    LocalDate to,
-    long coupleId
+    LocalDate to
 
 ) {
 }

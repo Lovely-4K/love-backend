@@ -19,8 +19,8 @@ public class CalendarQueryService {
 
     private final CalendarQueryRepository calendarQueryRepository;
 
-    public FindCalendarsWithDateServiceResponse findCalendarsWithDate(FindCalendarsWithDateRepositoryRequest request) {
-        List<FindCalendarsWithDateResponse> responses = calendarQueryRepository.findCalendarsWithDate(request);
+    public FindCalendarsWithDateServiceResponse findCalendarsWithDate(FindCalendarsWithDateRepositoryRequest request, Long coupleId) {
+        List<FindCalendarsWithDateResponse> responses = calendarQueryRepository.findCalendarsWithDate(request, coupleId);
         return FindCalendarsWithDateServiceResponse.from(responses);
     }
 

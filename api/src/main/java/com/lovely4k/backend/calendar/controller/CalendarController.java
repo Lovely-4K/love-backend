@@ -39,10 +39,10 @@ public class CalendarController {
 
     @SneakyThrows
     @GetMapping
-    public ResponseEntity<ApiResponse<FindCalendarsWithDateServiceResponse>> findAllSchedulesWithDate(@ModelAttribute @Valid FindCalendarsWithDateRequest request) {
+    public ResponseEntity<ApiResponse<FindCalendarsWithDateServiceResponse>> findAllSchedulesWithDate(@ModelAttribute @Valid FindCalendarsWithDateRequest request, @LoginUser SessionUser sessionUser) {
         return ApiResponse.ok(
-                calendarQueryService.findCalendarsWithDate(request.toRepositoryDto()),
-                linkTo(methodOn(getClass()).findAllSchedulesWithDate(request)).withSelfRel(),
+                calendarQueryService.findCalendarsWithDate(request.toRepositoryDto(), sessionUser.coupleId()),
+                linkTo(methodOn(getClass()).findAllSchedulesWithDate(request, sessionUser)).withSelfRel(),
                 linkTo(getClass().getMethod(CREATE_SCHEDULE, SessionUser.class, CreateCalendarRequest.class)).withRel(CREATE_SCHEDULE),
                 linkTo(getClass().getMethod(EDIT_SCHEDULE_BY_ID, Long.class, UpdateCalendarRequest.class)).withRel(EDIT_SCHEDULE_BY_ID),
                 linkTo(getClass().getMethod(DELETE_SCHEDULE_BY_ID, Long.class)).withRel(DELETE_SCHEDULE_BY_ID)
@@ -72,7 +72,7 @@ public class CalendarController {
                 response,
                 response.id(),
                 linkTo(methodOn(getClass()).createSchedule(sessionUser, request)).withSelfRel(),
-                linkTo(getClass().getMethod(FIND_ALL_SCHEDULE_WITH_DATE, FindCalendarsWithDateRequest.class)).withRel(FIND_ALL_SCHEDULE_WITH_DATE)
+                linkTo(getClass().getMethod(FIND_ALL_SCHEDULE_WITH_DATE, FindCalendarsWithDateRequest.class, SessionUser.class)).withRel(FIND_ALL_SCHEDULE_WITH_DATE)
         );
     }
 
@@ -83,7 +83,7 @@ public class CalendarController {
         return ApiResponse.ok(
             response,
             linkTo(methodOn(getClass()).editScheduleById(id, request)).withSelfRel(),
-            linkTo(getClass().getMethod(FIND_ALL_SCHEDULE_WITH_DATE, FindCalendarsWithDateRequest.class)).withRel(FIND_ALL_SCHEDULE_WITH_DATE)
+            linkTo(getClass().getMethod(FIND_ALL_SCHEDULE_WITH_DATE, FindCalendarsWithDateRequest.class, SessionUser.class)).withRel(FIND_ALL_SCHEDULE_WITH_DATE)
         );
     }
 
