@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
@@ -25,4 +26,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
         ORDER BY id DESC LIMIT :limit
         """, nativeQuery = true)
     List<Question> findQuestionsByCoupleIdWithLimit(@Param("id") Long id, @Param("coupleId") Long coupleId, @Param("limit") int limit);
+
+    @Query(value = "SELECT * FROM question WHERE couple_Id = :coupleId ORDER BY RAND() LIMIT 1", nativeQuery = true)
+    Optional<Question> findOneRandomQuestion(Long coupleId);
 }
