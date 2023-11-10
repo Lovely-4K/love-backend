@@ -1,6 +1,7 @@
 package com.lovely4k.docs.diary;
 
 import com.lovely4k.backend.diary.controller.DiaryController;
+import com.lovely4k.backend.diary.controller.request.WebFillDiaryRequest;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
@@ -92,6 +93,34 @@ class DiaryControllerDocsTest extends RestDocsSupport {
             )
         ;
     }
+
+    @DisplayName("이미 만들어진 다이어리에 상대방이 다이어리를 작성하는 API")
+    @Test
+    void fillDiary() throws Exception {
+        // given
+        WebFillDiaryRequest webFillDiaryRequest = new WebFillDiaryRequest("나도 오늘 데이트 해서 좋았어.");
+
+        // when
+        mockMvc.perform(
+                post("/v1/diaries/{diaryId}", 1L)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(webFillDiaryRequest))
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("diary-fill",
+                requestFields(
+                    fieldWithPath("text").type(STRING).description("다이어리 내용")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(NUMBER).description("코드"),
+                    fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디"),
+                    fieldWithPath("links[0].rel").type(STRING).description("relation of url"),
+                    fieldWithPath("links[0].href").type(STRING).description("url of relation")
+                )
+                ));
+    }
+
 
     @DisplayName("다이어리를 상세 조회하는 API")
     @Test

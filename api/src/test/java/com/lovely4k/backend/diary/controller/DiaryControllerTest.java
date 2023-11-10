@@ -1,6 +1,7 @@
 package com.lovely4k.backend.diary.controller;
 
 import com.lovely4k.backend.ControllerTestSupport;
+import com.lovely4k.backend.diary.controller.request.WebFillDiaryRequest;
 import com.lovely4k.docs.diary.MockDiaryCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 import java.nio.charset.StandardCharsets;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -204,4 +206,44 @@ class DiaryControllerTest extends ControllerTestSupport {
             .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
         ;
     }
+
+    @DisplayName("fillDiary 시 text 값은 Null 이어서는 안된다.")
+    @Test
+    void fillDiary_Null() throws Exception {
+        // given
+        WebFillDiaryRequest webFillDiaryRequest = new WebFillDiaryRequest(null);
+
+        // when  && then
+        this.mockMvc.perform(
+            post("/v1/diaries/{diaryId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(webFillDiaryRequest))
+        )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+        ;
+    }
+
+    @DisplayName("fillDiary 시 text 값은 Blank 이어서는 안된다.")
+    @Test
+    void fillDiary_Blank() throws Exception {
+        // given
+        WebFillDiaryRequest webFillDiaryRequest = new WebFillDiaryRequest("");
+
+        // when  && then
+        this.mockMvc.perform(
+                post("/v1/diaries/{diaryId}", 1L)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(webFillDiaryRequest))
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+        ;
+    }
+
+
 }
