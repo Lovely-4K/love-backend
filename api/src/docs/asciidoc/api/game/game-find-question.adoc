@@ -1,0 +1,13 @@
+[[game-find-question]]
+=== 게임 질문 조회
+
+coupleId를 통해 해당 커플이 과거에 답변한 질문들 중 랜덤으로 하나의 질문을 조회할 수 있습니다.
+
+==== Http Request
+include::{snippets}/find-random-question/http-request.adoc[]
+
+==== Http Response
+include::{snippets}/find-random-question/http-response.adoc[]
+
+게임을 시작할 경우 질문 조회 후 하단의 값들이 body에 담겨져 응답이 됩니다.
+include::{snippets}/find-random-question/response-fields.adoc[]

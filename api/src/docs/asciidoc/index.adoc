@@ -46,3 +46,8 @@ include::api/diary/diary-delete.adoc[]
 == Question
 질문 API 입니다. 현재 로그인 기능이 없어 쿼리 스트링으로 coupleId, userId를 받습니다.
 include::api/question/questions.adoc[]
+
+
+[[Game]]
+== Game
+include::api/game/game-find-question.adoc[]
