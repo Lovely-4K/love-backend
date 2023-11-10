@@ -24,10 +24,10 @@ class DiaryTest {
         LocalDate localDate = LocalDate.of(2023, 10, 20);
         String text = "안녕하세요";
         Member member = Member.builder()
-                .nickname("tommy")
-                .sex(MALE)
-                .coupleId(1L)
-                .build();
+            .nickname("tommy")
+            .sex(MALE)
+            .coupleId(1L)
+            .build();
 
         Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
 
@@ -36,11 +36,11 @@ class DiaryTest {
 
         // then
         assertAll(
-                () -> assertThat(diary.getBoyText()).isNotNull().isEqualTo("안녕하세요"),
-                () -> assertThat(diary.getScore()).isZero(),
-                () -> assertThat(diary.getCoupleId()).isEqualTo(member.getCoupleId()),
-                () -> assertThat(diary.getDatingDay()).isEqualTo(localDate),
-                () -> assertThat(diary.getLocation()).isEqualTo(location)
+            () -> assertThat(diary.getBoyText()).isNotNull().isEqualTo("안녕하세요"),
+            () -> assertThat(diary.getScore()).isZero(),
+            () -> assertThat(diary.getCoupleId()).isEqualTo(member.getCoupleId()),
+            () -> assertThat(diary.getDatingDay()).isEqualTo(localDate),
+            () -> assertThat(diary.getLocation()).isEqualTo(location)
         );
     }
 
@@ -52,10 +52,10 @@ class DiaryTest {
         LocalDate localDate = LocalDate.of(2023, 10, 20);
         String text = "안녕하세요";
         Member member = Member.builder()
-                .nickname("tommy")
-                .sex(FEMALE)
-                .coupleId(1L)
-                .build();
+            .nickname("tommy")
+            .sex(FEMALE)
+            .coupleId(1L)
+            .build();
 
         Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
 
@@ -64,11 +64,11 @@ class DiaryTest {
 
         // then
         assertAll(
-                () -> assertThat(diary.getGirlText()).isNotNull().isEqualTo("안녕하세요"),
-                () -> assertThat(diary.getScore()).isZero(),
-                () -> assertThat(diary.getCoupleId()).isEqualTo(member.getCoupleId()),
-                () -> assertThat(diary.getDatingDay()).isEqualTo(localDate),
-                () -> assertThat(diary.getLocation()).isEqualTo(location)
+            () -> assertThat(diary.getGirlText()).isNotNull().isEqualTo("안녕하세요"),
+            () -> assertThat(diary.getScore()).isZero(),
+            () -> assertThat(diary.getCoupleId()).isEqualTo(member.getCoupleId()),
+            () -> assertThat(diary.getDatingDay()).isEqualTo(localDate),
+            () -> assertThat(diary.getLocation()).isEqualTo(location)
         );
     }
 
@@ -80,17 +80,17 @@ class DiaryTest {
         LocalDate localDate = LocalDate.of(2023, 10, 20);
         String text = "안녕하세요";
         Member member = Member.builder()
-                .nickname("tommy")
-                .sex(MALE)
-                .build();
+            .nickname("tommy")
+            .sex(MALE)
+            .build();
 
         Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
 
         // when && then
         assertThatThrownBy(
-                () -> Diary.create(score, localDate, text, member, location)
+            () -> Diary.create(score, localDate, text, member, location)
         ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("score out of range.");
+            .hasMessage("score out of range.");
 
     }
 
@@ -102,17 +102,17 @@ class DiaryTest {
         LocalDate localDate = LocalDate.of(2023, 10, 20);
         String text = "안녕하세요";
         Member member = Member.builder()
-                .nickname("tommy")
-                .sex(MALE)
-                .build();
+            .nickname("tommy")
+            .sex(MALE)
+            .build();
 
         Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
 
         // when && then
         assertThatThrownBy(
-                () -> Diary.create(score, localDate, text, member, location)
+            () -> Diary.create(score, localDate, text, member, location)
         ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("score out of range.");
+            .hasMessage("score out of range.");
 
     }
 
@@ -121,22 +121,22 @@ class DiaryTest {
     void checkAuthorityNoAuthority() {
         // given
         Member member = Member.builder()
-                .sex(MALE)
-                .coupleId(1L)
-                .build();
+            .sex(MALE)
+            .coupleId(1L)
+            .build();
 
         Diary diary = Diary.builder()
-                .coupleId(2L)
-                .boyText("hello")
-                .girlText("hi")
-                .build();
+            .coupleId(2L)
+            .boyText("hello")
+            .girlText("hi")
+            .build();
 
         Long memberCoupleId = member.getCoupleId();
         // when && then
         assertThatThrownBy(
-                () -> diary.checkAuthority(memberCoupleId)
+            () -> diary.checkAuthority(memberCoupleId)
         ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("you can only manage your couple's diary");
+            .hasMessage("you can only manage your couple's diary");
     }
 
     @DisplayName("내가 속한 커플의 다이어리에 대해 checkAuthority를 하면 아무 일이 발생하지 않는다. ")
@@ -144,15 +144,15 @@ class DiaryTest {
     void checkAuthority() {
         // given
         Member member = Member.builder()
-                .sex(MALE)
-                .coupleId(1L)
-                .build();
+            .sex(MALE)
+            .coupleId(1L)
+            .build();
 
         Diary diary = Diary.builder()
-                .coupleId(1L)
-                .boyText("hello")
-                .girlText("hi")
-                .build();
+            .coupleId(1L)
+            .boyText("hello")
+            .girlText("hi")
+            .build();
 
         Long memberCoupleId = member.getCoupleId();
         // when && then
@@ -164,15 +164,15 @@ class DiaryTest {
     void addPhoto() {
         // given
         Photos photos = Photos.builder()
-                .firstImage("first-image-url")
-                .secondImage("second-image-url")
-                .build();
+            .firstImage("first-image-url")
+            .secondImage("second-image-url")
+            .build();
 
         Diary diary = Diary.builder()
-                .coupleId(1L)
-                .boyText("boy-text")
-                .girlText("girl-text")
-                .build();
+            .coupleId(1L)
+            .boyText("boy-text")
+            .girlText("girl-text")
+            .build();
 
         assertThat(diary.getPhotos()).isNull();
         // when
@@ -180,9 +180,68 @@ class DiaryTest {
 
         // then
         assertAll(
-                () -> assertThat(diary.getPhotos()).isNotNull(),
-                () -> assertThat(diary.getPhotos().countOfImages()).isEqualTo(2)
+            () -> assertThat(diary.getPhotos()).isNotNull(),
+            () -> assertThat(diary.getPhotos().countOfImages()).isEqualTo(2)
         );
+    }
+
+    @DisplayName("fill method를 통해 다이어리의 빈 부분을 채울 수 있다.")
+    @Test
+    void fill_girlText() {
+        // given
+        Diary diary = Diary.builder()
+            .coupleId(1L)
+            .boyText("오늘 이 장소 올해 가본 곳 중 제일 좋았어!")
+            .score(5)
+            .datingDay(LocalDate.of(2020, 2, 20))
+            .build();
+
+        String text = "나도 이곳 너무 좋더라. 담에 우리 또 올까?";
+        // when
+        diary.fill(text);
+
+        // then
+        assertThat(diary.getGirlText()).isEqualTo(text);
+    }
+
+    @DisplayName("fill method를 통해 다이어리의 빈 부분을 채울 수 있다.")
+    @Test
+    void fill_boyText() {
+        // given
+        Diary diary = Diary.builder()
+            .coupleId(1L)
+            .girlText("오늘 이 장소 올해 가본 곳 중 제일 좋았어!")
+            .score(5)
+            .datingDay(LocalDate.of(2020, 2, 20))
+            .build();
+
+        String text = "나도 이곳 너무 좋더라. 담에 우리 또 올까?";
+        // when
+        diary.fill(text);
+
+        // then
+        assertThat(diary.getBoyText()).isEqualTo(text);
+    }
+
+    @DisplayName("fill method시에 두 회원 모두 다이어리를 작성했다면 IllegalStateException이 발생한다.")
+    @Test
+    void fill_alreadyFilled() {
+        // given
+        Diary diary = Diary.builder()
+            .coupleId(1L)
+            .boyText("나도 이곳 너무 좋더라. 담에 우리 또 올까?")
+            .girlText("오늘 이 장소 올해 가본 곳 중 제일 좋았어!")
+            .score(5)
+            .datingDay(LocalDate.of(2020, 2, 20))
+            .build();
+
+        String text = "나도 이곳 너무 좋더라. 담에 우리 또 올까?";
+
+        // when && then
+        assertThatThrownBy(
+            () -> diary.fill(text)
+        ).isInstanceOf(IllegalStateException.class)
+            .hasMessage("이미 두분 다 다이어리를 작성했습니다.");
     }
 
 }

@@ -6,6 +6,7 @@ import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepositoryAdapter;
 import com.lovely4k.backend.diary.Photos;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
+import com.lovely4k.backend.diary.service.request.FillDiaryRequest;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
 import com.lovely4k.backend.location.Category;
@@ -47,18 +48,25 @@ public class DiaryService {
         return savedDiary.getId();
     }
 
+    @Transactional
+    public void fillDiary(Long diaryId, FillDiaryRequest serviceRequest, Long coupleId) {
+        Diary diary = validateDiaryId(diaryId);
+        diary.checkAuthority(coupleId);
+        diary.fill(serviceRequest.text());
+    }
+
     private void increaseTemperature(Diary savedDiary) {
         try {
             facade.increaseTemperature(savedDiary.getCoupleId());
         } catch (InterruptedException e) {  // NOSONAR
             log.warn("[System Error] Something went wrong during increasing temperature", e);
-            throw new IllegalStateException("System Error Occurred",e);
+            throw new IllegalStateException("System Error Occurred", e);
         }
     }
 
     private Member validateMemberId(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(
-                () -> new EntityNotFoundException("invalid member id")
+            () -> new EntityNotFoundException("invalid member id")
         );
     }
 
@@ -85,9 +93,10 @@ public class DiaryService {
 
     private Diary validateDiaryId(Long diaryId) {
         return diaryRepositoryAdapter.findById(diaryId).orElseThrow(
-                () -> new EntityNotFoundException("invalid diary id")
+            () -> new EntityNotFoundException("invalid diary id")
         );
     }
+
     public Page<DiaryListResponse> findDiaryList(Long coupleId, Category category, Pageable pageable) {
         Page<Diary> pageDiary = diaryRepositoryAdapter.findDiaryList(coupleId, category, pageable);
 

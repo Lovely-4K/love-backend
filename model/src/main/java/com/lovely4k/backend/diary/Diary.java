@@ -90,4 +90,19 @@ public class Diary extends BaseTimeEntity {
             default -> throw new IllegalArgumentException("invalid input of sex");
         }
     }
+
+    public void fill(String text) {
+        alreadyFilled();
+        if (boyText == null) {
+            this.boyText = text;
+        } else {
+            this.girlText = text;
+        }
+    }
+
+    private void alreadyFilled() {
+        if (boyText != null && girlText != null) {
+            throw new IllegalStateException("이미 두분 다 다이어리를 작성했습니다.");
+        }
+    }
 }

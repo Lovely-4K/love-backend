@@ -7,6 +7,7 @@ import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
+import com.lovely4k.backend.diary.service.request.FillDiaryRequest;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
 import com.lovely4k.backend.location.Category;
@@ -186,6 +187,91 @@ class DiaryServiceTest extends IntegrationTestSupport {
         MockMultipartFile fifthImage = new MockMultipartFile("images", "image5.png", "image/png", "some-image".getBytes());
         MockMultipartFile sixthImage = new MockMultipartFile("images", "image6.png", "image/png", "some-image".getBytes());
         return List.of(firstImage, secondImage, thirdImage, fourthImage, fifthImage, sixthImage);
+    }
+
+
+    @DisplayName("fillDiary를 통해서 생성된 다이어리에 채워지지 않은 일기장을 채울 수 있다.")
+    @Test
+    void fillDiary_boyText() {
+        // given
+        Diary diary = Diary.builder()
+            .coupleId(1L)
+            .girlText("오늘 이 장소 올해 가본 곳 중 제일 좋았어!")
+            .score(5)
+            .datingDay(LocalDate.of(2020, 2, 20))
+            .build();
+        Diary savedDiary = diaryRepository.save(diary);
+
+        String text = "나도 여기 너무 좋더라 다음에 또 가자";
+        FillDiaryRequest fillDiaryRequest = new FillDiaryRequest(text);
+
+        // when
+        diaryService.fillDiary(savedDiary.getId(), fillDiaryRequest, 1L);
+
+        // then
+        Diary findDiary = diaryRepository.findById(savedDiary.getId()).orElseThrow();
+
+        assertAll(
+            () -> assertThat(findDiary.getBoyText()).isNotNull(),
+            () -> assertThat(findDiary.getBoyText()).isEqualTo(text)
+        );
+    }
+
+    @DisplayName("fillDiary를 통해서 생성된 다이어리에 채워지지 않은 일기장을 채울 수 있다.")
+    @Test
+    void fillDiary_girlText() {
+        // given
+        Diary diary = Diary.builder()
+            .coupleId(1L)
+            .boyText("오늘 이 장소 올해 가본 곳 중 제일 좋았어!")
+            .score(5)
+            .datingDay(LocalDate.of(2020, 2, 20))
+            .build();
+        Diary savedDiary = diaryRepository.save(diary);
+
+        String text = "나도 여기 너무 좋더라 다음에 또 가자";
+        FillDiaryRequest fillDiaryRequest = new FillDiaryRequest(text);
+
+        // when
+        diaryService.fillDiary(savedDiary.getId(), fillDiaryRequest, 1L);
+
+        // then
+        Diary findDiary = diaryRepository.findById(savedDiary.getId()).orElseThrow();
+
+        assertAll(
+            () -> assertThat(findDiary.getGirlText()).isNotNull(),
+            () -> assertThat(findDiary.getGirlText()).isEqualTo(text)
+        );
+
+    }
+
+    @DisplayName("다른 커플의 다이어리에 작성을 하려고 하는 경우 IllegalArgumentException이 발생한다.")
+    @Test
+    void fillDiary() {
+        // given
+        Diary diary = Diary.builder()
+            .coupleId(1L)
+            .girlText("오늘 이 장소 올해 가본 곳 중 제일 좋았어!")
+            .score(5)
+            .datingDay(LocalDate.of(2020, 2, 20))
+            .build();
+        Diary savedDiary = diaryRepository.save(diary);
+
+        String text = "나도 여기 너무 좋더라 다음에 또 가자";
+        FillDiaryRequest fillDiaryRequest = new FillDiaryRequest(text);
+
+        // when && then
+        assertThatThrownBy(
+            () -> diaryService.fillDiary(savedDiary.getId(), fillDiaryRequest, 2L)
+        ).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("you can only manage your couple's diary");
+
+        // then
+        Diary findDiary = diaryRepository.findById(savedDiary.getId()).orElseThrow();
+
+        assertAll(
+            () -> assertThat(findDiary.getBoyText()).isNull()
+        );
     }
 
     @DisplayName("getDiaryDetail을 통해 다이어리 상세 정보를 조회할 수 있다.")
