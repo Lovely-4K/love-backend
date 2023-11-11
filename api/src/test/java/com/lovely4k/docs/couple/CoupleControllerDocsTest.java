@@ -1,9 +1,7 @@
 package com.lovely4k.docs.couple;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.lovely4k.backend.couple.Decision;
 import com.lovely4k.backend.couple.controller.CoupleController;
-import com.lovely4k.backend.couple.controller.request.DecideReCoupleRequest;
 import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
@@ -250,37 +248,4 @@ class CoupleControllerDocsTest extends RestDocsSupport {
         ;
     }
 
-    @DisplayName("커플 복구 승인 / 거절 API")
-    @Test
-    void restoreConfirm() throws Exception {
-        // given
-        DecideReCoupleRequest decideReCoupleRequest = new DecideReCoupleRequest("yes");
-
-        // when && then
-        this.mockMvc.perform(
-                post("/v1/couples/recouple-decide/{recoveryId}", 1)
-                    .queryParam("memberId", "1")
-                    .content(objectMapper.writeValueAsString(decideReCoupleRequest))
-                    .contentType(APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andDo(document("couple-recouple-confirm",
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                queryParameters(
-                    parameterWithName("memberId").description("회원 아이디")
-                ),
-                requestFields(
-                    fieldWithPath("decision").type(JsonFieldType.STRING).description("결정 여부")
-                ),
-                responseFields(
-                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
-                    fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디"),
-                    fieldWithPath("links[0].rel").type(JsonFieldType.STRING).description("relation of url"),
-                    fieldWithPath("links[0].href").type(JsonFieldType.STRING).description("url of relation")
-                )
-            ))
-        ;
-    }
 }

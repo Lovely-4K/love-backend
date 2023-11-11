@@ -5,7 +5,6 @@ import com.lovely4k.backend.common.ApiResponse;
 import com.lovely4k.backend.common.sessionuser.LoginUser;
 import com.lovely4k.backend.common.sessionuser.SessionUser;
 import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
-import com.lovely4k.backend.couple.controller.request.DecideReCoupleRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
@@ -47,7 +46,7 @@ public class CoupleController {
 
         return ApiResponse.ok(
             linkTo(methodOn(CoupleController.class).registerCouple(invitationCode, sessionUser)).withSelfRel(),
-            linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile")
+            linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile")   // NOSONAR
         );
     }
 
@@ -90,21 +89,6 @@ public class CoupleController {
 
         return ApiResponse.ok(
             linkTo(methodOn(CoupleController.class).reCouple(coupleId, sessionUser)).withSelfRel(),
-            linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile"),
-            linkTo(CoupleController.class.getMethod("editCoupleProfile", CoupleProfileEditRequest.class, SessionUser.class)).withRel("edit couple profile")
-        );
-    }
-
-    @SneakyThrows
-    @PostMapping(value = "/recouple-decide/{recoveryId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<Void>> decideReCoupleApproval(
-        @PathVariable Long recoveryId,
-        @LoginUser SessionUser sessionUser,
-        @RequestBody @Valid DecideReCoupleRequest request
-    ) {
-        coupleService.decideReCoupleApproval(recoveryId, sessionUser.memberId(), request.toServiceRequest());
-        return ApiResponse.ok(
-            linkTo(methodOn(CoupleController.class).decideReCoupleApproval(recoveryId, sessionUser, request)).withSelfRel(),
             linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile"),
             linkTo(CoupleController.class.getMethod("editCoupleProfile", CoupleProfileEditRequest.class, SessionUser.class)).withRel("edit couple profile")
         );

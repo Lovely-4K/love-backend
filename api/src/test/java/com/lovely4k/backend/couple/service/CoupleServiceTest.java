@@ -2,12 +2,9 @@ package com.lovely4k.backend.couple.service;
 
 import com.lovely4k.backend.IntegrationTestSupport;
 import com.lovely4k.backend.couple.Couple;
-import com.lovely4k.backend.couple.Decision;
-import com.lovely4k.backend.couple.Recovery;
+import com.lovely4k.backend.couple.CoupleStatus;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
-import com.lovely4k.backend.couple.repository.RecoveryRepository;
 import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
-import com.lovely4k.backend.couple.service.request.DecideReCoupleServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import com.lovely4k.backend.member.Member;
@@ -43,8 +40,6 @@ class CoupleServiceTest extends IntegrationTestSupport {
     @Autowired
     private CoupleRepository coupleRepository;
 
-    @Autowired
-    private RecoveryRepository recoveryRepository;
 
     @Test
     @DisplayName("초대 코드를 발급받을 수 있다. - MALE 이 코드를 넘겨 줄 경우")
@@ -207,7 +202,37 @@ class CoupleServiceTest extends IntegrationTestSupport {
 
     }
 
-    @DisplayName("삭제 권한이 없는 경우 IllegalArgumentException이 발생한다.")
+    @DisplayName("커플을 끊을 경우 deleted = true, deleted_date가 기록되며, Couple Status = 'BREAKUP' 이 된다.")
+    @Test
+    void deleteCouple_checkStatus() {
+        // given
+        Couple couple = Couple.builder()
+            .boyId(1L)
+            .girlId(2L)
+            .meetDay(LocalDate.of(2020, 10, 20))
+            .invitationCode("test-code")
+            .build();
+        Couple savedCouple = coupleRepository.save(couple);
+
+        Couple findCouple = coupleRepository.findById(savedCouple.getId()).orElseThrow();
+        assertAll(
+            () -> assertThat(findCouple.isDeleted()).isFalse(),
+            () -> assertThat(findCouple.getDeletedDate()).isNull()
+        );
+
+        // when
+        coupleService.deleteCouple(savedCouple.getId(), 1L);
+
+        // then
+        Couple deletedCouple = coupleRepository.findDeletedById(savedCouple.getId()).orElseThrow();
+        assertAll(
+            () -> assertThat(deletedCouple.isDeleted()).isTrue(),
+            () -> assertThat(deletedCouple.getCoupleStatus()).isEqualTo(CoupleStatus.BREAKUP),
+            () -> assertThat(deletedCouple.getDeletedDate()).isNotNull()
+        );
+    }
+
+    @DisplayName("커플 끊기 권한이 없는 경우 IllegalArgumentException이 발생한다.")
     @Test
     void deleteCouple_noAuthority() {
         // given
@@ -223,94 +248,65 @@ class CoupleServiceTest extends IntegrationTestSupport {
         assertThatThrownBy(
             () -> coupleService.deleteCouple(coupleId, 3L)
         ).isInstanceOf(IllegalArgumentException.class)
-            .hasMessage(String.format("%s %d은 %s %d에 대한 권한이 없음", "member", 3, "couple", couple.getId()));
+            .hasMessage(String.format("%s %d은 %s %d에 대한 권한이 없습니다.", "member", 3, "couple", couple.getId()));
     }
 
-    @DisplayName("reCouple을 통해 Recovery 테이블에 신청 기록을 저장할 수 있다. ")
+    @DisplayName("커플이 깨진 상태에서 recouple을 호출하면 재결합 신청을 할 수 있다.")
     @Test
-    void reCouple() {
+    void recouple_request() {
         // given
         Couple couple = Couple.builder()
             .boyId(1L)
             .girlId(2L)
             .meetDay(LocalDate.of(2020, 10, 20))
             .invitationCode("test-code")
+            .temperature(40.0f)
             .deleted(true)
             .deletedDate(LocalDate.of(2022, 10, 20))
+            .coupleStatus(CoupleStatus.BREAKUP)
             .build();
+
         Couple savedCouple = coupleRepository.save(couple);
-
-        LocalDate requestedDate = LocalDate.of(2022, 10, 30);
-
         // when
-        coupleService.reCouple(requestedDate, savedCouple.getId(), 1L);
-
-        // then
-        Recovery recovery = recoveryRepository.findByCoupleId(savedCouple.getId()).orElseThrow();
-        assertAll(
-            () -> assertThat(recovery.getCoupleId()).isEqualTo(savedCouple.getId()),
-            () -> assertThat(recovery.getRequestedDate()).isEqualTo(requestedDate)
-        );
-
-    }
-
-    @DisplayName("decideReCoupleApproval를 통해 커플 재결합을 할 수 있다. ")
-    @Test
-    void decideReCoupleApproval_ok() {
-        // given
-        Couple couple = Couple.builder()
-            .boyId(1L)
-            .girlId(2L)
-            .meetDay(LocalDate.of(2020, 10, 20))
-            .invitationCode("test-code")
-            .deleted(true)
-            .deletedDate(LocalDate.of(2022, 10, 20))
-            .build();
-        Couple savedCouple = coupleRepository.save(couple);
-        LocalDate requestedDate = LocalDate.of(2022, 10, 30);
-
-        Recovery recovery = Recovery.of(savedCouple.getId(), requestedDate);
-        Recovery savedRecovery = recoveryRepository.save(recovery);
-
-        // when
-        coupleService.decideReCoupleApproval(savedRecovery.getId(), 1L, new DecideReCoupleServiceRequest(Decision.YES));
-
-        // then
-        Couple findCouple = coupleRepository.findById(savedCouple.getId()).orElseThrow();
-        assertAll(
-            () -> assertThat(recoveryRepository.findAll()).isEmpty(),
-            () -> assertThat(findCouple.isDeleted()).isFalse(),
-            () -> assertThat(findCouple.getDeletedDate()).isNull()
-        );
-    }
-
-    @DisplayName("decideReCoupleApproval에서 만약 응답이 NO 라면 재결합 되지 않는다.")
-    @Test
-    void decideReCoupleApproval_deny() {
-        // given
-        Couple couple = Couple.builder()
-            .boyId(1L)
-            .girlId(2L)
-            .meetDay(LocalDate.of(2020, 10, 20))
-            .invitationCode("test-code")
-            .deleted(true)
-            .deletedDate(LocalDate.of(2022, 10, 20))
-            .build();
-        Couple savedCouple = coupleRepository.save(couple);
-        LocalDate requestedDate = LocalDate.of(2022, 10, 30);
-
-        Recovery recovery = Recovery.of(savedCouple.getId(), requestedDate);
-        Recovery savedRecovery = recoveryRepository.save(recovery);
-
-        // when
-        coupleService.decideReCoupleApproval(savedRecovery.getId(), 1L, new DecideReCoupleServiceRequest(Decision.NO));
+        coupleService.reCouple(LocalDate.of(2022, 10, 30), savedCouple.getId(), 1L);
 
         // then
         Couple findCouple = coupleRepository.findDeletedById(savedCouple.getId()).orElseThrow();
+
         assertAll(
-            () -> assertThat(recoveryRepository.findAll()).isEmpty(),
-            () -> assertThat(findCouple.isDeleted()).isTrue(),
-            () -> assertThat(findCouple.getDeletedDate()).isNotNull()
+            () -> assertThat(findCouple.getCoupleStatus()).isEqualTo(CoupleStatus.RECOUPLE),
+            () -> assertThat(findCouple.getReCoupleRequesterId()).isEqualTo(1L)
+        );
+    }
+
+    @DisplayName("RECOUPLE 상태에서 recouple을 호출하면 원래의 관계로 돌아갈 수 있다.")
+    @Test
+    void recouple_approve() {
+        // given
+        Couple couple = Couple.builder()
+            .boyId(1L)
+            .girlId(2L)
+            .meetDay(LocalDate.of(2020, 10, 20))
+            .invitationCode("test-code")
+            .temperature(40.0f)
+            .deleted(true)
+            .deletedDate(LocalDate.of(2022, 10, 20))
+            .coupleStatus(CoupleStatus.RECOUPLE)
+            .reCoupleRequesterId(1L)
+            .build();
+
+        Couple savedCouple = coupleRepository.save(couple);
+        // when
+        coupleService.reCouple(LocalDate.of(2022, 10, 30), savedCouple.getId(), 2L);
+
+        // then
+        Couple findCouple = coupleRepository.findById(savedCouple.getId()).orElseThrow();
+
+        assertAll(
+            () -> assertThat(findCouple.getCoupleStatus()).isEqualTo(CoupleStatus.RELATIONSHIP),
+            () -> assertThat(findCouple.getReCoupleRequesterId()).isNull(),
+            () -> assertThat(findCouple.getDeletedDate()).isNull(),
+            () -> assertThat(findCouple.isDeleted()).isFalse()
         );
     }
 

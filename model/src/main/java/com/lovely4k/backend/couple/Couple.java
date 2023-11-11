@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@SQLDelete(sql = "UPDATE couple SET deleted = true, deleted_date = CURRENT_DATE() WHERE id = ?")
+@SQLDelete(sql = "UPDATE couple SET deleted = true, deleted_date = CURRENT_DATE, couple_status = 'BREAKUP' WHERE id = ? and version = ?")
 @Where(clause = "deleted = false")
 public class Couple extends BaseTimeEntity {
 
@@ -47,15 +47,26 @@ public class Couple extends BaseTimeEntity {
     @Column(name = "deleted_date")
     private LocalDate deletedDate;
 
+    @Column(name = "couple_status")
+    @Enumerated(value = EnumType.STRING)
+    private CoupleStatus coupleStatus;
+
+    @Column(name = "re_couple_requester_id")
+    private Long reCoupleRequesterId;
+
+
     @Builder
-    private Couple(Long boyId, Long girlId, LocalDate meetDay, String invitationCode,Float temperature, boolean deleted, LocalDate deletedDate) {
+    private Couple(Long boyId, Long girlId, LocalDate meetDay, String invitationCode, Float temperature, Long version, boolean deleted, LocalDate deletedDate, CoupleStatus coupleStatus, Long reCoupleRequesterId) {   // NOSONAR
         this.boyId = boyId;
         this.girlId = girlId;
         this.meetDay = meetDay;
         this.invitationCode = invitationCode;
         this.temperature = temperature;
+        this.version = version;
         this.deleted = deleted;
         this.deletedDate = deletedDate;
+        this.coupleStatus = coupleStatus;
+        this.reCoupleRequesterId = reCoupleRequesterId;
     }
 
     public static Couple create(Long requestedMemberId, Sex sex, String invitationCode) {
@@ -68,22 +79,24 @@ public class Couple extends BaseTimeEntity {
 
     private static Couple createBoy(Long requestedMemberId, String invitationCode) {
         return Couple.builder()
-                .boyId(requestedMemberId)
-                .girlId(null)
-                .meetDay(null)
-                .invitationCode(invitationCode)
-                .temperature(0.0f)
-                .build();
+            .boyId(requestedMemberId)
+            .girlId(null)
+            .meetDay(null)
+            .invitationCode(invitationCode)
+            .temperature(0.0f)
+            .coupleStatus(CoupleStatus.RELATIONSHIP)
+            .build();
     }
 
     private static Couple createGirl(Long requestedMemberId, String invitationCode) {
         return Couple.builder()
-                .boyId(null)
-                .girlId(requestedMemberId)
-                .meetDay(null)
-                .invitationCode(invitationCode)
-                .temperature(0.0f)
-                .build();
+            .boyId(null)
+            .girlId(requestedMemberId)
+            .meetDay(null)
+            .invitationCode(invitationCode)
+            .temperature(0.0f)
+            .coupleStatus(CoupleStatus.RELATIONSHIP)
+            .build();
     }
 
     public void registerGirlId(Long receivedMemberId) {
@@ -120,8 +133,48 @@ public class Couple extends BaseTimeEntity {
         return requestedDate.isAfter(limitedDate);
     }
 
-    public void recouple() {
-        this.deleted = false;
-        this.deletedDate = null;
+    public void recouple(Long memberId, LocalDate requestedDate) {
+        checkCoupleStatus();
+        checkAuthority(memberId);
+
+        if (this.coupleStatus == CoupleStatus.BREAKUP) {  // 요청을 하는 경우
+            checkExpired(requestedDate);
+            this.coupleStatus = CoupleStatus.RECOUPLE;
+            this.reCoupleRequesterId = memberId;
+        } else if (coupleStatus == CoupleStatus.RECOUPLE){    // 받은 요청을 수락하는 경우
+            checkInvalidAccess(memberId);
+            this.deleted = false;
+            this.deletedDate = null;
+            this.coupleStatus = CoupleStatus.RELATIONSHIP;
+            this.reCoupleRequesterId = null;
+        }
+    }
+
+    private void checkCoupleStatus() {
+        if (this.coupleStatus == CoupleStatus.RELATIONSHIP) {
+            throw new IllegalStateException("현재 커플의 경우 재결합을 할 수 있는 상태가 아닙니다.");
+        }
+    }
+
+    public void checkAuthority(Long memberId) {
+        if (!hasAuthority(memberId)) {
+            throw new IllegalArgumentException(String.format("member %d은 couple %d에 대한 권한이 없습니다.", memberId, id));
+        }
+    }
+
+    private void checkExpired(LocalDate requestedDate) {
+        if (isExpired(requestedDate)) {
+            throw new IllegalStateException("커플을 끊은 지 30일이 지났기 때문에 복원을 할 수 없습니다.");
+        }
+    }
+
+    private void checkInvalidAccess(Long memberId) {
+        if (this.reCoupleRequesterId.equals(memberId)) {
+            throw new IllegalArgumentException("재결합 신청한 요청자는 재결합을 수락할 수 없습니다.");
+        }
+    }
+
+    public boolean isRecoupleReceiver(Long memberId) {
+        return hasAuthority(memberId) && this.coupleStatus == CoupleStatus.RECOUPLE && !this.reCoupleRequesterId.equals(memberId);
     }
 }

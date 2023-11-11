@@ -1,7 +1,6 @@
 package com.lovely4k.backend.couple.controller;
 
 import com.lovely4k.backend.ControllerTestSupport;
-import com.lovely4k.backend.couple.controller.request.DecideReCoupleRequest;
 import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
@@ -113,42 +112,6 @@ class CoupleControllerTest extends ControllerTestSupport {
             .andDo(print())
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.body.title").value("DateTimeParseException"));
-    }
-
-    @DisplayName("decideReCoupleApproval시에 decision 값은 필수이다.")
-    @Test
-    void decideReCoupleApproval() throws Exception {
-        // given
-        DecideReCoupleRequest decideReCoupleRequest = new DecideReCoupleRequest(null);
-
-        // when
-        this.mockMvc.perform(
-                post("/v1/couples/recouple-decide/{recoveryId}", 1)
-                    .queryParam("memberId", "1")
-                    .content(objectMapper.writeValueAsString(decideReCoupleRequest))
-                    .contentType(APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"));
-    }
-
-    @DisplayName("decideReCoupleApproval에서 YES나 NO로 들어와야 한다. (대소문자는 상관없다.)")
-    @Test
-    void decideReCoupleApproval_InvalidValue() throws Exception{
-        // given
-        DecideReCoupleRequest decideReCoupleRequest = new DecideReCoupleRequest("nor");
-
-        // when
-        this.mockMvc.perform(
-                post("/v1/couples/recouple-decide/{recoveryId}", 1)
-                    .queryParam("memberId", "1")
-                    .content(objectMapper.writeValueAsString(decideReCoupleRequest))
-                    .contentType(APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"));
     }
 
 }

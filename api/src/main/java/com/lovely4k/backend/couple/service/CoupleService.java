@@ -1,13 +1,8 @@
 package com.lovely4k.backend.couple.service;
 
-import com.lovely4k.backend.common.ExceptionMessage;
 import com.lovely4k.backend.couple.Couple;
-import com.lovely4k.backend.couple.Decision;
-import com.lovely4k.backend.couple.Recovery;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
-import com.lovely4k.backend.couple.repository.RecoveryRepository;
 import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
-import com.lovely4k.backend.couple.service.request.DecideReCoupleServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import com.lovely4k.backend.member.Member;
@@ -29,7 +24,6 @@ public class CoupleService {
 
     private final CoupleRepository coupleRepository;
     private final MemberRepository memberRepository;
-    private final RecoveryRepository recoveryRepository;
 
     @Transactional
     public InvitationCodeCreateResponse
@@ -78,56 +72,21 @@ public class CoupleService {
     @Transactional
     public void increaseTemperature(Long coupleId) {
         Couple couple = coupleRepository.findByIdWithOptimisticLock(coupleId)
-            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));  // NOSONAR
         couple.increaseTemperature();
     }
 
     @Transactional
     public void deleteCouple(Long coupleId, Long memberId) {
         Couple couple = findCouple(coupleId);
-        checkAuthority(memberId, couple);
+        couple.checkAuthority(memberId);
         coupleRepository.delete(couple);
     }
 
     @Transactional
     public void reCouple(LocalDate requestedDate, Long coupleId, Long memberId) {
         Couple couple = findDeletedCouple(coupleId);
-        checkAuthority(memberId, couple);
-        checkExpiration(requestedDate, couple);
-        recoveryRepository.save(Recovery.of(coupleId, requestedDate));
-    }
-
-    @Transactional
-    public void decideReCoupleApproval(Long recoveryId, Long memberId, DecideReCoupleServiceRequest serviceRequest) {
-        Recovery recovery = findRecovery(recoveryId);
-        Couple couple = findDeletedCouple(recovery.getCoupleId());
-        checkAuthority(memberId, couple);
-        recoupleOnCondition(serviceRequest, couple);
-        recoveryRepository.delete(recovery);
-    }
-
-    private Recovery findRecovery(Long recoveryId) {
-        return recoveryRepository.findById(recoveryId).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessage.notFoundEntityMessage("recovery", recoveryId))
-        );
-    }
-
-    private void recoupleOnCondition(DecideReCoupleServiceRequest serviceRequest, Couple couple) {
-        if (serviceRequest.decision() == Decision.YES) {
-            couple.recouple();
-        }
-    }
-
-    private void checkAuthority(Long memberId, Couple couple) {
-        if (!couple.hasAuthority(memberId)) {
-            throw new IllegalArgumentException(ExceptionMessage.noAuthorityMessage("member", memberId, "couple", couple.getId()));
-        }
-    }
-
-    private void checkExpiration(LocalDate requestedDate, Couple couple) {
-        if (couple.isExpired(requestedDate)) {
-            throw new IllegalStateException("커플을 끊은 지 30일이 지났기 때문에 복원을 할 수 없습니다.");
-        }
+        couple.recouple(memberId, requestedDate);
     }
 
     private Optional<Member> findMemberOptional(Optional<Long> memberId) {

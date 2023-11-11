@@ -6,6 +6,7 @@ import com.lovely4k.backend.authentication.OAuth2UserService;
 import com.lovely4k.backend.authentication.OAuthAttributes;
 import com.lovely4k.backend.authentication.SecurityConfig;
 import com.lovely4k.backend.couple.controller.CoupleController;
+import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.diary.controller.DiaryController;
 import com.lovely4k.backend.diary.service.DiaryService;
@@ -78,6 +79,9 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected SecurityContext securityContext;
+
+    @MockBean
+    protected CoupleRepository coupleRepository;
 
     @Mock
     protected Authentication authentication;
