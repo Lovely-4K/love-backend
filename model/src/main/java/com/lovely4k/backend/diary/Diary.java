@@ -91,8 +91,9 @@ public class Diary extends BaseTimeEntity {
         }
     }
 
-    public void fill(String text) {
+    public void fill(Long coupleId, String text) {
         alreadyFilled();
+        checkAuthority(coupleId);
         if (boyText == null) {
             this.boyText = text;
         } else {

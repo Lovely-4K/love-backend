@@ -198,7 +198,7 @@ class DiaryTest {
 
         String text = "나도 이곳 너무 좋더라. 담에 우리 또 올까?";
         // when
-        diary.fill(text);
+        diary.fill(1L, text);
 
         // then
         assertThat(diary.getGirlText()).isEqualTo(text);
@@ -217,7 +217,7 @@ class DiaryTest {
 
         String text = "나도 이곳 너무 좋더라. 담에 우리 또 올까?";
         // when
-        diary.fill(text);
+        diary.fill(1L, text);
 
         // then
         assertThat(diary.getBoyText()).isEqualTo(text);
@@ -239,7 +239,7 @@ class DiaryTest {
 
         // when && then
         assertThatThrownBy(
-            () -> diary.fill(text)
+            () -> diary.fill(1L, text)
         ).isInstanceOf(IllegalStateException.class)
             .hasMessage("이미 두분 다 다이어리를 작성했습니다.");
     }

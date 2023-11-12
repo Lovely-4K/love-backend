@@ -51,8 +51,7 @@ public class DiaryService {
     @Transactional
     public void fillDiary(Long diaryId, FillDiaryRequest serviceRequest, Long coupleId) {
         Diary diary = validateDiaryId(diaryId);
-        diary.checkAuthority(coupleId);
-        diary.fill(serviceRequest.text());
+        diary.fill(coupleId, serviceRequest.text());
     }
 
     private void increaseTemperature(Diary savedDiary) {

@@ -13,7 +13,7 @@ CREATE TABLE couple (
     girl_id BIGINT,
     meet_day date,
     invitation_code VARCHAR(255),
-    temperature FLOAT DEFAULT 0,
+    temperature FLOAT,
     deleted BOOLEAN DEFAULT FALSE,
     deleted_date DATE,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
