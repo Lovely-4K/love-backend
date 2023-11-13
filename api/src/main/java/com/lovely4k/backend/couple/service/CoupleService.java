@@ -55,10 +55,16 @@ public class CoupleService {
 
         Couple couple = findCouple(coupleId);
 
-        Optional<Member> boy = findMemberOptional(Optional.ofNullable(couple.getBoyId()));
-        Optional<Member> girl = findMemberOptional(Optional.ofNullable(couple.getGirlId()));
+        Member my = findMember(memberId);
+        Optional<Member> opponent;
 
-        return CoupleProfileGetResponse.from(boy, girl, couple.getMeetDay());
+        if (memberId.equals(couple.getGirlId())) {
+             opponent = findMemberOptional(couple.getBoyId());
+        } else {
+            opponent = findMemberOptional(couple.getGirlId());
+        }
+
+        return CoupleProfileGetResponse.from(my, opponent, couple.getMeetDay());
     }
 
     @Transactional
@@ -84,9 +90,9 @@ public class CoupleService {
         }
         coupleRepository.delete(couple);
     }
-  
-    private Optional<Member> findMemberOptional(Optional<Long> memberId) {
-        return memberRepository.findById(memberId.orElse(-1L));
+
+    private Optional<Member> findMemberOptional(Long memberId) {
+        return memberRepository.findById(memberId);
     }
 
     private Member findMember(Long memberId) {
