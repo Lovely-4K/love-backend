@@ -81,7 +81,7 @@ class CoupleControllerDocsTest extends RestDocsSupport {
     @DisplayName("커플을 등록하는 API")
     void registerCouple() throws Exception {
         mockMvc.perform(
-                post("/v1/couples")
+                get("/v1/couples")
                     .param("invitationCode", "invitationCodeSample")
                     .characterEncoding("utf-8")
                     .contentType(APPLICATION_JSON)
