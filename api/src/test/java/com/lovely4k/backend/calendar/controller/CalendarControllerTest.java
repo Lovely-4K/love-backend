@@ -29,8 +29,6 @@ class CalendarControllerTest extends ControllerTestSupport {
         mockMvc.perform(
                         post("/v1/calendars")
                                 .content(objectMapper.writeValueAsString(request))
-                                .param("coupleId", "1")
-                                .param("memberId", "1")
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isBadRequest())
