@@ -18,6 +18,13 @@ import java.time.format.DateTimeParseException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<ProblemDetail>> handleAllException(Exception e, HttpServletRequest request) {
+        ProblemDetail problemDetail = ProblemDetailCreator.create(e, request, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, problemDetail);
+    }
+
     @ExceptionHandler(DateTimeParseException.class)
     public ResponseEntity<ApiResponse<ProblemDetail>> handleValidation(DateTimeParseException e, HttpServletRequest request) {
         ProblemDetail problemDetail = ProblemDetailCreator.create(e, request, HttpStatus.BAD_REQUEST);
