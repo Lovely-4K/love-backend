@@ -47,7 +47,7 @@ class CoupleControllerTest extends ControllerTestSupport {
         String invitationCode = UUID.randomUUID().toString();
 
         //when //then
-        mockMvc.perform(get("/v1/couples")
+        mockMvc.perform(post("/v1/couples")
                 .queryParam(
                     "invitationCode", invitationCode)
                 .contentType(APPLICATION_JSON)
@@ -62,27 +62,32 @@ class CoupleControllerTest extends ControllerTestSupport {
         //given
         Long memberId = 1L;
 
-        given(coupleService.findCoupleProfile(memberId))
-            .willReturn(new CoupleProfileGetResponse(
+        given(coupleService.findCoupleProfile(memberId)).willReturn(
+            new CoupleProfileGetResponse(
                 "듬직이",
                 "ESTJ",
                 "boyProfileUrl",
                 1L,
+                "#FF5733",
+                LocalDate.of(1995, 5, 15),
                 "깜찍이",
                 "INFP",
-                "girlProfile,Url",
-                2L,
+                "girlProfileUrl",
+                2L, // opponentId
+                LocalDate.of(1995, 10, 21),
+                "#C70039",
                 LocalDate.of(2020, 7, 23)
-            ));
+            )
+        );
 
         //when //then
         mockMvc.perform(get("/v1/couples"))
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.body.boyNickname").value("듬직이"))
-            .andExpect(jsonPath("$.body.boyMbti").value("ESTJ"))
-            .andExpect(jsonPath("$.body.girlNickname").value("깜찍이"))
-            .andExpect(jsonPath("$.body.girlMbti").value("INFP"));
+            .andExpect(jsonPath("$.body.myNickname").value("듬직이"))
+            .andExpect(jsonPath("$.body.myMbti").value("ESTJ"))
+            .andExpect(jsonPath("$.body.opponentNickname").value("깜찍이"))
+            .andExpect(jsonPath("$.body.opponentMbti").value("INFP"));
     }
 
     @Test

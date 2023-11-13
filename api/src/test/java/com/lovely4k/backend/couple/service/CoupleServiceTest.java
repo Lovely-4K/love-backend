@@ -142,10 +142,10 @@ class CoupleServiceTest extends IntegrationTestSupport {
 
         //then
         assertAll(
-            () -> assertThat(profileGetResponse.boyMbti()).isEqualTo(boy.getMbti()),
-            () -> assertThat(profileGetResponse.boyNickname()).isEqualTo(boy.getNickname()),
-            () -> assertThat(profileGetResponse.girlMbti()).isEqualTo(girl.getMbti()),
-            () -> assertThat(profileGetResponse.girlNickname()).isEqualTo(girl.getNickname())
+            () -> assertThat(profileGetResponse.myMbti()).isEqualTo(boy.getMbti()),
+            () -> assertThat(profileGetResponse.myNickname()).isEqualTo(boy.getNickname()),
+            () -> assertThat(profileGetResponse.opponentMbti()).isEqualTo(girl.getMbti()),
+            () -> assertThat(profileGetResponse.opponentNickname()).isEqualTo(girl.getNickname())
         );
     }
 
