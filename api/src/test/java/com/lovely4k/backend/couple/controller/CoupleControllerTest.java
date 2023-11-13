@@ -47,7 +47,7 @@ class CoupleControllerTest extends ControllerTestSupport {
         String invitationCode = UUID.randomUUID().toString();
 
         //when //then
-        mockMvc.perform(post("/v1/couples")
+        mockMvc.perform(get("/v1/couples")
                 .queryParam(
                     "invitationCode", invitationCode)
                 .contentType(APPLICATION_JSON)
