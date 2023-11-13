@@ -3,15 +3,15 @@ package com.lovely4k.backend.question.repository;
 import com.lovely4k.backend.couple.QCouple;
 import com.lovely4k.backend.member.QMember;
 import com.lovely4k.backend.member.Sex;
+import com.lovely4k.backend.question.repository.response.FindQuestionGameResponse;
 import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 import static com.lovely4k.backend.couple.QCouple.couple;
 import static com.lovely4k.backend.question.QQuestion.question;
@@ -22,6 +22,26 @@ import static com.lovely4k.backend.question.QQuestionForm.questionForm;
 public class QuestionQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    public Optional<FindQuestionGameResponse> findOneRandomQuestion(Long coupleId) {
+        return Optional.ofNullable(jpaQueryFactory
+            .select(Projections.constructor(FindQuestionGameResponse.class,
+                questionForm.questionContent,
+                questionForm.questionChoices.firstChoice,
+                questionForm.questionChoices.secondChoice,
+                questionForm.questionChoices.thirdChoice,
+                questionForm.questionChoices.fourthChoice,
+                question.boyChoiceIndex,
+                question.girlChoiceIndex))
+            .from(question)
+            .join(question.questionForm, questionForm)
+            .where(
+                question.coupleId.eq(coupleId),
+                question.boyChoiceIndex.ne(0),
+                question.girlChoiceIndex.ne(0))
+            .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
+            .fetchFirst());
+    }
 
     public QuestionDetailsResponse findQuestionDetails(long questionId, Sex sex, long memberId) {
         QMember memberBoy = new QMember("memberBoy");

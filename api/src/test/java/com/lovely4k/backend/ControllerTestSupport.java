@@ -11,6 +11,7 @@ import com.lovely4k.backend.diary.controller.DiaryController;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.game.controller.GameController;
 import com.lovely4k.backend.game.service.GameQueryService;
+import com.lovely4k.backend.game.service.GameSseComponent;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.Role;
 import com.lovely4k.backend.member.Sex;
@@ -78,6 +79,9 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected GameQueryService gameQueryService;
+
+    @MockBean
+    protected GameSseComponent gameSseComponent;
 
     @MockBean
     OAuth2UserService oAuth2UserService;
