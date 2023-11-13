@@ -7,7 +7,7 @@
 
 ==== HTTP Request
 include::{snippets}/diary-delete/http-request.adoc[]
-include::{snippets}/diary-delete/query-parameters.adoc[]
+include::{snippets}/diary-delete/path-parameters.adoc[]
 
 ==== HTTP Response
 include::{snippets}/diary-delete/http-response.adoc[]
