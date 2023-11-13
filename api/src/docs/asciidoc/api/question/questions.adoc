@@ -5,7 +5,6 @@
 
 ==== Request
 include::{snippets}/get-daily-question/http-request.adoc[]
-include::{snippets}/get-daily-question/query-parameters.adoc[]
 
 ==== Response (Success)
 include::{snippets}/get-daily-question/http-response.adoc[]
@@ -18,7 +17,6 @@ include::{snippets}/get-daily-question/response-fields.adoc[]
 
 ==== Request
 include::{snippets}/create-question-form-and-question-by-user/http-request.adoc[]
-include::{snippets}/create-question-form-and-question-by-user/query-parameters.adoc[]
 include::{snippets}/create-question-form-and-question-by-user/request-fields.adoc[]
 
 ==== Response (Success)
@@ -33,7 +31,6 @@ include::{snippets}/create-question-form-and-question-by-user/response-headers.a
 
 ==== Request
 include::{snippets}/create-question/http-request.adoc[]
-include::{snippets}/create-question/query-parameters.adoc[]
 
 ==== Response (Success)
 include::{snippets}/create-question/http-response.adoc[]
@@ -47,7 +44,6 @@ include::{snippets}/create-question/response-fields.adoc[]
 ==== Request
 include::{snippets}/answer-question/http-request.adoc[]
 include::{snippets}/answer-question/request-fields.adoc[]
-include::{snippets}/answer-question/query-parameters.adoc[]
 
 ==== Response (Success)
 include::{snippets}/answer-question/http-response.adoc[]

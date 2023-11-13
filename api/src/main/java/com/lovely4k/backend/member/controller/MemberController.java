@@ -32,7 +32,6 @@ public class MemberController {
     @SneakyThrows
     @GetMapping
     public ResponseEntity<ApiResponse<MemberProfileGetResponse>> getMemberProfile(@LoginUser SessionUser sessionUser) {
-        System.out.println(sessionUser.memberId());
         return ApiResponse.ok(memberService.findMemberProfile(sessionUser.memberId()),
             linkTo(methodOn(MemberController.class).getMemberProfile(sessionUser)).withSelfRel(),
             linkTo(MemberController.class.getMethod("editMemberProfile", List.class, MemberProfileEditRequest.class, SessionUser.class)).withRel("edit member profile")
