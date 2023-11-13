@@ -63,10 +63,10 @@ public class QuestionService {
 
     @Retryable(retryFor = ObjectOptimisticLockingFailureException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     @Transactional
-    public void updateQuestionAnswer(Long id, Sex sex, int answer) {
+    public void updateQuestionAnswer(Long id, String sex, int answer) {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(notFoundEntityMessage("question", id)));  // NOSONAR
-        question.updateAnswer(answer, sex);
+        question.updateAnswer(answer, Sex.valueOf(sex));
         increaseTemperature(question);
     }
 

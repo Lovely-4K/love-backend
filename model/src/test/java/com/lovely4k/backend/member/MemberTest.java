@@ -19,15 +19,14 @@ class MemberTest {
         //when
         member.updateProfile(
             "sampleImageUrl",
-            "김영희",
             "깜찍이",
             LocalDate.of(1997, 2, 3),
             "INFP",
             "#FFFFFF");
 
         //then
-        assertThat(member).extracting("name", "calendarColor")
-            .contains("김영희", "#FFFFFF");
+        assertThat(member).extracting("nickname", "calendarColor")
+            .contains("깜찍이", "#FFFFFF");
     }
 
     @Test
@@ -48,7 +47,6 @@ class MemberTest {
     private Member createMemberWithoutCoupleId() {
         return Member.builder()
             .sex(MALE)
-            .name("김철수")
             .nickname("듬직이")
             .birthday(LocalDate.of(1996, 7, 30))
             .mbti("ESFJ")

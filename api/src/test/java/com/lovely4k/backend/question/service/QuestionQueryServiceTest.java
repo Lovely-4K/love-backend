@@ -42,7 +42,7 @@ class QuestionQueryServiceTest {
         given(questionQueryRepository.findQuestionDetails(questionId, sex, memberId)).willReturn(mockResponse);
 
         // when
-        QuestionDetailsResponse result = questionQueryService.findQuestionDetails(questionId, memberId, sex);
+        QuestionDetailsResponse result = questionQueryService.findQuestionDetails(questionId, memberId, sex.name());
 
         // then
         assertThat(result).isNotNull()

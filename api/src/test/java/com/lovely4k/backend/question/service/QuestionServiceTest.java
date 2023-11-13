@@ -142,7 +142,7 @@ class QuestionServiceTest {
         given(questionRepository.findById(questionId)).willReturn(Optional.of(mockQuestion));
 
         // When
-        questionService.updateQuestionAnswer(questionId, sex, answer);
+        questionService.updateQuestionAnswer(questionId, sex.name(), answer);
 
         // Then
         verify(mockQuestion, times(1)).updateAnswer(answer, sex);
@@ -163,7 +163,7 @@ class QuestionServiceTest {
         doThrow(OptimisticLockException.class).when(mockQuestion).updateAnswer(answer, sex);
 
         // When & Then
-        Assertions.assertThatThrownBy(() -> questionService.updateQuestionAnswer(questionId, sex, answer))
+        Assertions.assertThatThrownBy(() -> questionService.updateQuestionAnswer(questionId, sex.name(), answer))
                 .isInstanceOf(OptimisticLockException.class);
     }
 
