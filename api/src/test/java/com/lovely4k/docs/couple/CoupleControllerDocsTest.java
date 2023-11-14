@@ -162,7 +162,7 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("body.meetDay").type(JsonFieldType.STRING)
                             .description("만난날"),
                         fieldWithPath("body.opponentCalendarColor").type(JsonFieldType.STRING)
-                                .description("상대방 달력 색깔"),
+                            .description("상대방 달력 색깔"),
                         fieldWithPath("body.opponentBirthday").type(JsonFieldType.STRING)
                             .description("상대방 생일"),
                         fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
@@ -175,7 +175,7 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                             .description("url of relation")
                     )
                 )
-            ));
+            );
     }
 
     @Test
