@@ -23,36 +23,57 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        log.info("onAuthenticationSuccess 요청 시작");
         MyOAuth2Member oAuth2Member = (MyOAuth2Member) authentication.getPrincipal();
         Long coupleId = oAuth2Member.getCoupleId();
 
         Optional<Couple> optionalCouple = coupleRepository.findDeletedById(coupleId);
-        log.info("optionalCouple Exist? {}", optionalCouple.isPresent());
         optionalCouple.ifPresentOrElse(
             couple -> {
                 if (couple.isRecoupleReceiver(oAuth2Member.getMemberId())) {
-                    log.info("send code!!");
+                    log.debug("send code!!");
                     sendRecoupleCode(response, coupleId);
+                } else {
+                    sendCode(response);
                 }
             }
-            , () -> {
-            }
+            , () -> sendCode(response)
         );
 
     }
 
     private void sendRecoupleCode(HttpServletResponse response, Long coupleId) {
         response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(MediaType.APPLICATION_JSON.getType());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         try {
-            response.getWriter().write("""
-                recouple request is in progress. do you want to recouple? 
-                if you want to recouple, request api below.
-                [POST] http://localhost:8080/recouple/ """ + coupleId);
+            String jsonResponse = String.format("""
+            {
+                "code": 200,
+                "message": "Recouple request is in progress. Do you want to recouple?",
+                "recoupleUrl": "https://love-back.kro.kr/recouple/%d"
+            }
+            """, coupleId);
+            response.getWriter().write(jsonResponse);
         } catch (IOException e) {
-            throw new IllegalStateException("something went wrong while generating response message", e);
+            throw new IllegalStateException("Something went wrong while generating response message", e);
         }
     }
+
+    private void sendCode(HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+        try {
+            String jsonResponse = """
+            {
+                "code": 200,
+                "message": "Login success"
+            }
+            """;
+            response.getWriter().write(jsonResponse);
+        } catch (IOException e) {
+            throw new IllegalStateException("Something went wrong while generating response message", e);
+        }
+    }
+
 }
