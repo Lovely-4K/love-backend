@@ -86,6 +86,9 @@ public class CoupleService {
     @Transactional
     public void reCouple(LocalDate requestedDate, Long coupleId, Long memberId) {
         Couple couple = findDeletedCouple(coupleId);
+        Long opponentId = couple.getOpponentId(memberId);
+        findMember(opponentId).checkReCoupleCondition(coupleId);
+
         couple.recouple(memberId, requestedDate);
     }
 

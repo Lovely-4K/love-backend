@@ -255,27 +255,28 @@ class CoupleServiceTest extends IntegrationTestSupport {
     @Test
     void recouple_request() {
         // given
-        Couple couple = Couple.builder()
-            .boyId(1L)
-            .girlId(2L)
-            .meetDay(LocalDate.of(2020, 10, 20))
-            .invitationCode("test-code")
-            .temperature(40.0f)
-            .deleted(true)
-            .deletedDate(LocalDate.of(2022, 10, 20))
-            .coupleStatus(CoupleStatus.BREAKUP)
-            .build();
+        Member boy = createMember(MALE, "ESFJ", "tommy");
+        Member girl1 = createMember(FEMALE, "ISFP", "lisa");
+        memberRepository.saveAll(List.of(boy, girl1));
 
-        Couple savedCouple = coupleRepository.save(couple);
+        // boy 와 girl1 연인 관계 생성
+        InvitationCodeCreateResponse createResponse = coupleService.createInvitationCode(boy.getId(), "MALE");
+        coupleService.registerCouple(createResponse.invitationCode(), girl1.getId());
+
+        coupleRepository.flush();
+
+        // boy 와 girl1 결별
+        coupleService.deleteCouple(createResponse.coupleId(), boy.getId());
+
         // when
-        coupleService.reCouple(LocalDate.of(2022, 10, 30), savedCouple.getId(), 1L);
+        coupleService.reCouple(LocalDate.of(2022, 10, 30), createResponse.coupleId(), boy.getId());
 
         // then
-        Couple findCouple = coupleRepository.findDeletedById(savedCouple.getId()).orElseThrow();
+        Couple findCouple = coupleRepository.findDeletedById(createResponse.coupleId()).orElseThrow();
 
         assertAll(
             () -> assertThat(findCouple.getCoupleStatus()).isEqualTo(CoupleStatus.RECOUPLE),
-            () -> assertThat(findCouple.getReCoupleRequesterId()).isEqualTo(1L)
+            () -> assertThat(findCouple.getReCoupleRequesterId()).isEqualTo(boy.getId())
         );
     }
 
@@ -283,24 +284,28 @@ class CoupleServiceTest extends IntegrationTestSupport {
     @Test
     void recouple_approve() {
         // given
-        Couple couple = Couple.builder()
-            .boyId(1L)
-            .girlId(2L)
-            .meetDay(LocalDate.of(2020, 10, 20))
-            .invitationCode("test-code")
-            .temperature(40.0f)
-            .deleted(true)
-            .deletedDate(LocalDate.of(2022, 10, 20))
-            .coupleStatus(CoupleStatus.RECOUPLE)
-            .reCoupleRequesterId(1L)
-            .build();
+        Member boy = createMember(MALE, "ESFJ", "tommy");
+        Member girl1 = createMember(FEMALE, "ISFP", "lisa");
+        memberRepository.saveAll(List.of(boy, girl1));
 
-        Couple savedCouple = coupleRepository.save(couple);
+        // boy 와 girl1 연인 관계 생성
+        InvitationCodeCreateResponse createResponse = coupleService.createInvitationCode(boy.getId(), "MALE");
+        coupleService.registerCouple(createResponse.invitationCode(), girl1.getId());
+
+        coupleRepository.flush();
+
+        // boy 와 girl1 결별
+        coupleService.deleteCouple(createResponse.coupleId(), boy.getId());
+
+        // boy가 recouple 신청
+        coupleService.reCouple(LocalDate.of(2022, 10, 30), createResponse.coupleId(), boy.getId());
+
+
         // when
-        coupleService.reCouple(LocalDate.of(2022, 10, 30), savedCouple.getId(), 2L);
+        coupleService.reCouple(LocalDate.of(2022, 10, 30), createResponse.coupleId(), girl1.getId());
 
         // then
-        Couple findCouple = coupleRepository.findById(savedCouple.getId()).orElseThrow();
+        Couple findCouple = coupleRepository.findById(createResponse.coupleId()).orElseThrow();
 
         assertAll(
             () -> assertThat(findCouple.getCoupleStatus()).isEqualTo(CoupleStatus.RELATIONSHIP),
@@ -308,6 +313,42 @@ class CoupleServiceTest extends IntegrationTestSupport {
             () -> assertThat(findCouple.getDeletedDate()).isNull(),
             () -> assertThat(findCouple.isDeleted()).isFalse()
         );
+    }
+
+    @DisplayName("recouple 요청 시 만약 상대방이 다른 사람과 커플을 맺은 상태라면, 재결합 신청을 할 수 없다.")
+    @Test
+    void recouple_alreadyCoupled() {
+        // given
+        Member boy = createMember(MALE, "ESFJ", "tommy");
+        Member girl1 = createMember(FEMALE, "ISFP", "lisa");
+        Member girl2 = createMember(FEMALE, "ENTJ", "elsa");
+
+        memberRepository.saveAll(List.of(boy, girl1, girl2));
+
+        // boy 와 girl1 연인 관계 생성
+        InvitationCodeCreateResponse createResponse = coupleService.createInvitationCode(boy.getId(), "MALE");
+        coupleService.registerCouple(createResponse.invitationCode(), girl1.getId());
+
+        // boy 와 girl1 결별
+        coupleService.deleteCouple(createResponse.coupleId(), boy.getId());
+
+        // boy 와 girl2 연인 관계 생성
+        InvitationCodeCreateResponse createResponse2 = coupleService.createInvitationCode(boy.getId(), "MALE");
+        coupleService.registerCouple(createResponse2.invitationCode(), girl2.getId());
+
+        // girl1 이 boy와 재결합을 원할 때 IllegalArgumentException 발생
+        Member savedGirl1 = memberRepository.findById(girl1.getId()).orElseThrow();
+        Couple deletedCouple = coupleRepository.findDeletedById(savedGirl1.getCoupleId()).orElseThrow();
+
+        LocalDate requestedDate = deletedCouple.getDeletedDate().plusDays(5L);
+        Long coupleId = savedGirl1.getCoupleId();
+        Long memberId = savedGirl1.getId();
+
+        assertThatThrownBy(
+            () -> coupleService.reCouple(requestedDate, coupleId, memberId)
+        ).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("상대방은 커플 재결합을 할 수 있는 상태가 아닙니다.");
+
     }
 
     private Member createMember(Sex sex, String mbti, String nickname) {

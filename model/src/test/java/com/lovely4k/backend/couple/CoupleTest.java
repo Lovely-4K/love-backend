@@ -352,4 +352,24 @@ class CoupleTest {
         ).isInstanceOf(IllegalArgumentException.class)
             .hasMessage("재결합 신청한 요청자는 재결합을 수락할 수 없습니다.");
     }
+
+    @DisplayName("getOpponentId를 통해 커플 상대방의 id를 조회할 수 있다.")
+    @Test
+    void getOpponentId() {
+        // given
+        Couple couple = Couple.builder()
+            .boyId(1L)
+            .girlId(2L)
+            .meetDay(LocalDate.of(2020, 10, 20))
+            .invitationCode("test-code")
+            .temperature(40.0f)
+            .coupleStatus(CoupleStatus.RELATIONSHIP)
+            .build();
+
+        // when
+        Long opponentId = couple.getOpponentId(1L);
+
+        // then
+        assertThat(opponentId).isEqualTo(2L);
+    }
 }

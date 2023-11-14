@@ -177,4 +177,12 @@ public class Couple extends BaseTimeEntity {
     public boolean isRecoupleReceiver(Long memberId) {
         return hasAuthority(memberId) && this.coupleStatus == CoupleStatus.RECOUPLE && !this.reCoupleRequesterId.equals(memberId);
     }
+
+    public Long getOpponentId(Long memberId) {
+        if (this.boyId.equals(memberId)) {
+            return this.girlId;
+        } else {
+            return this.boyId;
+        }
+    }
 }

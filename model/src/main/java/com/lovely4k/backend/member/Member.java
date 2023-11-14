@@ -81,4 +81,10 @@ public class Member extends BaseTimeEntity {
         this.ageRange = ageRange;
         return this;
     }
+
+    public void checkReCoupleCondition(Long coupleId) {
+        if (!this.coupleId.equals(coupleId)) {
+            throw new IllegalArgumentException("상대방은 커플 재결합을 할 수 있는 상태가 아닙니다.");
+        }
+    }
 }
