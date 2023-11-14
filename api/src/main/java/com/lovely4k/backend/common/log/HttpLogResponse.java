@@ -45,4 +45,25 @@ public record HttpLogResponse(
         return new HttpLogResponse(ipAddress, header, uri, "", "", parameter, httpMethod, status);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ipAddress=").append(ipAddress)
+            .append(", header=").append(header)
+            .append(", uri=").append(uri)
+            .append(", requestBody=").append(requestBody)
+            .append(", responseBody=").append(responseBody)
+            .append(", httpMethod=").append(httpMethod)
+            .append(", status=").append(status);
+
+        sb.append(", parameter=");
+        parameter.forEach((key, values) -> {
+            sb.append(key).append(":[");
+            sb.append(String.join(", ", values));
+            sb.append("] ");
+        });
+
+        return sb.toString();
+    }
+
 }

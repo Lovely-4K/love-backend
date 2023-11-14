@@ -7,27 +7,38 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public record CoupleProfileGetResponse(
-    String boyNickname,
-    String boyMbti,
-    String boyImageUrl,
-    Long boyId,
-    String girlNickname,
-    String girlMbti,
-    String girlImageUrl,
-    Long girlId,
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    LocalDate meetDay
+    String myNickname,
+    String myMbti,
+    String myImageUrl,
+    Long myId,
+    String myCalendarColor,
+    @JsonFormat(pattern = "yyyy-MM-dd") LocalDate myBirthday,
+
+    String opponentNickname,
+    String opponentMbti,
+    String opponentImageUrl,
+    Long opponentId,
+    @JsonFormat(pattern = "yyyy-MM-dd") LocalDate opponentBirthday,
+    String opponentCalendarColor,
+
+    @JsonFormat(pattern = "yyyy-MM-dd") LocalDate meetDay
 ) {
-    public static CoupleProfileGetResponse from(Optional<Member> boy, Optional<Member> girl, LocalDate meetDay) {
+    public static CoupleProfileGetResponse from(Member my, Optional<Member> opponent, LocalDate meetDay) {
         return new CoupleProfileGetResponse(
-            boy.map(Member::getNickname).orElse(null),
-            boy.map(Member::getMbti).orElse(null),
-            boy.map(Member::getImageUrl).orElse(null),
-            boy.map(Member::getId).orElse(null),
-            girl.map(Member::getNickname).orElse(null),
-            girl.map(Member::getMbti).orElse(null),
-            girl.map(Member::getImageUrl).orElse(null),
-            girl.map(Member::getId).orElse(null),
+            my.getNickname(),
+            my.getMbti(),
+            my.getImageUrl(),
+            my.getId(),
+            my.getCalendarColor(),
+            my.getBirthday(),
+
+            opponent.map(Member::getNickname).orElse(null),
+            opponent.map(Member::getMbti).orElse(null),
+            opponent.map(Member::getImageUrl).orElse(null),
+            opponent.map(Member::getId).orElse(null),
+            opponent.map(Member::getBirthday).orElse(null),
+            opponent.map(Member::getCalendarColor).orElse(null),
+
             meetDay
         );
     }
