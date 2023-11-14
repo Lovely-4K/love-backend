@@ -2,11 +2,13 @@ package com.lovely4k.backend.member.service;
 
 import com.lovely4k.backend.common.imageuploader.ImageUploader;
 import com.lovely4k.backend.member.Member;
+import com.lovely4k.backend.member.MemberupdatedEvent;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import com.lovely4k.backend.member.service.request.MemberProfileEditServiceRequest;
 import com.lovely4k.backend.member.service.response.MemberProfileGetResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final ImageUploader imageUploader;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     public MemberProfileGetResponse findMemberProfile(Long memberId) {
@@ -37,6 +40,7 @@ public class MemberService {
         String profileImageUrl = updateProfileImage(profileImages, oldProfileImageUrl);
 
         updateMemberProfile(profileImageUrl, serviceRequest, findMember);
+        eventPublisher.publishEvent(new MemberupdatedEvent(findMember));
     }
 
     private String updateProfileImage(List<MultipartFile> profileImages, String oldProfileImageUrl) {
