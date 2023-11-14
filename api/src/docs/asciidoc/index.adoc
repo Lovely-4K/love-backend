@@ -55,4 +55,3 @@ include::api/question/questions.adoc[]
 == Calendar
 일정 API 입니다.
 include::api/calendar/calendars.adoc[]
-include::api/question/questions.adoc[]
