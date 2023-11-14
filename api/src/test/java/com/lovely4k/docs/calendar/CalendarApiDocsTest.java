@@ -5,7 +5,8 @@ import com.lovely4k.backend.calendar.ScheduleType;
 import com.lovely4k.backend.calendar.controller.CalendarController;
 import com.lovely4k.backend.calendar.controller.request.CreateCalendarRequest;
 import com.lovely4k.backend.calendar.controller.request.UpdateCalendarRequest;
-import com.lovely4k.backend.calendar.repository.response.ColorResponse;
+import com.lovely4k.backend.calendar.repository.response.FindAllCalendarsWithDateResponse;
+import com.lovely4k.backend.calendar.repository.response.FindRecentCalendarsResponse;
 import com.lovely4k.backend.calendar.service.CalendarCommandService;
 import com.lovely4k.backend.calendar.service.CalendarQueryService;
 import com.lovely4k.backend.calendar.service.request.CreateCalendarServiceReqeust;
@@ -21,7 +22,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.mock;
@@ -48,11 +50,20 @@ class CalendarApiDocsTest extends RestDocsSupport {
     @Test
     void findAllSchedulesWithDate() throws Exception {
         // Given
-        FindAllCalendarsWithDateServiceResponse response = new FindAllCalendarsWithDateServiceResponse(
-        new ColorResponse(1L, "yellow"),
-            new ColorResponse(2L, "green"),
-            List.of(new ScheduleServiceResponse(LocalDate.now(), LocalDate.now(), "놀러가기", ScheduleType.DATE))
-        );
+        FindAllCalendarsWithDateServiceResponse response = FindAllCalendarsWithDateServiceResponse
+            .from(
+                List.of(
+                    new FindAllCalendarsWithDateResponse(
+                    1L,
+                    "RED",
+                    2L,
+                    "BLUE",
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    "영화보기",
+                    ScheduleType.DATE)
+                )
+            );
 
         given(calendarQueryService.findAllCalendarsWithDate(any(FindAllCalendarsWithDateServiceRequest.class)))
             .willReturn(response);
@@ -72,15 +83,15 @@ class CalendarApiDocsTest extends RestDocsSupport {
                     parameterWithName("coupleId").description("커플 ID")
                 ),
                 responseFields(
-                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
-                    fieldWithPath("body.firstColor.memberId").type(JsonFieldType.NUMBER).description("첫 번째 색상의 회원 ID"),
-                    fieldWithPath("body.firstColor.calendarColor").type(JsonFieldType.STRING).description("첫 번째 색상"),
-                    fieldWithPath("body.secondColor.memberId").type(JsonFieldType.NUMBER).description("두 번째 색상의 회원 ID"),
-                    fieldWithPath("body.secondColor.calendarColor").type(JsonFieldType.STRING).description("두 번째 색상"),
-                    fieldWithPath("body.schedules[0].startDate").type(JsonFieldType.STRING).description("일정 시작 날짜"),
-                    fieldWithPath("body.schedules[0].endDate").type(JsonFieldType.STRING).description("일정 종료 날짜"),
-                    fieldWithPath("body.schedules[0].scheduleDetails").type(JsonFieldType.STRING).description("일정 상세"),
-                    fieldWithPath("body.schedules[0].scheduleType").type(JsonFieldType.STRING).description("일정 타입(공통 일정이 아닌 경우 PRIVATE로 반환)"),
+                    fieldWithPath("code").type(NUMBER).description("코드"),
+                    fieldWithPath("body.colorInfo.boyId").type(NUMBER).description("남자의 회원 ID"),
+                    fieldWithPath("body.colorInfo.boyCalendarColor").type(STRING).description("남자의 달력 색상"),
+                    fieldWithPath("body.colorInfo.girlId").type(NUMBER).description("여자의 회원 ID"),
+                    fieldWithPath("body.colorInfo.girlCalendarColor").type(STRING).description("여자의 달력 색상"),
+                    fieldWithPath("body.schedules[0].startDate").type(STRING).description("일정 시작 날짜"),
+                    fieldWithPath("body.schedules[0].endDate").type(STRING).description("일정 종료 날짜"),
+                    fieldWithPath("body.schedules[0].scheduleDetails").type(STRING).description("일정 상세"),
+                    fieldWithPath("body.schedules[0].scheduleType").type(STRING).description("일정 타입(공통 일정이 아닌 경우 PRIVATE로 반환)"),
                     fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
                     fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
                 )
@@ -91,11 +102,19 @@ class CalendarApiDocsTest extends RestDocsSupport {
     @Test
     void findRecentSchedules() throws Exception {
         // Given
-        FindRecentCalendarsServiceResponse response = new FindRecentCalendarsServiceResponse(
-        new ColorResponse(1L, "yellow"),
-            new ColorResponse(2L, "green"),
-            List.of(new ScheduleServiceResponse(LocalDate.now(), LocalDate.now(), "놀러가기", ScheduleType.DATE))
-        );
+        FindRecentCalendarsServiceResponse response = FindRecentCalendarsServiceResponse
+            .from(
+                List.of(
+                    new FindRecentCalendarsResponse(1L,
+                    "RED",
+                    2L,
+                    "BLUE",
+                    LocalDate.now(),
+                    LocalDate.now(),
+                    "영화보기",
+                    ScheduleType.DATE)
+                )
+            );
 
         given(calendarQueryService.findRecentCalendars(any(), any()))
             .willReturn(response);
@@ -112,10 +131,10 @@ class CalendarApiDocsTest extends RestDocsSupport {
                 ),
                 responseFields(
                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
-                    fieldWithPath("body.firstColor.memberId").type(JsonFieldType.NUMBER).description("첫 번째 색상의 회원 ID"),
-                    fieldWithPath("body.firstColor.calendarColor").type(JsonFieldType.STRING).description("첫 번째 색상"),
-                    fieldWithPath("body.secondColor.memberId").type(JsonFieldType.NUMBER).description("두 번째 색상의 회원 ID"),
-                    fieldWithPath("body.secondColor.calendarColor").type(JsonFieldType.STRING).description("두 번째 색상"),
+                    fieldWithPath("body.colorInfo.boyId").type(JsonFieldType.NUMBER).description("남자의 ID"),
+                    fieldWithPath("body.colorInfo.boyCalendarColor").type(JsonFieldType.STRING).description("남자의 달력 색상"),
+                    fieldWithPath("body.colorInfo.girlId").type(JsonFieldType.NUMBER).description("여자의 ID"),
+                    fieldWithPath("body.colorInfo.girlCalendarColor").type(JsonFieldType.STRING).description("여자의 달력 색상"),
                     fieldWithPath("body.schedules[0].startDate").type(STRING).description("일정 시작 날짜"),
                     fieldWithPath("body.schedules[0].endDate").type(JsonFieldType.STRING).description("일정 종료 날짜"),
                     fieldWithPath("body.schedules[0].scheduleDetails").type(JsonFieldType.STRING).description("일정 상세"),
@@ -124,7 +143,6 @@ class CalendarApiDocsTest extends RestDocsSupport {
                     fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
                 )
             ));
-
     }
 
     @DisplayName("일정을 생성하는 api docs")
@@ -135,6 +153,7 @@ class CalendarApiDocsTest extends RestDocsSupport {
 
         CreateCalendarResponse response = new CreateCalendarResponse(1L, LocalDate.now(), LocalDate.now(), "details", ScheduleType.DATE, 0L);
 
+
         given(calendarCommandService.createCalendar(any(), any(), any(CreateCalendarServiceReqeust.class)))
             .willReturn(response);
 
@@ -144,7 +163,6 @@ class CalendarApiDocsTest extends RestDocsSupport {
                 .characterEncoding("UTF-8"))
             .andDo(print())
             .andExpect(status().isCreated())
-            .andDo(print())
             .andDo(document("create-schedules",
                 requestFields(
                     fieldWithPath("startDate").type(JsonFieldType.STRING).description("일정 시작 날짜"),

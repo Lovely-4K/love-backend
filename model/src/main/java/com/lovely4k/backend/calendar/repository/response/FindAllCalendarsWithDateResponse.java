@@ -1,11 +1,17 @@
 package com.lovely4k.backend.calendar.repository.response;
 
-import java.util.List;
+import com.lovely4k.backend.calendar.ScheduleType;
+
+import java.time.LocalDate;
 
 public record FindAllCalendarsWithDateResponse(
-        ColorResponse firstColor,
-        ColorResponse secondColor,
-        List<ScheduleResponse> schedules
-
+    long boyId,
+    String boyCalendarColor,
+    long girlId,
+    String girlCalendarColor,
+    LocalDate startDate,
+    LocalDate endDate,
+    String scheduleDetails,
+    ScheduleType scheduleType
 ) {
 }

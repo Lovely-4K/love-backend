@@ -53,7 +53,7 @@ public class CalendarController {
     @GetMapping("/recent")
     public ResponseEntity<ApiResponse<FindRecentCalendarsServiceResponse>> findRecentSchedules(
         @LoginUser SessionUser sessionUser,
-        @RequestParam(value = "limit", defaultValue = "5") Long limit) {
+        @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
         return ApiResponse.ok(
                 calendarQueryService.findRecentCalendars(sessionUser.coupleId(), limit),
                 linkTo(methodOn(getClass()).findRecentSchedules(sessionUser, limit)).withSelfRel(),
