@@ -18,7 +18,6 @@ include::{snippets}/diary-create/request-part-texts-fields.adoc[]
 
 ==== HTTP Request
 include::{snippets}/diary-create/http-request.adoc[]
-include::{snippets}/diary-create/query-parameters.adoc[]
 ==== HTTP Response
 include::{snippets}/diary-create/http-response.adoc[]
 include::{snippets}/diary-create/response-headers.adoc[]

@@ -1,0 +1,19 @@
+로그인 기능은 OAuth2를 통해 제공되며, 현재 지원하는 서비스는 다음과 같습니다:
+
+=== 카카오 로그인
+
+카카오 계정으로 로그인을 진행하려면 아래 URL을 사용하세요.
+
+[source,https]
+----
+GET https://love-back.kro.kr/oauth2/authorization/kakao
+----
+
+=== 네이버 로그인
+
+네이버 계정으로 로그인을 진행하려면 아래 URL을 사용하세요.
+
+[source,https]
+----
+GET https://love-back.kro.kr/oauth2/authorization/naver
+----

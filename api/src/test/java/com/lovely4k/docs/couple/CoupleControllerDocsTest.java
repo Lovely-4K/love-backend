@@ -115,10 +115,14 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                 "ESTJ",
                 "boyProfileUrl",
                 1L,
+                "#FF5733",
+                LocalDate.of(1995, 5, 15),
                 "깜찍이",
                 "INFP",
-                "girlProfile,Url",
-                2L,
+                "girlProfileUrl",
+                2L, // opponentId
+                LocalDate.of(1995, 10, 21),
+                "#C70039",
                 LocalDate.of(2020, 7, 23)
             )
         );
@@ -130,36 +134,46 @@ class CoupleControllerDocsTest extends RestDocsSupport {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("couple-profile-get",
-                preprocessResponse(prettyPrint()),
-                responseFields(
-                    fieldWithPath("code").type(JsonFieldType.NUMBER)
-                        .description("응답 코드"),
-                    fieldWithPath("body.boyNickname").type(JsonFieldType.STRING)
-                        .description("남자친구 별명"),
-                    fieldWithPath("body.boyMbti").type(JsonFieldType.STRING)
-                        .description("남자친구 MBTI"),
-                    fieldWithPath("body.boyImageUrl").type(JsonFieldType.STRING)
-                        .description("남자친구 프로필 사진 url"),
-                    fieldWithPath("body.boyId").type(JsonFieldType.NUMBER)
-                        .description("남자친구 id"),
-                    fieldWithPath("body.girlNickname").type(JsonFieldType.STRING)
-                        .description("여자친구 별명"),
-                    fieldWithPath("body.girlMbti").type(JsonFieldType.STRING)
-                        .description("여자친구 MBTI"),
-                    fieldWithPath("body.girlImageUrl").type(JsonFieldType.STRING)
-                        .description("여자친구 프로필 사진 url"),
-                    fieldWithPath("body.girlId").type(JsonFieldType.NUMBER)
-                        .description("여자친구 id"),
-                    fieldWithPath("body.meetDay").type(JsonFieldType.STRING)
-                        .description("만난날"),
-                    fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
-                        .description("relation of url"),
-                    fieldWithPath("links[0].href").type(JsonFieldType.STRING)
-                        .description("url of relation"),
-                    fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
-                        .description("relation of url"),
-                    fieldWithPath("links[1].href").type(JsonFieldType.STRING)
-                        .description("url of relation")
+                    preprocessResponse(prettyPrint()),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.NUMBER)
+                            .description("응답 코드"),
+                        fieldWithPath("body.myNickname").type(JsonFieldType.STRING)
+                            .description("나의 별명"),
+                        fieldWithPath("body.myMbti").type(JsonFieldType.STRING)
+                            .description("나의 MBTI"),
+                        fieldWithPath("body.myImageUrl").type(JsonFieldType.STRING)
+                            .description("나의 프로필 사진 url"),
+                        fieldWithPath("body.myId").type(JsonFieldType.NUMBER)
+                            .description("나의 id"),
+                        fieldWithPath("body.myCalendarColor").type(JsonFieldType.STRING)
+                            .description("나의 달력 색깔"),
+                        fieldWithPath("body.myBirthday").type(JsonFieldType.STRING)
+                            .description("나의 생일"),
+
+                        fieldWithPath("body.opponentNickname").type(JsonFieldType.STRING)
+                            .description("상대방 별명"),
+                        fieldWithPath("body.opponentMbti").type(JsonFieldType.STRING)
+                            .description("상대방 MBTI"),
+                        fieldWithPath("body.opponentImageUrl").type(JsonFieldType.STRING)
+                            .description("상대방 프로필 사진 url"),
+                        fieldWithPath("body.opponentId").type(JsonFieldType.NUMBER)
+                            .description("상대방 id"),
+                        fieldWithPath("body.meetDay").type(JsonFieldType.STRING)
+                            .description("만난날"),
+                        fieldWithPath("body.opponentCalendarColor").type(JsonFieldType.STRING)
+                                .description("상대방 달력 색깔"),
+                        fieldWithPath("body.opponentBirthday").type(JsonFieldType.STRING)
+                            .description("상대방 생일"),
+                        fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[0].href").type(JsonFieldType.STRING)
+                            .description("url of relation"),
+                        fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
+                            .description("relation of url"),
+                        fieldWithPath("links[1].href").type(JsonFieldType.STRING)
+                            .description("url of relation")
+                    )
                 )
             ));
     }
@@ -247,5 +261,4 @@ class CoupleControllerDocsTest extends RestDocsSupport {
             ))
         ;
     }
-
 }

@@ -23,19 +23,18 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -97,7 +96,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     @Test
     void getDiaryDetail() throws Exception {
         // stubbing
-        when(diaryService.findDiaryDetail(1L, 1L))
+        when(diaryService.findDiaryDetail(any(), any()))
             .thenReturn(
                 new DiaryDetailResponse(102L,
                     LocalDate.of(2021, 10, 20), 5, Category.FOOD,
@@ -107,7 +106,6 @@ class DiaryControllerDocsTest extends RestDocsSupport {
 
         this.mockMvc.perform(
                 get("/v1/diaries/{id}", 1L)
-                    .queryParam("coupleId", "1")
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(csrf())
             )
@@ -116,8 +114,8 @@ class DiaryControllerDocsTest extends RestDocsSupport {
             .andDo(document("diary-detail",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                queryParameters(
-                    parameterWithName("coupleId").description("커플 아이디")
+                pathParameters(
+                    parameterWithName("id").description("diary ID")
                 ),
                 responseFields(
                     fieldWithPath("code").type(NUMBER).description("코드"),
@@ -155,12 +153,11 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                 PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")),
                 diaryListResponseList.size());
 
-        when(diaryService.findDiaryList(eq(1L), any(), any()))
+        when(diaryService.findDiaryList(any(), any(), any()))
             .thenReturn(responsePage);
 
         this.mockMvc.perform(
                 get("/v1/diaries")
-                    .queryParam("coupleId", "1")
                     .queryParam("page", "0")
                     .queryParam("size", "10")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -172,7 +169,6 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 queryParameters(
-                    parameterWithName("coupleId").description("커플 아이디"),
                     parameterWithName("size").description("페이지 사이즈"),
                     parameterWithName("page").description("페이지 번호")
                 ),
@@ -204,7 +200,6 @@ class DiaryControllerDocsTest extends RestDocsSupport {
 
         this.mockMvc.perform(
                 patch("/v1/diaries/{id}", 1L)
-                    .queryParam("memberId", "1")
                     .content(objectMapper.writeValueAsString(mockDiaryEditRequest))
                     .contentType("application/json")
                     .with(csrf())
@@ -214,9 +209,6 @@ class DiaryControllerDocsTest extends RestDocsSupport {
             .andDo(document("diary-edit",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                queryParameters(
-                    parameterWithName("memberId").description("회원 아이디")
-                ),
                 responseFields(
                     fieldWithPath("code").type(NUMBER).description("코드"),
                     fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디"),
@@ -231,7 +223,6 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     void deleteDiary() throws Exception {
         this.mockMvc.perform(
                 delete("/v1/diaries/{id}", 1L)
-                    .queryParam("coupleId", "1")
                     .contentType(MediaType.APPLICATION_JSON)
                     .with(csrf())
             )
@@ -240,8 +231,8 @@ class DiaryControllerDocsTest extends RestDocsSupport {
             .andDo(document("diary-delete",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                queryParameters(
-                    parameterWithName("coupleId").description("커플 아이디")
+                pathParameters(
+                    parameterWithName("id").description("diary ID")
                 )
             ));
     }
