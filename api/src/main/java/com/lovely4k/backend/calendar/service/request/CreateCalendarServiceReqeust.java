@@ -14,6 +14,7 @@ public record CreateCalendarServiceReqeust(
         LocalDate endDate,
 
         String scheduleDetails,
+
         String scheduleType
 ) {
     public Calendar toEntity(long ownerId, long memberId) {

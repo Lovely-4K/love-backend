@@ -49,7 +49,7 @@ class CalendarApiDocsTest extends RestDocsSupport {
     void findAllSchedulesWithDate() throws Exception {
         // Given
         FindAllCalendarsWithDateServiceResponse response = new FindAllCalendarsWithDateServiceResponse(
-            new ColorResponse(1L, "yellow"),
+        new ColorResponse(1L, "yellow"),
             new ColorResponse(2L, "green"),
             List.of(new ScheduleServiceResponse(LocalDate.now(), LocalDate.now(), "놀러가기", ScheduleType.DATE))
         );
@@ -92,7 +92,7 @@ class CalendarApiDocsTest extends RestDocsSupport {
     void findRecentSchedules() throws Exception {
         // Given
         FindRecentCalendarsServiceResponse response = new FindRecentCalendarsServiceResponse(
-            new ColorResponse(1L, "yellow"),
+        new ColorResponse(1L, "yellow"),
             new ColorResponse(2L, "green"),
             List.of(new ScheduleServiceResponse(LocalDate.now(), LocalDate.now(), "놀러가기", ScheduleType.DATE))
         );
@@ -124,6 +124,7 @@ class CalendarApiDocsTest extends RestDocsSupport {
                     fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
                 )
             ));
+
     }
 
     @DisplayName("일정을 생성하는 api docs")
@@ -170,7 +171,7 @@ class CalendarApiDocsTest extends RestDocsSupport {
     void editScheduleById() throws Exception {
         // Given
         Long scheduleId = 1L;
-        UpdateCalendarRequest updateRequest = new UpdateCalendarRequest(LocalDate.now(), LocalDate.now(), "updated details", ScheduleType.DATE);
+        UpdateCalendarRequest updateRequest = new UpdateCalendarRequest(LocalDate.now(), LocalDate.now(), "updated details", "DATE");
         UpdateCalendarResponse updateResponse = new UpdateCalendarResponse(LocalDate.now(), LocalDate.now(), "updated details", ScheduleType.DATE);
 
         given(calendarCommandService.updateCalendarById(eq(scheduleId), any(UpdateCalendarServiceRequest.class)))

@@ -39,22 +39,38 @@ public class Calendar extends BaseTimeEntity {
     private String scheduleDetails;
 
     private Calendar(LocalDate startDate, LocalDate endDate, long ownerId, ScheduleType scheduleType, String scheduleDetails, long coupleId) {
-        Validate.notNull(startDate, "startDate must not be null");
-        Validate.notNull(endDate, "endDate must not be null");
-        Validate.isTrue(!startDate.isAfter(endDate), "endDate must be after startDate");
-        this.startDate = startDate;
-        this.endDate = endDate;
+        validateDates(startDate, endDate);
+        validateScheduleType(scheduleType);
         this.ownerId = ownerId;
-        this.scheduleType = Validate.notNull(scheduleType, "scheduleType must not be null");
         this.coupleId = coupleId;
         this.scheduleDetails = validateScheduleDetails(scheduleDetails);
     }
-
 
     private String validateScheduleDetails(String details) {
         Validate.isTrue(StringUtils.isNotBlank(details), "scheduleDetails must not be blank");
         Validate.isTrue(details.length() <= 255, "scheduleDetails must be between 1 and 255 characters long");
         return details;
+    }
+
+    private void validateDates(LocalDate startDate, LocalDate endDate) {
+        this.startDate = Validate.notNull(startDate, "startDate must not be null");
+        this.endDate = Validate.notNull(endDate, "endDate must not be null");
+        Validate.isTrue(!startDate.isAfter(endDate), "endDate must be after startDate");
+    }
+
+    private void validateScheduleType(ScheduleType scheduleType) {
+        this.scheduleType = Validate.notNull(scheduleType, "scheduleType must not be null");
+    }
+
+    public void update(LocalDate startDate, LocalDate endDate, String scheduleType, String scheduleDetails) {
+        validateDates(startDate, endDate);
+        ScheduleType type = ScheduleType.valueOf(scheduleType.toUpperCase());
+
+        if (type == ScheduleType.PERSONAL) {
+            ownerId = 0L;
+        }
+        this.scheduleType = type;
+        this.scheduleDetails = validateScheduleDetails(scheduleDetails);
     }
 
     public static Calendar create(LocalDate startDate, LocalDate endDate, long ownerId, String scheduleType, String scheduleDetails, long coupleId) {
