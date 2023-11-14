@@ -4,7 +4,8 @@ import com.lovely4k.backend.calendar.ScheduleType;
 
 import java.time.LocalDate;
 
-public record FindAllCalendarsWithDateResponse(
+public record FindCalendarsWithDateResponse(
+    long calendarId,
     long boyId,
     String boyCalendarColor,
     long girlId,

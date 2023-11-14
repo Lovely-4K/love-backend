@@ -5,7 +5,8 @@ import com.lovely4k.backend.calendar.ScheduleType;
 import com.lovely4k.backend.calendar.controller.CalendarController;
 import com.lovely4k.backend.calendar.controller.request.CreateCalendarRequest;
 import com.lovely4k.backend.calendar.controller.request.UpdateCalendarRequest;
-import com.lovely4k.backend.calendar.repository.response.FindAllCalendarsWithDateResponse;
+import com.lovely4k.backend.calendar.repository.FindCalendarsWithDateRepositoryRequest;
+import com.lovely4k.backend.calendar.repository.response.FindCalendarsWithDateResponse;
 import com.lovely4k.backend.calendar.repository.response.FindRecentCalendarsResponse;
 import com.lovely4k.backend.calendar.service.CalendarCommandService;
 import com.lovely4k.backend.calendar.service.CalendarQueryService;
@@ -46,14 +47,15 @@ class CalendarApiDocsTest extends RestDocsSupport {
         return new CalendarController(calendarCommandService, calendarQueryService);
     }
 
-    @DisplayName("startDate ~ endDate 기간에 해당하는 일정 조회 api docs")
+    @DisplayName("from ~ to 기간에 해당하는 일정 조회 api docs")
     @Test
     void findAllSchedulesWithDate() throws Exception {
         // Given
-        FindAllCalendarsWithDateServiceResponse response = FindAllCalendarsWithDateServiceResponse
+        FindCalendarsWithDateServiceResponse response = FindCalendarsWithDateServiceResponse
             .from(
                 List.of(
-                    new FindAllCalendarsWithDateResponse(
+                    new FindCalendarsWithDateResponse(
+                        1L,
                     1L,
                     "RED",
                     2L,
@@ -65,12 +67,13 @@ class CalendarApiDocsTest extends RestDocsSupport {
                 )
             );
 
-        given(calendarQueryService.findAllCalendarsWithDate(any(FindAllCalendarsWithDateServiceRequest.class)))
+
+        given(calendarQueryService.findCalendarsWithDate(any(FindCalendarsWithDateRepositoryRequest.class)))
             .willReturn(response);
 
         mockMvc.perform(get("/v1/calendars")
-                .queryParam("startDate", "2023-01-01")
-                .queryParam("endDate", "2023-01-31")
+                .queryParam("from", "2023-01-01")
+                .queryParam("to", "2023-01-31")
                 .queryParam("coupleId", "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8))
@@ -78,8 +81,8 @@ class CalendarApiDocsTest extends RestDocsSupport {
             .andDo(print())
             .andDo(document("find-all-schedules-with-date",
                 queryParameters(
-                    parameterWithName("startDate").description("조회 시작 날짜"),
-                    parameterWithName("endDate").description("조회 종료 날짜"),
+                    parameterWithName("from").description("조회 시작 날짜"),
+                    parameterWithName("to").description("조회 종료 날짜"),
                     parameterWithName("coupleId").description("커플 ID")
                 ),
                 responseFields(
@@ -88,6 +91,7 @@ class CalendarApiDocsTest extends RestDocsSupport {
                     fieldWithPath("body.colorInfo.boyCalendarColor").type(STRING).description("남자의 달력 색상"),
                     fieldWithPath("body.colorInfo.girlId").type(NUMBER).description("여자의 회원 ID"),
                     fieldWithPath("body.colorInfo.girlCalendarColor").type(STRING).description("여자의 달력 색상"),
+                    fieldWithPath("body.schedules[0].calendarId").type(NUMBER).description("일정의 id"),
                     fieldWithPath("body.schedules[0].startDate").type(STRING).description("일정 시작 날짜"),
                     fieldWithPath("body.schedules[0].endDate").type(STRING).description("일정 종료 날짜"),
                     fieldWithPath("body.schedules[0].scheduleDetails").type(STRING).description("일정 상세"),
@@ -105,7 +109,9 @@ class CalendarApiDocsTest extends RestDocsSupport {
         FindRecentCalendarsServiceResponse response = FindRecentCalendarsServiceResponse
             .from(
                 List.of(
-                    new FindRecentCalendarsResponse(1L,
+                    new FindRecentCalendarsResponse(
+                        1L,
+                        1L,
                     "RED",
                     2L,
                     "BLUE",
@@ -130,11 +136,12 @@ class CalendarApiDocsTest extends RestDocsSupport {
                     parameterWithName("limit").description("조회할 개수 default 5")
                 ),
                 responseFields(
-                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
-                    fieldWithPath("body.colorInfo.boyId").type(JsonFieldType.NUMBER).description("남자의 ID"),
-                    fieldWithPath("body.colorInfo.boyCalendarColor").type(JsonFieldType.STRING).description("남자의 달력 색상"),
-                    fieldWithPath("body.colorInfo.girlId").type(JsonFieldType.NUMBER).description("여자의 ID"),
-                    fieldWithPath("body.colorInfo.girlCalendarColor").type(JsonFieldType.STRING).description("여자의 달력 색상"),
+                    fieldWithPath("code").type(NUMBER).description("코드"),
+                    fieldWithPath("body.colorInfo.boyId").type(NUMBER).description("남자의 회원 ID"),
+                    fieldWithPath("body.colorInfo.boyCalendarColor").type(STRING).description("남자의 달력 색상"),
+                    fieldWithPath("body.colorInfo.girlId").type(NUMBER).description("여자의 회원 ID"),
+                    fieldWithPath("body.colorInfo.girlCalendarColor").type(STRING).description("여자의 달력 색상"),
+                    fieldWithPath("body.schedules[0].calendarId").type(NUMBER).description("일정의 id"),
                     fieldWithPath("body.schedules[0].startDate").type(STRING).description("일정 시작 날짜"),
                     fieldWithPath("body.schedules[0].endDate").type(JsonFieldType.STRING).description("일정 종료 날짜"),
                     fieldWithPath("body.schedules[0].scheduleDetails").type(JsonFieldType.STRING).description("일정 상세"),
