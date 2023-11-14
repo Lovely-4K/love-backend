@@ -48,11 +48,11 @@ public class HttpAspect {
         HttpLogResponse httpLog = HttpLogResponse.of(request, Objects.requireNonNull(response), objectMapper, proceed);
 
         if (elapsedTime > maxAffordableTime) {
-            log.warn(objectMapper.writeValueAsString(httpLog));
+            log.warn(httpLog.toString());
             return proceed;
         }
 
-        log.info(objectMapper.writeValueAsString(httpLog.removeBody()));
+        log.info(httpLog.removeBody().toString());
 
         return proceed;
     }
@@ -70,7 +70,7 @@ public class HttpAspect {
         Object proceed = joinPoint.proceed();
         HttpServletResponse response = sra.getResponse();
 
-        log.warn(objectMapper.writeValueAsString(HttpLogResponse.of(request, Objects.requireNonNull(response), objectMapper, proceed)));
+        log.warn(HttpLogResponse.of(request, Objects.requireNonNull(response), objectMapper, proceed).toString());
 
         return proceed;
     }

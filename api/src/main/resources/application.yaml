@@ -6,17 +6,8 @@ spring:
 # == 공통 설정 영역 == #
   jpa:
     open-in-view: false
-    properties:
-      hibernate:
-        format_sql: true
     hibernate:
       ddl-auto: none
-
-logging:
-  level:
-    root: info
-    org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql.BasicBinder: trace
 
 love:
   system:

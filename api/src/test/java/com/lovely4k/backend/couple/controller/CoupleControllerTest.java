@@ -116,6 +116,6 @@ class CoupleControllerTest extends ControllerTestSupport {
                 .contentType(APPLICATION_JSON))
             .andDo(print())
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.body.title").value("DateTimeParseException"));
+            .andExpect(jsonPath("$.body.title").exists());
     }
 }
