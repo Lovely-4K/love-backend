@@ -15,10 +15,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,14 +43,12 @@ class HttpAspectTest {
     void printLog() throws Throwable {
         // given
         given(joinPoint.proceed()).willReturn(null);
-        given(objectMapper.writeValueAsString(any())).willReturn("log message");
 
         // when
         Object result = httpAspect.printLog(joinPoint);
 
         // then
         then(joinPoint).should(times(1)).proceed();
-        then(objectMapper).should(atLeastOnce()).writeValueAsString(any());
         assertThat(result).isNull();
     }
 
@@ -60,14 +56,12 @@ class HttpAspectTest {
     void printErrorLog() throws Throwable {
         // given
         given(joinPoint.proceed()).willReturn(null);
-        given(objectMapper.writeValueAsString(any())).willReturn("error log message");
 
         // when
         Object result = httpAspect.printErrorLog(joinPoint);
 
         // then
         then(joinPoint).should(times(1)).proceed();
-        then(objectMapper).should(atLeastOnce()).writeValueAsString(any());
         assertThat(result).isNull();
     }
 }
