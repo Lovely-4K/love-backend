@@ -5,8 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 
@@ -25,7 +23,7 @@ class CoupleTest {
                 .build();
 
         //when
-        couple.registerGirlId(2L);
+        couple.registerPartnerId(2L);
 
         //then
         assertThat(couple.getGirlId())
@@ -42,7 +40,7 @@ class CoupleTest {
                 .build();
 
         //when
-        couple.registerBoyId(2L);
+        couple.registerPartnerId(2L);
 
         //then
         assertThat(couple.getBoyId())

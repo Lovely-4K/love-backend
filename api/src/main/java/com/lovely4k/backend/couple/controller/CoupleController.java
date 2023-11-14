@@ -38,7 +38,7 @@ public class CoupleController {
     }
 
     @SneakyThrows
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseEntity<ApiResponse<Void>> registerCouple(@RequestParam String invitationCode, @LoginUser SessionUser sessionUser) {
         coupleService.registerCouple(invitationCode, sessionUser.memberId());
 

@@ -26,8 +26,7 @@ public class CoupleService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public InvitationCodeCreateResponse
-    createInvitationCode(Long requestedMemberId, String sex) {
+    public InvitationCodeCreateResponse createInvitationCode(Long requestedMemberId, String sex) {
         String invitationCode = UUID.randomUUID().toString();
 
         Couple couple = Couple.create(requestedMemberId, Sex.valueOf(sex), invitationCode);
@@ -40,11 +39,7 @@ public class CoupleService {
     public void registerCouple(String invitationCode, Long receivedMemberId) {
         Couple couple = validateInvitationCode(invitationCode);
 
-        if (couple.getBoyId() == null) {
-            couple.registerBoyId(receivedMemberId);
-        } else {
-            couple.registerGirlId(receivedMemberId);
-        }
+        couple.registerPartnerId(receivedMemberId);
 
         registerCoupleId(couple);
     }
@@ -59,7 +54,7 @@ public class CoupleService {
         Optional<Member> opponent;
 
         if (memberId.equals(couple.getGirlId())) {
-             opponent = findMemberOptional(couple.getBoyId());
+            opponent = findMemberOptional(couple.getBoyId());
         } else {
             opponent = findMemberOptional(couple.getGirlId());
         }
@@ -81,7 +76,7 @@ public class CoupleService {
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
         couple.increaseTemperature();
     }
-  
+
     @Transactional
     public void deleteCouple(Long coupleId, Long memberId) {
         Couple couple = findCouple(coupleId);

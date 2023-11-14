@@ -66,30 +66,22 @@ public class Couple extends BaseTimeEntity {
 
     private static Couple createBoy(Long requestedMemberId, String invitationCode) {
         return Couple.builder()
-                .boyId(requestedMemberId)
-                .girlId(null)
-                .meetDay(null)
-                .invitationCode(invitationCode)
-                .temperature(0.0f)
-                .build();
+            .boyId(requestedMemberId)
+            .girlId(null)
+            .meetDay(null)
+            .invitationCode(invitationCode)
+            .temperature(0.0f)
+            .build();
     }
 
     private static Couple createGirl(Long requestedMemberId, String invitationCode) {
         return Couple.builder()
-                .boyId(null)
-                .girlId(requestedMemberId)
-                .meetDay(null)
-                .invitationCode(invitationCode)
-                .temperature(0.0f)
-                .build();
-    }
-
-    public void registerGirlId(Long receivedMemberId) {
-        this.girlId = receivedMemberId;
-    }
-
-    public void registerBoyId(Long receivedMemberId) {
-        this.boyId = receivedMemberId;
+            .boyId(null)
+            .girlId(requestedMemberId)
+            .meetDay(null)
+            .invitationCode(invitationCode)
+            .temperature(0.0f)
+            .build();
     }
 
     public void update(LocalDate meetDay) {
@@ -111,5 +103,13 @@ public class Couple extends BaseTimeEntity {
 
     public boolean hasAuthority(Long memberId) {
         return (this.boyId.equals(memberId) || this.girlId.equals(memberId));
+    }
+
+    public void registerPartnerId(Long receivedMemberId) {
+        if (this.boyId == null) {
+            this.boyId = receivedMemberId;
+        } else {
+            this.girlId = receivedMemberId;
+        }
     }
 }
