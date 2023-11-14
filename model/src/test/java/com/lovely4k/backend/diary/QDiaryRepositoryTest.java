@@ -42,7 +42,7 @@ class QDiaryRepositoryTest extends IntegrationTestSupport {
         Diary accomodation2 = buildDiary(Category.ACCOMODATION, 1L);
         diaryRepository.saveAll(List.of(foodDiary1, foodDiary2, accomodation1, accomodation2));
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("localDateTime").ascending());
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("createdDate").ascending());
         // when
         Page<Diary> diaryPage = qDiaryRepository.findAll(1L, Category.FOOD, pageRequest);
 
@@ -60,7 +60,7 @@ class QDiaryRepositoryTest extends IntegrationTestSupport {
         Diary accomodation2 = buildDiary(Category.ACCOMODATION, 1L);
         diaryRepository.saveAll(List.of(foodDiary1, foodDiary2, accomodation1, accomodation2));
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("localDateTime").ascending());
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("createdDate").ascending());
         // when
         Page<Diary> diaryPage = qDiaryRepository.findAll(1L, null, pageRequest);
 

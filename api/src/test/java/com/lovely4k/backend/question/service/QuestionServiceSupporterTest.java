@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,16 +30,16 @@ class QuestionServiceSupporterTest {
     void getQuestionDay_ValidCase() {
         // Given
         Long coupleId = 1L;
-        LocalDateTime localDateTime = LocalDateTime.now().minusDays(5);
+        LocalDate localDate = LocalDate.now().minusDays(5);
         Couple couple = mock(Couple.class);
 
-        given(couple.getLocalDateTime()).willReturn(localDateTime);
+        given(couple.getCreatedDate()).willReturn(localDate);
         given(coupleRepository.findById(coupleId)).willReturn(Optional.of(couple));
 
         // When
         long questionDay = questionServiceSupporter.getQuestionDay(coupleId);
 
         // Then
-        assertThat(questionDay).isEqualTo(DateConverter.getDurationOfAppUsage(localDateTime));
+        assertThat(questionDay).isEqualTo(DateConverter.getDurationOfAppUsage(localDate));
     }
 }

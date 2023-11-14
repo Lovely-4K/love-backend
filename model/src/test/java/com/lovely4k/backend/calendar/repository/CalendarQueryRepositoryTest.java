@@ -1,6 +1,6 @@
 package com.lovely4k.backend.calendar.repository;
 
-import com.lovely4k.backend.IntegrationTestSupport;
+import com.lovely4k.backend.QueryTestSupport;
 import com.lovely4k.backend.calendar.ScheduleType;
 import com.lovely4k.backend.calendar.repository.response.FindCalendarsWithDateResponse;
 import com.lovely4k.backend.calendar.repository.response.FindRecentCalendarsResponse;
@@ -15,7 +15,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class CalendarQueryRepositoryTest extends IntegrationTestSupport {
+class CalendarQueryRepositoryTest extends QueryTestSupport {
 
     @Autowired
     CalendarQueryRepository calendarQueryRepository;

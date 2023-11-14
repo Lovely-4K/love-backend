@@ -6,13 +6,13 @@ import com.lovely4k.backend.common.sessionuser.SessionUser;
 import com.lovely4k.backend.question.controller.request.AnswerQuestionRequest;
 import com.lovely4k.backend.question.controller.request.AnsweredQuestionParamRequest;
 import com.lovely4k.backend.question.controller.request.CreateQuestionFormRequest;
+import com.lovely4k.backend.question.repository.response.AnsweredQuestionResponse;
+import com.lovely4k.backend.question.repository.response.DailyQuestionResponse;
 import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse;
 import com.lovely4k.backend.question.service.QuestionQueryService;
 import com.lovely4k.backend.question.service.QuestionService;
-import com.lovely4k.backend.question.service.response.AnsweredQuestionResponse;
 import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
 import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
-import com.lovely4k.backend.question.service.response.DailyQuestionResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -43,7 +43,7 @@ public class QuestionController {
     @SneakyThrows
     @GetMapping("/daily")
     public ResponseEntity<ApiResponse<DailyQuestionResponse>> getDailyQuestion(@LoginUser SessionUser user) {
-        return ApiResponse.ok(questionService.findDailyQuestion(user.coupleId()),
+        return ApiResponse.ok(questionQueryService.findDailyQuestion(user.coupleId()),
                 linkTo(methodOn(getClass()).getDailyQuestion(user)).withSelfRel(),
                 linkTo(getClass().getMethod(CREATE_QUESTION, SessionUser.class)).withRel(CREATE_QUESTION),
                 linkTo(getClass().getMethod(CREATE_QUESTION_FORM, CreateQuestionFormRequest.class, SessionUser.class)).withRel(CREATE_QUESTION_FORM));
@@ -86,7 +86,7 @@ public class QuestionController {
     @SneakyThrows
     @GetMapping
     public ResponseEntity<ApiResponse<AnsweredQuestionResponse>> getAnsweredQuestions(@ModelAttribute @Valid AnsweredQuestionParamRequest params) {
-        return ApiResponse.ok(questionService.findAllAnsweredQuestionByCoupleId(params.getId(), params.getCoupleId(), params.getLimit()),
+        return ApiResponse.ok(questionQueryService.findAllAnsweredQuestionByCoupleId(params.getId(), params.getCoupleId(), params.getLimit()),
                 linkTo(methodOn(getClass()).getAnsweredQuestions(params)).withSelfRel(),
                 linkTo(getClass().getMethod(GET_QUESTION_DETAILS, Long.class, SessionUser.class)).withRel(GET_QUESTION_DETAILS));
     }

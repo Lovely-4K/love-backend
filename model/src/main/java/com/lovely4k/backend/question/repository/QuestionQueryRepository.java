@@ -3,15 +3,19 @@ package com.lovely4k.backend.question.repository;
 import com.lovely4k.backend.couple.QCouple;
 import com.lovely4k.backend.member.QMember;
 import com.lovely4k.backend.member.Sex;
+import com.lovely4k.backend.question.QQuestion;
+import com.lovely4k.backend.question.QQuestionForm;
+import com.lovely4k.backend.question.repository.response.AnsweredQuestionResponse;
+import com.lovely4k.backend.question.repository.response.DailyQuestionResponse;
 import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse;
+import com.lovely4k.backend.question.repository.response.QuestionResponse;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import static com.lovely4k.backend.couple.QCouple.couple;
 import static com.lovely4k.backend.question.QQuestion.question;
@@ -81,4 +85,57 @@ public class QuestionQueryRepository {
     private BooleanExpression getMemberFilter(Sex sex, long memberId, QCouple couple) {
         return sex == Sex.MALE ? couple.boyId.eq(memberId) : couple.girlId.eq(memberId);
     }
+
+    public AnsweredQuestionResponse findAnsweredQuestions(Long id, Long coupleId, Integer limit) {
+        QQuestion question = QQuestion.question;
+
+        // Constructing the query with conditions and projections
+        List<QuestionResponse> result = jpaQueryFactory
+            .select(Projections.constructor(QuestionResponse.class,
+                question.id,
+                question.questionForm.questionContent))
+            .from(question)
+            .where(
+                question.id.gt(id),
+                question.coupleId.eq(coupleId),
+                question.boyChoiceIndex.ne(0),
+                question.girlChoiceIndex.ne(0)
+            )
+            .orderBy(question.id.desc())
+            .limit(limit)
+            .fetch();
+
+        return new AnsweredQuestionResponse(result);
+    }
+
+    //오늘의 질문 조회. 커스텀 질문, 서버에서 주는 질문 두개 조회돌 경우 커스텀 질문으로 응답.
+    public DailyQuestionResponse findDailyQuestion(Long coupleId) {
+        QQuestion question = QQuestion.question;
+        QCouple couple = QCouple.couple;
+        QQuestionForm questionForm = QQuestionForm.questionForm;
+
+        NumberExpression<Long> questionDayExpression = Expressions.numberTemplate(
+            Long.class,
+            "TIMESTAMPDIFF(DAY, {0}, CURRENT_DATE)",
+            couple.createdDate);
+
+        return jpaQueryFactory
+            .select(Projections.constructor(DailyQuestionResponse.class,
+                question.id,
+                questionForm.questionContent,
+                questionForm.questionChoices.firstChoice,
+                questionForm.questionChoices.secondChoice,
+                questionForm.questionChoices.thirdChoice,
+                questionForm.questionChoices.fourthChoice,
+                questionForm.questionFormType))
+            .from(question)
+            .join(question.questionForm, questionForm)
+            .join(couple).on(question.coupleId.eq(couple.id))
+            .where(question.coupleId.eq(coupleId)
+                .and(question.questionDay.eq(questionDayExpression)))
+            .orderBy(question.id.desc())
+            .fetchFirst();
+    }
+
+
 }

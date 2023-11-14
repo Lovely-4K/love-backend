@@ -292,7 +292,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // when
         Page<DiaryListResponse> diaryList =
-            diaryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")));
+            diaryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate")));
 
         // then
         assertAll(
@@ -306,7 +306,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
     void findDiaryListNoDiary() {
         // when
         Page<DiaryListResponse> diaryList =
-            diaryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")));
+            diaryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate")));
 
         // then
         assertAll(

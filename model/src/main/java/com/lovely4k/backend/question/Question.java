@@ -89,24 +89,4 @@ public class Question extends BaseTimeEntity {
         return this.questionForm.getQuestionChoices();
     }
 
-    public String getGirlChoiceAnswer() {
-        return getChoiceAnswerByIndex(girlChoiceIndex);
-    }
-
-    public String getBoyChoiceAnswer() {
-        return getChoiceAnswerByIndex(boyChoiceIndex);
-    }
-
-    private String getChoiceAnswerByIndex(int choiceIndex) {
-        QuestionChoices choices = getQuestionChoices();
-        return switch (choiceIndex) {
-            case 1 -> choices.getFirstChoice();
-            case 2 -> choices.getSecondChoice();
-            case 3 -> choices.getThirdChoice();
-            case 4 -> choices.getFourthChoice();
-            default -> throw new IllegalStateException("아직 답변을 하지 않았습니다.");
-        };
-    }
-
-
 }

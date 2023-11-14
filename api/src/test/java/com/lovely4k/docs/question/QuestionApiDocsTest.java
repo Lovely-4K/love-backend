@@ -1,19 +1,17 @@
 package com.lovely4k.docs.question;
 
-import com.lovely4k.backend.question.Question;
-import com.lovely4k.backend.question.QuestionChoices;
-import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.QuestionFormType;
 import com.lovely4k.backend.question.controller.QuestionController;
 import com.lovely4k.backend.question.controller.request.AnswerQuestionRequest;
 import com.lovely4k.backend.question.controller.request.CreateQuestionFormRequest;
+import com.lovely4k.backend.question.repository.response.AnsweredQuestionResponse;
+import com.lovely4k.backend.question.repository.response.DailyQuestionResponse;
 import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse;
+import com.lovely4k.backend.question.repository.response.QuestionResponse;
 import com.lovely4k.backend.question.service.QuestionQueryService;
 import com.lovely4k.backend.question.service.QuestionService;
-import com.lovely4k.backend.question.service.response.AnsweredQuestionResponse;
 import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
 import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
-import com.lovely4k.backend.question.service.response.DailyQuestionResponse;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,7 +51,7 @@ class QuestionApiDocsTest extends RestDocsSupport {
             1L, "테스트 질문", "선택지 1", "선택지 2", null, null, QuestionFormType.SERVER
         );
 
-        given(questionService.findDailyQuestion(any())).willReturn(mockResponse);
+        given(questionQueryService.findDailyQuestion(any())).willReturn(mockResponse);
 
         mockMvc.perform(get("/v1/questions/daily")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -218,16 +216,10 @@ class QuestionApiDocsTest extends RestDocsSupport {
     @Test
     void getAnsweredQuestions() throws Exception {
         //given
-        QuestionChoices questionChoices = QuestionChoices.create("test1", "test2", null, null);
-        QuestionForm questionForm = QuestionForm.create(1L, "test", questionChoices, 0L, QuestionFormType.SERVER);
-        Question question = mock(Question.class);
+        QuestionResponse questionResponse = new QuestionResponse(1L, "content");
+        AnsweredQuestionResponse response = new AnsweredQuestionResponse(List.of(questionResponse));
 
-        given(question.getId()).willReturn(1L);
-        given(question.getQuestionForm()).willReturn(questionForm);
-
-        AnsweredQuestionResponse response = AnsweredQuestionResponse.from(List.of(question));
-
-        given(questionService.findAllAnsweredQuestionByCoupleId(any(), any(), anyInt())).willReturn(response);
+        given(questionQueryService.findAllAnsweredQuestionByCoupleId(any(), any(), anyInt())).willReturn(response);
 
         //when & then
         mockMvc.perform(get("/v1/questions")
