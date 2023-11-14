@@ -15,6 +15,8 @@ CREATE TABLE couple (
     invitation_code VARCHAR(255),
     deleted BOOLEAN DEFAULT FALSE,
     deleted_date DATE,
+    temperature FLOAT,
+    version BIGINT NOT NULL DEFAULT 0,
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_couple_boy_id (boy_id),
