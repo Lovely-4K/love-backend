@@ -1,15 +1,18 @@
 package com.lovely4k.backend.calendar.controller;
 
 import com.lovely4k.backend.calendar.controller.request.CreateCalendarRequest;
-import com.lovely4k.backend.calendar.controller.request.FindAllCalendarsWithDateRequest;
+import com.lovely4k.backend.calendar.controller.request.FindCalendarsWithDateRequest;
 import com.lovely4k.backend.calendar.controller.request.UpdateCalendarRequest;
 import com.lovely4k.backend.calendar.service.CalendarCommandService;
 import com.lovely4k.backend.calendar.service.CalendarQueryService;
 import com.lovely4k.backend.calendar.service.response.CreateCalendarResponse;
-import com.lovely4k.backend.calendar.service.response.FindAllCalendarsWithDateServiceResponse;
+import com.lovely4k.backend.calendar.service.response.FindCalendarsWithDateServiceResponse;
 import com.lovely4k.backend.calendar.service.response.FindRecentCalendarsServiceResponse;
 import com.lovely4k.backend.calendar.service.response.UpdateCalendarResponse;
 import com.lovely4k.backend.common.ApiResponse;
+import com.lovely4k.backend.common.sessionuser.LoginUser;
+import com.lovely4k.backend.common.sessionuser.SessionUser;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.hateoas.MediaTypes;
@@ -36,39 +39,52 @@ public class CalendarController {
 
     @SneakyThrows
     @GetMapping
-    public ResponseEntity<ApiResponse<FindAllCalendarsWithDateServiceResponse>> findAllSchedulesWithDate(@ModelAttribute FindAllCalendarsWithDateRequest request) {
-        return ApiResponse.ok(calendarQueryService.findAllCalendarsWithDate(request.toServiceDto()),
+    public ResponseEntity<ApiResponse<FindCalendarsWithDateServiceResponse>> findAllSchedulesWithDate(@ModelAttribute @Valid FindCalendarsWithDateRequest request) {
+        return ApiResponse.ok(
+                calendarQueryService.findCalendarsWithDate(request.toRepositoryDto()),
                 linkTo(methodOn(getClass()).findAllSchedulesWithDate(request)).withSelfRel(),
-                linkTo(getClass().getMethod(CREATE_SCHEDULE, Long.class, CreateCalendarRequest.class)).withRel(CREATE_SCHEDULE),
+                linkTo(getClass().getMethod(CREATE_SCHEDULE, SessionUser.class, CreateCalendarRequest.class)).withRel(CREATE_SCHEDULE),
                 linkTo(getClass().getMethod(EDIT_SCHEDULE_BY_ID, Long.class, UpdateCalendarRequest.class)).withRel(EDIT_SCHEDULE_BY_ID),
-                linkTo(getClass().getMethod(DELETE_SCHEDULE_BY_ID, Long.class)).withRel(DELETE_SCHEDULE_BY_ID));
+                linkTo(getClass().getMethod(DELETE_SCHEDULE_BY_ID, Long.class)).withRel(DELETE_SCHEDULE_BY_ID)
+        );
     }
 
     @SneakyThrows
     @GetMapping("/recent")
-    public ResponseEntity<ApiResponse<FindRecentCalendarsServiceResponse>> findRecentSchedules(@RequestParam("coupleId") Long coupleId, @RequestParam(value = "limit", defaultValue = "5") Long limit) {
-        return ApiResponse.ok(calendarQueryService.findRecentCalendars(coupleId, limit),
-                linkTo(methodOn(getClass()).findRecentSchedules(coupleId, limit)).withSelfRel(),
-                linkTo(getClass().getMethod(EDIT_SCHEDULE_BY_ID, Long.class, UpdateCalendarRequest.class)).withRel(EDIT_SCHEDULE_BY_ID));
+    public ResponseEntity<ApiResponse<FindRecentCalendarsServiceResponse>> findRecentSchedules(
+        @LoginUser SessionUser sessionUser,
+        @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
+        return ApiResponse.ok(
+                calendarQueryService.findRecentCalendars(sessionUser.coupleId(), limit),
+                linkTo(methodOn(getClass()).findRecentSchedules(sessionUser, limit)).withSelfRel(),
+                linkTo(getClass().getMethod(EDIT_SCHEDULE_BY_ID, Long.class, UpdateCalendarRequest.class)).withRel(EDIT_SCHEDULE_BY_ID)
+        );
     }
 
     @SneakyThrows
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<CreateCalendarResponse>> createSchedule(@RequestParam("coupleId") Long coupleId, @RequestBody CreateCalendarRequest request) {
-        CreateCalendarResponse response = calendarCommandService.createCalendar(coupleId, request.toServiceDto());
+    public ResponseEntity<ApiResponse<CreateCalendarResponse>> createSchedule(
+            @LoginUser SessionUser sessionUser,
+            @RequestBody @Valid CreateCalendarRequest request) {
+        CreateCalendarResponse response = calendarCommandService.createCalendar(sessionUser.coupleId(), sessionUser.memberId(), request.toServiceDto());
 
-        return ApiResponse.created(response, response.id(),
-                linkTo(methodOn(getClass()).createSchedule(coupleId, request)).withSelfRel(),
-                linkTo(getClass().getMethod(FIND_ALL_SCHEDULE_WITH_DATE, FindAllCalendarsWithDateRequest.class)).withRel(FIND_ALL_SCHEDULE_WITH_DATE));
+        return ApiResponse.created(
+                response,
+                response.id(),
+                linkTo(methodOn(getClass()).createSchedule(sessionUser, request)).withSelfRel(),
+                linkTo(getClass().getMethod(FIND_ALL_SCHEDULE_WITH_DATE, FindCalendarsWithDateRequest.class)).withRel(FIND_ALL_SCHEDULE_WITH_DATE)
+        );
     }
 
     @SneakyThrows
     @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<UpdateCalendarResponse>> editScheduleById(@PathVariable("id") Long id, @RequestBody UpdateCalendarRequest request) {
+    public ResponseEntity<ApiResponse<UpdateCalendarResponse>> editScheduleById(@PathVariable("id") Long id, @RequestBody @Valid UpdateCalendarRequest request) {
         UpdateCalendarResponse response = calendarCommandService.updateCalendarById(id, request.toServiceDto());
-        return ApiResponse.ok(response,
-                linkTo(methodOn(getClass()).editScheduleById(id, request)).withSelfRel(),
-                linkTo(getClass().getMethod(FIND_ALL_SCHEDULE_WITH_DATE, FindAllCalendarsWithDateRequest.class)).withRel(FIND_ALL_SCHEDULE_WITH_DATE));
+        return ApiResponse.ok(
+            response,
+            linkTo(methodOn(getClass()).editScheduleById(id, request)).withSelfRel(),
+            linkTo(getClass().getMethod(FIND_ALL_SCHEDULE_WITH_DATE, FindCalendarsWithDateRequest.class)).withRel(FIND_ALL_SCHEDULE_WITH_DATE)
+        );
     }
 
     @DeleteMapping("/{id}")

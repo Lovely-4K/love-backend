@@ -1,6 +1,7 @@
 package com.lovely4k.backend.calendar.service.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.lovely4k.backend.calendar.Calendar;
 import com.lovely4k.backend.calendar.ScheduleType;
 
 import java.time.LocalDate;
@@ -17,7 +18,7 @@ public record UpdateCalendarResponse(
         ScheduleType scheduleType
 ) {
 
-    public static UpdateCalendarResponse from() {
-        return new UpdateCalendarResponse(LocalDate.now(), LocalDate.now(), "details", ScheduleType.DATE);
+    public static UpdateCalendarResponse from(Calendar calendar) {
+        return new UpdateCalendarResponse(calendar.getStartDate(), calendar.getEndDate(), calendar.getScheduleDetails(), calendar.getScheduleType());
     }
 }

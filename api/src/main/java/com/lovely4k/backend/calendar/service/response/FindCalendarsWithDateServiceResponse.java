@@ -2,12 +2,12 @@ package com.lovely4k.backend.calendar.service.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lovely4k.backend.calendar.ScheduleType;
-import com.lovely4k.backend.calendar.repository.response.FindRecentCalendarsResponse;
+import com.lovely4k.backend.calendar.repository.response.FindCalendarsWithDateResponse;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public record FindRecentCalendarsServiceResponse(
+public record FindCalendarsWithDateServiceResponse(
     ColorResponse colorInfo,
     List<ScheduleServiceResponse> schedules
 ) {
@@ -17,7 +17,7 @@ public record FindRecentCalendarsServiceResponse(
         long girlId,
         String girlCalendarColor
     ) {
-        private static ColorResponse from(FindRecentCalendarsResponse response) {
+        private static ColorResponse from(FindCalendarsWithDateResponse response) {
             return new ColorResponse(
                 response.boyId(),
                 response.boyCalendarColor(),
@@ -39,7 +39,7 @@ public record FindRecentCalendarsServiceResponse(
         String scheduleDetails,
         ScheduleType scheduleType
     ) {
-        private static ScheduleServiceResponse from(FindRecentCalendarsResponse response) {
+        private static ScheduleServiceResponse from(FindCalendarsWithDateResponse response) {
             return new ScheduleServiceResponse(
                 response.calendarId(),
                 response.startDate(),
@@ -50,14 +50,14 @@ public record FindRecentCalendarsServiceResponse(
         }
     }
 
-    public static FindRecentCalendarsServiceResponse from(List<FindRecentCalendarsResponse> responses) {
-        List<ScheduleServiceResponse> scheduleServiceResponses = responses
+    public static FindCalendarsWithDateServiceResponse from(List<FindCalendarsWithDateResponse> response) {
+        List<ScheduleServiceResponse> scheduleServiceResponses = response
             .stream()
             .map(ScheduleServiceResponse::from)
             .toList();
 
-        return new FindRecentCalendarsServiceResponse(
-            ColorResponse.from(responses.get(0)),
+        return new FindCalendarsWithDateServiceResponse(
+            ColorResponse.from(response.get(0)),
             scheduleServiceResponses
         );
     }

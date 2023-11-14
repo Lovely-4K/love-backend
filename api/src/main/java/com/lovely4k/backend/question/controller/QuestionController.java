@@ -106,5 +106,4 @@ public class QuestionController {
         questionService.deleteQuestion();
         return ResponseEntity.noContent().build();
     }
-
 }
