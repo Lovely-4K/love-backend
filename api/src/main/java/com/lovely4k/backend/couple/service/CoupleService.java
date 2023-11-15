@@ -1,6 +1,8 @@
 package com.lovely4k.backend.couple.service;
 
 import com.lovely4k.backend.couple.Couple;
+import com.lovely4k.backend.couple.CoupleCreatedEvent;
+import com.lovely4k.backend.couple.CoupleUpdatedEvent;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
@@ -10,6 +12,7 @@ import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,7 @@ public class CoupleService {
 
     private final CoupleRepository coupleRepository;
     private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public InvitationCodeCreateResponse
@@ -32,7 +36,7 @@ public class CoupleService {
 
         Couple couple = Couple.create(requestedMemberId, Sex.valueOf(sex), invitationCode);
         Couple savedCouple = coupleRepository.save(couple);
-
+        eventPublisher.publishEvent(new CoupleCreatedEvent(couple));
         return new InvitationCodeCreateResponse(savedCouple.getId(), invitationCode);
     }
 
@@ -45,8 +49,8 @@ public class CoupleService {
         } else {
             couple.registerGirlId(receivedMemberId);
         }
-
         registerCoupleId(couple);
+        eventPublisher.publishEvent(new CoupleUpdatedEvent(couple));
     }
 
     public CoupleProfileGetResponse findCoupleProfile(Long memberId) {
