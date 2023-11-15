@@ -1,10 +1,7 @@
 package com.lovely4k.backend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lovely4k.backend.authentication.MyOAuth2Member;
-import com.lovely4k.backend.authentication.OAuth2UserService;
-import com.lovely4k.backend.authentication.OAuthAttributes;
-import com.lovely4k.backend.authentication.SecurityConfig;
+import com.lovely4k.backend.authentication.*;
 import com.lovely4k.backend.calendar.controller.CalendarController;
 import com.lovely4k.backend.calendar.service.CalendarCommandService;
 import com.lovely4k.backend.calendar.service.CalendarQueryService;
@@ -87,6 +84,9 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected CoupleRepository coupleRepository;
+
+    @MockBean
+    protected CustomSuccessHandler customSuccessHandler;
 
     @Mock
     protected Authentication authentication;
