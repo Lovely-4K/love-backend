@@ -9,8 +9,5 @@ public class AnsweredQuestionParamRequest {
     private Long id = 0L;
 
     @Min(1)
-    private final Long coupleId;
-
-    @Min(1)
     private int limit = 10;
 }

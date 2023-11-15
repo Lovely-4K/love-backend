@@ -38,21 +38,21 @@ CREATE TABLE member
     INDEX idx_couple_id (couple_id)
 );
 
-CREATE TABLE calendar
-(
-    id               BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    start_date       DATE         NOT NULL,
-    end_date         DATE,
-    member_id        BIGINT,
-    couple_id        BIGINT       NOT NULL,
-    schedule_type    VARCHAR(31)  NOT NULL,
-    schedule_details VARCHAR(255) NOT NULL,
-    created_at       TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at       TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_calendar_member_id (member_id),
-    INDEX idx_calendar_start_date (start_date),
-    INDEX idx_calendar_end_Date (end_date),
-    INDEX idx_calendar_couple_id (couple_id)
+CREATE TABLE calendar(
+     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+     start_date DATE NOT NULL,
+     end_date DATE,
+     member_id BIGINT,
+     couple_id BIGINT NOT NULL,
+     schedule_type VARCHAR(31) NOT NULL,
+     schedule_details VARCHAR(255) NOT NULL,
+     owner_id BIGINT,
+     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+     INDEX idx_calendar_member_id (member_id),
+     INDEX idx_calendar_start_date (start_date),
+     INDEX idx_calendar_end_Date (end_date),
+     INDEX idx_calendar_couple_id (couple_id)
 );
 
 insert into member (couple_id, sex, calendar_color)
@@ -62,6 +62,8 @@ values (1, 'FEMALE', 'BLUE');
 insert into couple (boy_id, girl_id)
 values (1, 2);
 
+insert into calendar (start_date, couple_id, owner_id, schedule_type, schedule_details)
+values ('2123-11-04', 1, 1, 'PERSONAL', '공부');
 insert into calendar (start_date, couple_id, schedule_type, schedule_details)
 values ('2123-11-05', 1, 'DATE', '영화');
 insert into calendar (start_date, couple_id, schedule_type, schedule_details)

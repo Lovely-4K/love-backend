@@ -117,6 +117,7 @@ CREATE TABLE calendar(
      couple_id BIGINT NOT NULL,
      schedule_type VARCHAR(31) NOT NULL,
      schedule_details VARCHAR(255) NOT NULL,
+     owner_id BIGINT,
      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      INDEX idx_calendar_member_id (member_id),

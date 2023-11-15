@@ -13,6 +13,7 @@ public record FindRecentCalendarsResponse(
     LocalDate startDate,
     LocalDate endDate,
     String scheduleDetails,
-    ScheduleType scheduleType
+    ScheduleType scheduleType,
+    long ownerId
 ) {
 }
