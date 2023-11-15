@@ -68,13 +68,12 @@ class CalendarApiDocsTest extends RestDocsSupport {
             );
 
 
-        given(calendarQueryService.findCalendarsWithDate(any(FindCalendarsWithDateRepositoryRequest.class)))
+        given(calendarQueryService.findCalendarsWithDate(any(FindCalendarsWithDateRepositoryRequest.class), any()))
             .willReturn(response);
 
         mockMvc.perform(get("/v1/calendars")
                 .queryParam("from", "2023-01-01")
                 .queryParam("to", "2023-01-31")
-                .queryParam("coupleId", "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8))
             .andExpect(status().isOk())
@@ -82,8 +81,7 @@ class CalendarApiDocsTest extends RestDocsSupport {
             .andDo(document("find-all-schedules-with-date",
                 queryParameters(
                     parameterWithName("from").description("조회 시작 날짜"),
-                    parameterWithName("to").description("조회 종료 날짜"),
-                    parameterWithName("coupleId").description("커플 ID")
+                    parameterWithName("to").description("조회 종료 날짜")
                 ),
                 responseFields(
                     fieldWithPath("code").type(NUMBER).description("코드"),

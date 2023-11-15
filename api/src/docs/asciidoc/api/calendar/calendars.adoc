@@ -1,0 +1,56 @@
+[[find-all-schedules-with-date]]
+=== 날짜로 일정 조회
+날짜로 일정을 조회합니다. 하나의 일정에는 시작일, 종료일이 있는데, 2023-11-23 ~ 2023-12-23 과 같이 조회를 하면 시작일이 2023-11-23부터 2023-12-23인 칼럼이 조회됩니다.
+
+==== Request
+include::{snippets}/find-all-schedules-with-date/http-request.adoc[]
+include::{snippets}/find-all-schedules-with-date/query-parameters.adoc[]
+==== Response (Success)
+include::{snippets}/find-all-schedules-with-date/http-response.adoc[]
+include::{snippets}/find-all-schedules-with-date/response-fields.adoc[]
+
+[[find-recent-schedules]]
+=== 앞으로 다가올 최근 일정 조회
+다가오는 일정을 조회합니다. limit에 넣은 값 만큼 조회하며 default 값은 5입니다.
+
+==== Request
+include::{snippets}/find-recent-schedules/http-request.adoc[]
+include::{snippets}/find-recent-schedules/query-parameters.adoc[]
+==== Response (Success)
+include::{snippets}/find-recent-schedules/http-response.adoc[]
+include::{snippets}/find-recent-schedules/response-fields.adoc[]
+
+[[create-schedules]]
+=== 일정 생성하기
+일정을 생성합니다. schedule type은 다음과 같습니다. 개인 일정인 경우 PERSONAL을 바디에 담아주시면 됩니다.
+
+TRAVEL, DATE, ANNIVERSARY, PERSONAL, ETC
+
+==== Request
+include::{snippets}/create-schedules/http-request.adoc[]
+include::{snippets}/create-schedules/request-fields.adoc[]
+==== Response (Success)
+include::{snippets}/create-schedules/http-response.adoc[]
+include::{snippets}/create-schedules/response-fields.adoc[]
+
+[[edit-schedule]]
+=== 일정 수정하기
+일정 생성하기와 동일합니다. path 변수의 id에 해당하는 일정을 수정합니다.
+
+==== Request
+include::{snippets}/edit-schedule/http-request.adoc[]
+include::{snippets}/edit-schedule/request-fields.adoc[]
+include::{snippets}/edit-schedule/path-parameters.adoc[]
+==== Response (Success)
+include::{snippets}/edit-schedule/http-response.adoc[]
+include::{snippets}/edit-schedule/response-fields.adoc[]
+
+[[delete-schedule]]
+=== 일정 삭제하기
+path 변수에 해당하는 일정을 삭제합니다.
+
+==== Request
+include::{snippets}/delete-schedule/http-request.adoc[]
+include::{snippets}/delete-schedule/path-parameters.adoc[]
+==== Response (Success)
+include::{snippets}/delete-schedule/http-response.adoc[]
