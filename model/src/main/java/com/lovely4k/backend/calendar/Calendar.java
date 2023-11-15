@@ -66,7 +66,7 @@ public class Calendar extends BaseTimeEntity {
         validateDates(startDate, endDate);
         ScheduleType type = ScheduleType.valueOf(scheduleType.toUpperCase());
 
-        if (type == ScheduleType.PERSONAL) {
+        if (type != ScheduleType.PERSONAL) {
             ownerId = 0L;
         }
         this.scheduleType = type;

@@ -47,12 +47,11 @@ class CalendarQueryRepositoryTest extends QueryTestSupport {
         // given -> calendar.sql
         FindCalendarsWithDateRepositoryRequest request = new FindCalendarsWithDateRepositoryRequest(
             LocalDate.of(2123, 11, 1),
-            LocalDate.of(2123, 11, 30),
-            1L
+            LocalDate.of(2123, 11, 30)
         );
 
         // when
-        List<FindCalendarsWithDateResponse> result = calendarQueryRepository.findCalendarsWithDate(request);
+        List<FindCalendarsWithDateResponse> result = calendarQueryRepository.findCalendarsWithDate(request, 1L);
 
         // then
         assertAll("Recent Calendars",

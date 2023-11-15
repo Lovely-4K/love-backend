@@ -41,7 +41,7 @@ public class CalendarQueryRepository {
             .fetch();
     }
 
-    public List<FindCalendarsWithDateResponse> findCalendarsWithDate(FindCalendarsWithDateRepositoryRequest request) {
+    public List<FindCalendarsWithDateResponse> findCalendarsWithDate(FindCalendarsWithDateRepositoryRequest request, Long coupleId) {
         QMember boy = new QMember("boy");
         QMember girl = new QMember("girl");
 
@@ -57,7 +57,7 @@ public class CalendarQueryRepository {
             .join(boy).on(couple.boyId.eq(boy.id))
             .join(girl).on(couple.girlId.eq(girl.id))
             .where(
-                calendar.coupleId.eq(request.coupleId()),
+                calendar.coupleId.eq(coupleId),
                 calendar.startDate.between(request.from(), request.to()))
             .orderBy(calendar.id.desc())
             .fetch();

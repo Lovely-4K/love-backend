@@ -14,11 +14,10 @@ public record FindCalendarsWithDateRequest(
 
     @NotNull(message = "to에 해당하는 날짜를 입력해주세요: yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    LocalDate to,
+    LocalDate to
 
-    long coupleId
 ) {
     public FindCalendarsWithDateRepositoryRequest toRepositoryDto() {
-        return new FindCalendarsWithDateRepositoryRequest(to, from, coupleId);
+        return new FindCalendarsWithDateRepositoryRequest(to, from);
     }
 }

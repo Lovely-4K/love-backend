@@ -20,6 +20,8 @@ public class ValueOfEnumValidator implements ConstraintValidator<EnumValue, Stri
 
         if (enumValues == null) return false;
 
+        if(value ==null) return false;
+
         return Arrays.stream(enumValues).anyMatch(eVal -> isValueValid(value, eVal));
     }
 

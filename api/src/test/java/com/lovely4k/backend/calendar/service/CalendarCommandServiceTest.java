@@ -83,7 +83,6 @@ class CalendarCommandServiceTest {
 
         // When
         UpdateCalendarResponse response = calendarCommandService.updateCalendarById(calendarId, request);
-        calendar.update(request.startDate(), request.endDate(), request.scheduleType(), request.scheduleDetails());
 
         // Then
         assertThat(response).isNotNull()

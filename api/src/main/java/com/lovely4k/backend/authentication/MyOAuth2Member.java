@@ -29,10 +29,10 @@ public class MyOAuth2Member implements OAuth2User, Serializable, MemberInfo {
     private final String nameAttributeKey;
 
     private final Long memberId;
-    private final Long coupleId;
+    private Long coupleId;
     private final Sex sex;
-    private final String nickName;
-    private final String picture;
+    private String nickName;
+    private String picture;
 
     /**
      * Constructs a {@code DefaultOAuth2User} using the provided parameters.
@@ -81,6 +81,14 @@ public class MyOAuth2Member implements OAuth2User, Serializable, MemberInfo {
             Comparator.comparing(GrantedAuthority::getAuthority));
         sortedAuthorities.addAll(authorities);
         return sortedAuthorities;
+    }
+
+    public MyOAuth2Member update(Long coupleId, String nickName, String picture) {
+        this.coupleId = coupleId;
+        this.nickName = nickName;
+        this.picture = picture;
+
+        return this;
     }
 
 }
