@@ -38,9 +38,6 @@ dependencies {
     // prometheus
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
-    // p6spy -> 개발 시 실제로 나가는 query 확인 전용으로 사용해주세요.
-//    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
-
 }
 
 ext { // 전역 변수
