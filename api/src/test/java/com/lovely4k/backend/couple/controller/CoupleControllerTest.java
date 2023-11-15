@@ -118,4 +118,5 @@ class CoupleControllerTest extends ControllerTestSupport {
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.body.title").exists());
     }
+
 }

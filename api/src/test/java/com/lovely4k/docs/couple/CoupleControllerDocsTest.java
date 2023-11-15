@@ -53,28 +53,27 @@ class CoupleControllerDocsTest extends RestDocsSupport {
             .andDo(print())
             .andExpect(status().isCreated())
             .andDo(document("get-invitationCode",
-                    preprocessResponse(prettyPrint()),
-                    responseHeaders(
-                        headerWithName("Location").description("리소스 저장 경로")
-                    ),
-                    responseFields(
-                        fieldWithPath("code").type(JsonFieldType.NUMBER)
-                            .description("응답 코드"),
-                        fieldWithPath("body.coupleId").type(JsonFieldType.NUMBER)
-                            .description("커플 id"),
-                        fieldWithPath("body.invitationCode").type(JsonFieldType.STRING)
-                            .description("초대 코드"),
-                        fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
-                            .description("relation of url"),
-                        fieldWithPath("links[0].href").type(JsonFieldType.STRING)
-                            .description("url of relation"),
-                        fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
-                            .description("relation of url"),
-                        fieldWithPath("links[1].href").type(JsonFieldType.STRING)
-                            .description("url of relation")
-                    )
+                preprocessResponse(prettyPrint()),
+                responseHeaders(
+                    headerWithName("Location").description("리소스 저장 경로")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                        .description("응답 코드"),
+                    fieldWithPath("body.coupleId").type(JsonFieldType.NUMBER)
+                        .description("커플 id"),
+                    fieldWithPath("body.invitationCode").type(JsonFieldType.STRING)
+                        .description("초대 코드"),
+                    fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
+                        .description("relation of url"),
+                    fieldWithPath("links[0].href").type(JsonFieldType.STRING)
+                        .description("url of relation"),
+                    fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
+                        .description("relation of url"),
+                    fieldWithPath("links[1].href").type(JsonFieldType.STRING)
+                        .description("url of relation")
                 )
-            );
+            ));
     }
 
     @Test
@@ -89,23 +88,22 @@ class CoupleControllerDocsTest extends RestDocsSupport {
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("couple-register",
-                    preprocessResponse(prettyPrint()),
-                    responseFields(
-                        fieldWithPath("code").type(JsonFieldType.NUMBER)
-                            .description("응답 코드"),
-                        fieldWithPath("body").type(JsonFieldType.NULL)
-                            .description("응답 바디"),
-                        fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
-                            .description("relation of url"),
-                        fieldWithPath("links[0].href").type(JsonFieldType.STRING)
-                            .description("url of relation"),
-                        fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
-                            .description("relation of url"),
-                        fieldWithPath("links[1].href").type(JsonFieldType.STRING)
-                            .description("url of relation")
-                    )
+                preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                        .description("응답 코드"),
+                    fieldWithPath("body").type(JsonFieldType.NULL)
+                        .description("응답 바디"),
+                    fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
+                        .description("relation of url"),
+                    fieldWithPath("links[0].href").type(JsonFieldType.STRING)
+                        .description("url of relation"),
+                    fieldWithPath("links[1].rel").type(JsonFieldType.STRING)
+                        .description("relation of url"),
+                    fieldWithPath("links[1].href").type(JsonFieldType.STRING)
+                        .description("url of relation")
                 )
-            );
+            ));
     }
 
     @Test
@@ -164,7 +162,7 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("body.meetDay").type(JsonFieldType.STRING)
                             .description("만난날"),
                         fieldWithPath("body.opponentCalendarColor").type(JsonFieldType.STRING)
-                                .description("상대방 달력 색깔"),
+                            .description("상대방 달력 색깔"),
                         fieldWithPath("body.opponentBirthday").type(JsonFieldType.STRING)
                             .description("상대방 생일"),
                         fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
@@ -220,21 +218,47 @@ class CoupleControllerDocsTest extends RestDocsSupport {
 
     @DisplayName("커플을 삭제하는 API")
     @Test
-    void deleteCouple() throws Exception{
+    void deleteCouple() throws Exception {
         // when && then
         this.mockMvc.perform(
-                        delete("/v1/couples/{coupleId}", 1)
-                                .queryParam("memberId", "1")
+                delete("/v1/couples/{coupleId}", 1)
+                    .queryParam("memberId", "1")
+            )
+            .andDo(print())
+            .andExpect(status().isNoContent())
+            .andDo(document("couple-delete",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                queryParameters(
+                    parameterWithName("memberId").description("회원 아이디")
                 )
-                .andDo(print())
-                .andExpect(status().isNoContent())
-                .andDo(document("couple-delete",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        queryParameters(
-                                parameterWithName("memberId").description("회원 아이디")
-                        )
-                ))
+            ))
+        ;
+    }
+
+    @DisplayName("커플을 복구하는 API")
+    @Test
+    void restoreCouple() throws Exception {
+        // when && then
+        this.mockMvc.perform(
+                post("/v1/couples/recouple/{coupleId}", 1)
+                    .queryParam("memberId", "1")
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("couple-recouple",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                queryParameters(
+                    parameterWithName("memberId").description("회원 아이디")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+                    fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디"),
+                    fieldWithPath("links[0].rel").type(JsonFieldType.STRING).description("relation of url"),
+                    fieldWithPath("links[0].href").type(JsonFieldType.STRING).description("url of relation")
+                )
+            ))
         ;
     }
 }
