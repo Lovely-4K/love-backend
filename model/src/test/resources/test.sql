@@ -48,16 +48,19 @@ CREATE TABLE member (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     couple_id BIGINT,
     sex VARCHAR(7),
-    name VARCHAR(15),
     nick_name VARCHAR(50),
     birthday DATE,
     mbti VARCHAR(7),
     calendar_color VARCHAR(31),
+    image_url VARCHAR(255),
+    age_range VARCHAR(10),
+    email VARCHAR(40),
+    role VARCHAR(10),
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_couple_id(couple_id)
-
 );
+
 
 -- Question 테이블
 CREATE TABLE question (

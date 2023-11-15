@@ -2,7 +2,9 @@ package com.lovely4k.backend.couple.service;
 
 import com.lovely4k.backend.common.ExceptionMessage;
 import com.lovely4k.backend.couple.Couple;
+import com.lovely4k.backend.couple.repository.CoupleQueryRepository;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
+import com.lovely4k.backend.couple.repository.response.FindCoupleProfileResponse;
 import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
@@ -24,6 +26,7 @@ public class CoupleService {
 
     private final CoupleRepository coupleRepository;
     private final MemberRepository memberRepository;
+    private final CoupleQueryRepository coupleQueryRepository;
 
     @Transactional
     public InvitationCodeCreateResponse createInvitationCode(Long requestedMemberId, String sex) {
@@ -46,20 +49,8 @@ public class CoupleService {
 
     public CoupleProfileGetResponse findCoupleProfile(Long memberId) {
 
-        Long coupleId = findMember(memberId).getCoupleId();
-
-        Couple couple = findCouple(coupleId);
-
-        Member my = findMember(memberId);
-        Optional<Member> opponent;
-
-        if (memberId.equals(couple.getGirlId())) {
-            opponent = findMemberOptional(couple.getBoyId());
-        } else {
-            opponent = findMemberOptional(couple.getGirlId());
-        }
-
-        return CoupleProfileGetResponse.from(my, opponent, couple.getMeetDay());
+        FindCoupleProfileResponse response = coupleQueryRepository.findCoupleProfile(memberId);
+        return CoupleProfileGetResponse.from(response);
     }
 
     @Transactional
