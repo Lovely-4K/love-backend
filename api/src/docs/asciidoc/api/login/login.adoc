@@ -17,3 +17,26 @@ GET https://love-back.kro.kr/oauth2/authorization/kakao
 ----
 GET https://love-back.kro.kr/oauth2/authorization/naver
 ----
+
+=== 로그인 응답
+
+상위 url로 로그인을 성공할 경우 다음 응답이 내려집니다.
+
+----
+{
+code: 200,
+message: "Login success"
+}
+----
+
+만약 헤어진 관계에서 상대방이 재결합을 원하는 경우 다음 응답이 내려집니다.
+
+----
+{
+    "code": 200,
+    "message": "Recouple request is in progress. Do you want to recouple?",
+    "recoupleUrl": "https://love-back.kro.kr/recouple/1" (커플 id)
+}
+----
+
+재결합을 요청하고자 한다면 `POST` 방식으로 상위 url에 요청을 주시면 됩니다.

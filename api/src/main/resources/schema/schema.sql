@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS member;
 DROP TABLE IF EXISTS location;
 DROP TABLE IF EXISTS diary;
 DROP TABLE IF EXISTS couple;
+DROP TABLE IF EXISTS calendar;
 
 -- Couple 테이블
 CREATE TABLE couple (
