@@ -1,7 +1,8 @@
 package com.lovely4k.backend.couple.service;
 
-import com.lovely4k.backend.common.ExceptionMessage;
 import com.lovely4k.backend.couple.Couple;
+import com.lovely4k.backend.couple.CoupleCreatedEvent;
+import com.lovely4k.backend.couple.CoupleUpdatedEvent;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
@@ -11,9 +12,11 @@ import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,6 +27,7 @@ public class CoupleService {
 
     private final CoupleRepository coupleRepository;
     private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public InvitationCodeCreateResponse
@@ -32,7 +36,7 @@ public class CoupleService {
 
         Couple couple = Couple.create(requestedMemberId, Sex.valueOf(sex), invitationCode);
         Couple savedCouple = coupleRepository.save(couple);
-
+        eventPublisher.publishEvent(new CoupleCreatedEvent(couple));
         return new InvitationCodeCreateResponse(savedCouple.getId(), invitationCode);
     }
 
@@ -45,8 +49,8 @@ public class CoupleService {
         } else {
             couple.registerGirlId(receivedMemberId);
         }
-
         registerCoupleId(couple);
+        eventPublisher.publishEvent(new CoupleUpdatedEvent(couple));
     }
 
     public CoupleProfileGetResponse findCoupleProfile(Long memberId) {
@@ -78,17 +82,24 @@ public class CoupleService {
     @Transactional
     public void increaseTemperature(Long coupleId) {
         Couple couple = coupleRepository.findByIdWithOptimisticLock(coupleId)
-            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));  // NOSONAR
         couple.increaseTemperature();
     }
-  
+
     @Transactional
     public void deleteCouple(Long coupleId, Long memberId) {
         Couple couple = findCouple(coupleId);
-        if (!couple.hasAuthority(memberId)) {
-            throw new IllegalArgumentException(ExceptionMessage.noAuthorityMessage("member", memberId, "couple", coupleId));
-        }
+        couple.checkAuthority(memberId);
         coupleRepository.delete(couple);
+    }
+
+    @Transactional
+    public void reCouple(LocalDate requestedDate, Long coupleId, Long memberId) {
+        Couple couple = findDeletedCouple(coupleId);
+        Long opponentId = couple.getOpponentId(memberId);
+        findMember(opponentId).checkReCoupleCondition(coupleId);
+
+        couple.recouple(memberId, requestedDate);
     }
 
     private Optional<Member> findMemberOptional(Long memberId) {
@@ -102,6 +113,11 @@ public class CoupleService {
 
     private Couple findCouple(Long coupleId) {
         return coupleRepository.findById(coupleId)
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
+    }
+
+    private Couple findDeletedCouple(Long coupleId) {
+        return coupleRepository.findDeletedById(coupleId)
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 커플 id 입니다."));
     }
 

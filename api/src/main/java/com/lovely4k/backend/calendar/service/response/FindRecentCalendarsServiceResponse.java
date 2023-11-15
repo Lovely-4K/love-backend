@@ -1,31 +1,64 @@
 package com.lovely4k.backend.calendar.service.response;
 
-import com.lovely4k.backend.calendar.repository.response.ColorResponse;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.lovely4k.backend.calendar.ScheduleType;
 import com.lovely4k.backend.calendar.repository.response.FindRecentCalendarsResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public record FindRecentCalendarsServiceResponse(
-        ColorResponse firstColor,
-        ColorResponse secondColor,
-        List<ScheduleServiceResponse> schedules
+    ColorResponse colorInfo,
+    List<ScheduleServiceResponse> schedules
 ) {
-    public static FindRecentCalendarsServiceResponse from(FindRecentCalendarsResponse response) {
-        List<ScheduleServiceResponse> scheduleServiceResponses = response
-                .schedules()
-                .stream()
-                .map(schedule -> new ScheduleServiceResponse(
-                        schedule.startDate(),
-                        schedule.endDate(),
-                        schedule.scheduleDetails(),
-                        schedule.scheduleType()
-                ))
-                .toList();
+    private record ColorResponse(
+        long boyId,
+        String boyCalendarColor,
+        long girlId,
+        String girlCalendarColor
+    ) {
+        private static ColorResponse from(FindRecentCalendarsResponse response) {
+            return new ColorResponse(
+                response.boyId(),
+                response.boyCalendarColor(),
+                response.girlId(),
+                response.girlCalendarColor()
+            );
+        }
+    }
+
+    private record ScheduleServiceResponse(
+        long calendarId,
+
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        LocalDate startDate,
+
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        LocalDate endDate,
+
+        String scheduleDetails,
+        ScheduleType scheduleType
+    ) {
+        private static ScheduleServiceResponse from(FindRecentCalendarsResponse response) {
+            return new ScheduleServiceResponse(
+                response.calendarId(),
+                response.startDate(),
+                response.endDate(),
+                response.scheduleDetails(),
+                response.scheduleType()
+            );
+        }
+    }
+
+    public static FindRecentCalendarsServiceResponse from(List<FindRecentCalendarsResponse> responses) {
+        List<ScheduleServiceResponse> scheduleServiceResponses = responses
+            .stream()
+            .map(ScheduleServiceResponse::from)
+            .toList();
 
         return new FindRecentCalendarsServiceResponse(
-                response.firstColor(),
-                response.secondColor(),
-                scheduleServiceResponses
+            ColorResponse.from(responses.get(0)),
+            scheduleServiceResponses
         );
     }
 }

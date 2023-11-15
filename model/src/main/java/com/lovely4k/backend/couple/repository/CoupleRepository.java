@@ -14,4 +14,7 @@ public interface CoupleRepository extends JpaRepository<Couple, Long> {
     @Lock(LockModeType.OPTIMISTIC)
     @Query("select c from Couple c where c.id = :id")
     Optional<Couple> findByIdWithOptimisticLock(Long id);
+
+    @Query(value = "SELECT * FROM couple WHERE id = ?1 AND deleted = true", nativeQuery = true)
+    Optional<Couple> findDeletedById(Long coupleId);
 }

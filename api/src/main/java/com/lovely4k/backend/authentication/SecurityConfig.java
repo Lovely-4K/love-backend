@@ -1,5 +1,6 @@
 package com.lovely4k.backend.authentication;
 
+import com.lovely4k.backend.couple.repository.CoupleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 public class SecurityConfig {
 
     private final OAuth2UserService oAuth2UserService;
+    private final CoupleRepository coupleRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -33,44 +35,56 @@ public class SecurityConfig {
         ;
 
         // Authorize of url
-        http.authorizeHttpRequests(
-            authorize -> authorize
-                .requestMatchers(
-                    antMatcher("/h2-console"),
-                    antMatcher("/v1/**")
-                ).permitAll()
+        http
+            .authorizeHttpRequests(
+                authorize -> authorize
+                    .requestMatchers(
+                        antMatcher("/h2-console"),
+                        antMatcher("/v1/**")
+                    ).permitAll()
 
 //                .requestMatchers(
 //                    antMatcher("/v1/**")
 //                ).hasRole(Role.USER.name())
 
-                .anyRequest().permitAll()
-        );
+                    .anyRequest().permitAll()
+            );
 
         // 로그아웃 설정
         http
-            .logout(l -> l
-                .logoutSuccessUrl("/")
-                .logoutUrl("/logout")
-                .invalidateHttpSession(true)
-                .clearAuthentication(true))
+            .logout(
+                logoutConfigurer -> logoutConfigurer
+                    .logoutSuccessUrl("/")
+                    .logoutUrl("/logout")
+                    .invalidateHttpSession(true)
+                    .clearAuthentication(true))
         ;
 
         // CORS
-        http.cors(
-            cors -> cors.configurationSource(corsConfigurationSource())
-        ); // CORS 설정 추가
+        http
+            .cors(
+                cors -> cors
+                    .configurationSource(corsConfigurationSource())
+            );
 
         // oauth2 설정
-        http.oauth2Login(ol -> ol.userInfoEndpoint(uI -> uI.userService(oAuth2UserService)));
+        http
+            .oauth2Login(
+                loginConfigurer -> loginConfigurer
+                    .userInfoEndpoint(uI -> uI.userService(oAuth2UserService))
+                    .successHandler(new CustomSuccessHandler(coupleRepository))
+            );
 
-        http.sessionManagement((sessionManagement -> sessionManagement
-            .sessionFixation().changeSessionId() // session fixation 방지
-            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션 생성 전략
-            .invalidSessionUrl("/") // 유효하지 않은 세션에서 요청시 리다이렉트 되는 url
-            .maximumSessions(2) // 2개의 로그인만 가능
-            .maxSessionsPreventsLogin(false))
-        );// 새로운 로그인 발생시 기존 로그인이 아닌 새로운 로그인 허용
+        // Session 설정
+        http
+            .sessionManagement((
+                sessionManagement -> sessionManagement
+                    .sessionFixation().changeSessionId() // session fixation 방지
+                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션 생성 전략
+                    .invalidSessionUrl("/") // 유효하지 않은 세션에서 요청시 리다이렉트 되는 url
+                    .maximumSessions(2) // 2개의 로그인만 가능
+                    .maxSessionsPreventsLogin(false)) // 새로운 로그인 발생시 기존 로그인이 아닌 새로운 로그인 허용
+            );
 
         return http.build();
     }

@@ -5,7 +5,11 @@ import com.lovely4k.backend.authentication.MyOAuth2Member;
 import com.lovely4k.backend.authentication.OAuth2UserService;
 import com.lovely4k.backend.authentication.OAuthAttributes;
 import com.lovely4k.backend.authentication.SecurityConfig;
+import com.lovely4k.backend.calendar.controller.CalendarController;
+import com.lovely4k.backend.calendar.service.CalendarCommandService;
+import com.lovely4k.backend.calendar.service.CalendarQueryService;
 import com.lovely4k.backend.couple.controller.CoupleController;
+import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.diary.controller.DiaryController;
 import com.lovely4k.backend.diary.service.DiaryService;
@@ -46,7 +50,8 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
     DiaryController.class,
     MemberController.class,
     QuestionController.class,
-    CoupleController.class
+    CoupleController.class,
+    CalendarController.class
 })
 public abstract class ControllerTestSupport {
 
@@ -79,6 +84,9 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected SecurityContext securityContext;
+
+    @MockBean
+    protected CoupleRepository coupleRepository;
 
     @Mock
     protected Authentication authentication;
@@ -118,4 +126,10 @@ public abstract class ControllerTestSupport {
             .apply(springSecurity())
             .build();
     }
+
+    @MockBean
+    protected CalendarCommandService calendarCommandService;
+
+    @MockBean
+    protected CalendarQueryService calendarQueryService;
 }

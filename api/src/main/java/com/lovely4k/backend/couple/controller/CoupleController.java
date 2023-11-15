@@ -16,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -44,7 +46,7 @@ public class CoupleController {
 
         return ApiResponse.ok(
             linkTo(methodOn(CoupleController.class).registerCouple(invitationCode, sessionUser)).withSelfRel(),
-            linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile")
+            linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile")   // NOSONAR
         );
     }
 
@@ -75,4 +77,21 @@ public class CoupleController {
         coupleService.deleteCouple(coupleId, memberId);
         return ResponseEntity.noContent().build();
     }
+
+    @SneakyThrows
+    @PostMapping("/recouple/{coupleId}")
+    public ResponseEntity<ApiResponse<Void>> reCouple(
+        @PathVariable Long coupleId,
+        @LoginUser SessionUser sessionUser
+    ) {
+        LocalDate requestedDate = LocalDate.now();
+        coupleService.reCouple(requestedDate, coupleId, sessionUser.memberId());
+
+        return ApiResponse.ok(
+            linkTo(methodOn(CoupleController.class).reCouple(coupleId, sessionUser)).withSelfRel(),
+            linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile"),
+            linkTo(CoupleController.class.getMethod("editCoupleProfile", CoupleProfileEditRequest.class, SessionUser.class)).withRel("edit couple profile")
+        );
+    }
+
 }

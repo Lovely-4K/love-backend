@@ -79,10 +79,10 @@ class ArchTests {
     @Test
     void serviceDependencyTest() {
         ArchRule shouldClassRule = classes().that().haveSimpleNameNotEndingWith("QueryService").and().haveSimpleNameEndingWith("Service")  // Service 클래스
-            .should().accessClassesThat().haveSimpleNameEndingWith("Repository");   // Service 클래스는 Repository에 접근할 수 있다.
+                .should().accessClassesThat().haveSimpleNameEndingWith("Repository");   // Service 클래스는 Repository에 접근할 수 있다.
 
         ArchRule shouldNotClassRule = noClasses().that().haveSimpleNameNotEndingWith("QueryService").and().haveSimpleNameEndingWith("Service")  // noClasses() -> 반대의 하위 규칙의 반대
-            .should().accessClassesThat().haveSimpleNameEndingWith("Controller");   // Service 클래스는 Controller에 접근할 수 있다.
+                .should().accessClassesThat().haveSimpleNameEndingWith("Controller");   // Service 클래스는 Controller에 접근할 수 있다.
 
         shouldClassRule.check(importedClasses);
         shouldNotClassRule.check(importedClasses);

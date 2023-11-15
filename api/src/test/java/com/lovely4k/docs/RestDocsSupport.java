@@ -24,7 +24,7 @@ public abstract class RestDocsSupport {
     void setUp(RestDocumentationContextProvider provider) {
         this.mockMvc = MockMvcBuilders.standaloneSetup(initController())
             .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-            .addFilters(new CharacterEncodingFilter("UTF-8", true))
+            .addFilter(new CharacterEncodingFilter("UTF-8", true))
             .apply(documentationConfiguration(provider)
                 .operationPreprocessors()
                 .withRequestDefaults(prettyPrint())

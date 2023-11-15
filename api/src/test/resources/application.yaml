@@ -54,4 +54,3 @@ logging:
 love:
   system:
     max-affordable-time: 3
-
