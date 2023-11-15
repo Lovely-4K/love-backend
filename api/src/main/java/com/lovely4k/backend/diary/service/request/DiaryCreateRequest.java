@@ -9,13 +9,14 @@ import java.time.LocalDate;
 public record DiaryCreateRequest(
         Long kakaoMapId,
         String address,
+        String placeName,
         Integer score,
         LocalDate datingDay,
         String category,
         String text
 ) {
     public Diary toEntity(Member member) {
-        Location location = Location.create(kakaoMapId, address, category);
+        Location location = Location.create(kakaoMapId, address, placeName, category);
         return Diary.create(score, datingDay, text, member, location);
     }
 }

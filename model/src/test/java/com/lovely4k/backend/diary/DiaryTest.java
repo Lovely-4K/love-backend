@@ -29,7 +29,7 @@ class DiaryTest {
                 .coupleId(1L)
                 .build();
 
-        Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(2L, "경기도 고양시", "starbucks", Category.FOOD);
 
         // when
         Diary diary = Diary.create(score, localDate, text, member, location);
@@ -57,7 +57,7 @@ class DiaryTest {
                 .coupleId(1L)
                 .build();
 
-        Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(2L, "경기도 고양시", "starbucks", Category.FOOD);
 
         // when
         Diary diary = Diary.create(score, localDate, text, member, location);
@@ -84,7 +84,7 @@ class DiaryTest {
                 .sex(MALE)
                 .build();
 
-        Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(2L, "경기도 고양시", "starbucks", Category.FOOD);
 
         // when && then
         assertThatThrownBy(
@@ -106,7 +106,7 @@ class DiaryTest {
                 .sex(MALE)
                 .build();
 
-        Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(2L, "경기도 고양시", "starbucks", Category.FOOD);
 
         // when && then
         assertThatThrownBy(

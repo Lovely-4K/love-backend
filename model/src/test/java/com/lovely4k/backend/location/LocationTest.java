@@ -14,15 +14,17 @@ class LocationTest {
         // given
         Long kakaoMapId = 1L;
         String address = "경기도 고양시";
+        String placeName = "starbucks";
         String category = "ACCOMODATION";
 
         // when
-        Location location = Location.create(kakaoMapId, address, category);
+        Location location = Location.create(kakaoMapId, address, placeName, category);
 
         // then
         assertAll(
                 () -> assertThat(location.getKakaoMapId()).isEqualTo(1L),
                 () -> assertThat(location.getAddress()).isEqualTo("경기도 고양시"),
+                () -> assertThat(location.getPlaceName()).isEqualTo("starbucks"),
                 () -> assertThat(location.getCategory()).isEqualTo(Category.ACCOMODATION)
         );
 

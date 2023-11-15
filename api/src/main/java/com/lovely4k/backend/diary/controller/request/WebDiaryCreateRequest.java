@@ -18,6 +18,9 @@ public record WebDiaryCreateRequest(
         @NotBlank(message = "address must not be null and empty")
         String address,
 
+        @NotBlank(message = "place name must not be null and empty")
+        String placeName,
+
         @Positive(message = "score must be positive")
         @Max(value = 5, message = "score cannot exceed 5")
         Integer score,
@@ -33,6 +36,6 @@ public record WebDiaryCreateRequest(
         String text
 ) {
         public DiaryCreateRequest toServiceRequest() {
-                return new DiaryCreateRequest(this.kakaoMapId, this.address, this.score, this.datingDay, this.category, this.text);
+                return new DiaryCreateRequest(this.kakaoMapId, this.address, this.placeName, this.score, this.datingDay, this.category, this.text);
         }
 }

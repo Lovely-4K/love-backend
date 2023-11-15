@@ -21,20 +21,24 @@ public class Location extends BaseTimeEntity {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "place_name")
+    private String placeName;
+
     @Enumerated(value = EnumType.STRING)
     private Category category;
 
-    private Location(Long kakaoMapId, String address, Category category) {
+    private Location(Long kakaoMapId, String address, String placeName, Category category) {
         this.kakaoMapId = kakaoMapId;
         this.address = address;
+        this.placeName = placeName;
         this.category = category;
     }
 
-    public static Location create(Long kakaoMapId, String address, String category) {
-        return new Location(kakaoMapId, address, Category.valueOf(category));
+    public static Location create(Long kakaoMapId, String address, String placeName, String category) {
+        return new Location(kakaoMapId, address, placeName, Category.valueOf(category));
     }
 
-    public static Location create(Long kakaoMapId, String address, Category category) {
-        return new Location(kakaoMapId, address, category);
+    public static Location create(Long kakaoMapId, String address, String placeName, Category category) {
+        return new Location(kakaoMapId, address, placeName, category);
     }
 }

@@ -52,7 +52,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     void createDiary() throws Exception {
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
-        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", "starbucks", 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
 
         mockMvc.perform(
@@ -69,6 +69,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                     requestPartFields("texts",
                         fieldWithPath("kakaoMapId").type(NUMBER).description("카카오 맵 id"),
                         fieldWithPath("address").type(STRING).description("장소에 대한 주소"),
+                        fieldWithPath("placeName").type(STRING).description("장소 이름"),
                         fieldWithPath("score").type(NUMBER).description("장소에 대한 평점"),
                         fieldWithPath("datingDay").type(STRING).description("데이트 한 날짜"),
                         fieldWithPath("category").type(STRING).description("장소 카테고리"),
@@ -142,9 +143,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     void getDiaryList() throws Exception {
         // stubbing
         List<DiaryListResponse> diaryListResponseList = List.of(
-            new DiaryListResponse(3L, 103L, "image-url"),
-            new DiaryListResponse(2L, 103532L, "image-url"),
-            new DiaryListResponse(1L, 123562L, "image-url")
+            new DiaryListResponse(3L, 103L, "image-url", LocalDate.of(2023, 10, 20), "starbucks"),
+            new DiaryListResponse(2L, 103532L, "image-url", LocalDate.of(2023, 11, 20), "cafebenne"),
+            new DiaryListResponse(1L, 123562L, "image-url", LocalDate.of(2023, 12, 20), "삼시세끼")
         );
 
         PageImpl<DiaryListResponse> responsePage =

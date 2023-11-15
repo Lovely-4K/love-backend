@@ -84,7 +84,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         List<MultipartFile> multipartFileList = List.of(firstImage, secondImage);
 
         DiaryCreateRequest diaryCreateRequest =
-            new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
+            new DiaryCreateRequest(1L, "경기도 일산", "starbucks", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
 
         // stubbing
         given(imageUploader.upload(any(String.class), any())
@@ -125,7 +125,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         ).willReturn(List.of("first-image-url", "second-image-url"));
 
         DiaryCreateRequest diaryCreateRequest =
-            new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
+            new DiaryCreateRequest(1L, "경기도 일산", "starbucks", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
 
         // when && then
         assertThatThrownBy(
@@ -144,7 +144,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         Long memberId = member.getId();
 
         DiaryCreateRequest diaryCreateRequest =
-            new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
+            new DiaryCreateRequest(1L, "경기도 일산", "starbucks", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
 
         // when
         Long savedDiaryId = diaryService.createDiary(Collections.emptyList(), diaryCreateRequest, memberId);
@@ -169,7 +169,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         ).willReturn(List.of("first-image-url", "second-image-url", "third-image-url", "fourth-image-url", "fifth-image-url", "sixth-image-url"));
 
         DiaryCreateRequest diaryCreateRequest =
-            new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
+            new DiaryCreateRequest(1L, "경기도 일산", "starbucks", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
 
         // when && then
         assertThatThrownBy(
@@ -193,7 +193,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
     void getDiaryDetail() {
         // given
 
-        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(10L, "경기도 고양시", "starbucks", Category.FOOD);
         Diary diary = buildDiary(location, 1L);
         diaryRepository.save(diary);
 
@@ -218,7 +218,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
     void getDiaryDetailInvalidDiaryId() {
         // given
 
-        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(10L, "경기도 고양시", "starbucks", Category.FOOD);
         Diary diary = buildDiary(location, 1L);
         diaryRepository.save(diary);
 
@@ -241,7 +241,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
     void getDiaryDetailNoAuthority() {
         // given
 
-        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(10L, "경기도 고양시", "starbucks", Category.FOOD);
         Diary diary = buildDiary(location, 2L);
         diaryRepository.save(diary);
 
@@ -262,7 +262,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
     @Test
     void deleteDiary() {
         // given
-        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(10L, "경기도 고양시", "starbucks", Category.FOOD);
         Diary diary = buildDiary(location, 1L);
         diaryRepository.save(diary);
 
@@ -319,7 +319,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
     @Test
     void deleteDiaryNoAuthority() {
         // given
-        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(10L, "경기도 고양시", "starbucks", Category.FOOD);
         Diary diary = buildDiary(location, 2L);
         diaryRepository.save(diary);
 
@@ -351,7 +351,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
     private static Diary buildDiary(Category category, long coupleId) {
         return Diary.builder()
             .coupleId(coupleId)
-            .location(Location.create(1L, "경기도 고양", category))
+            .location(Location.create(1L, "경기도 고양시", "starbucks", category))
             .boyText("hello")
             .girlText("hi")
             .score(4)

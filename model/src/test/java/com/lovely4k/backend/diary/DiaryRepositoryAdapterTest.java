@@ -67,8 +67,8 @@ class DiaryRepositoryAdapterTest extends IntegrationTestSupport {
     @Test
     void findDiaryList() {
         // given
-        Location food = Location.create(1L, "경기도 고양", Category.FOOD);
-        Location accomodation = Location.create(1L, "경기도 고양", Category.ACCOMODATION);
+        Location food = Location.create(1L, "경기도 고양시", "starbucks", Category.FOOD);
+        Location accomodation = Location.create(1L, "경기도 고양시", "starbucks", Category.ACCOMODATION);
         Diary diary1 = Diary.builder()
                 .coupleId(1L)
                 .girlText("girl text")
