@@ -12,7 +12,7 @@
         </encoder>
     </appender>
 
-    <property name="LOG_PATH" value="./logs"/>
+    <property name="LOG_PATH" value="/home/ec2-user/app/logs"/>
     <property name="LOG_FILE_NAME" value="current"/>
 
     <!-- 사용자 요청 추적 로깅 최대 30일, 5기가까지 보관-->
