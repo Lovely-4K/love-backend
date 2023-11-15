@@ -1,7 +1,6 @@
 package com.lovely4k.backend.question.service;
 
 import com.lovely4k.TestData;
-import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.IncreaseTemperatureFacade;
 import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
@@ -9,7 +8,8 @@ import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.repository.QuestionFormRepository;
 import com.lovely4k.backend.question.repository.QuestionRepository;
 import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
-import com.lovely4k.backend.question.service.response.*;
+import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
+import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
 import jakarta.persistence.OptimisticLockException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -19,18 +19,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class QuestionServiceTest {
+class QuestionServiceTest  {
 
     @Mock
     QuestionRepository questionRepository;
@@ -76,32 +73,6 @@ class QuestionServiceTest {
         // Then
         Assertions.assertThat(expectedResponse).isEqualTo(actualResponse);
         verify(questionValidator, times(1)).validateCreateQuestionForm(coupleId, questionDay);
-    }
-
-    @Test
-    @DisplayName("오늘의 질문을 조회한다.")
-    void testFindDailyQuestion() {
-        // Given
-        Long coupleId = 1L;
-        long questionDay = 1L;
-        Question mockQuestion = mock(Question.class);
-        QuestionForm questionForm = TestData.questionForm(1L);
-        given(questionServiceSupporter.getQuestionDay(coupleId)).willReturn(questionDay);
-        given(questionRepository.findQuestionByCoupleIdAndQuestionDay(coupleId, questionDay))
-                .willReturn(Arrays.asList(mockQuestion));
-        given(mockQuestion.getQuestionForm()).willReturn(questionForm);
-        given(mockQuestion.getId()).willReturn(1L);
-
-        // When
-        DailyQuestionResponse result = questionService.findDailyQuestion(coupleId);
-
-        // Then
-        assertAll(
-                () -> Assertions.assertThat(result).isNotNull(),
-                () -> Assertions.assertThat(result).isEqualTo(DailyQuestionResponse.from(mockQuestion))
-        );
-
-
     }
 
     @DisplayName("질문을 생성한다.")
@@ -164,64 +135,7 @@ class QuestionServiceTest {
 
         // When & Then
         Assertions.assertThatThrownBy(() -> questionService.updateQuestionAnswer(questionId, sex.name(), answer))
-                .isInstanceOf(OptimisticLockException.class);
-    }
-
-    @DisplayName("커플 ID로 답변된 모든 질문을 조회한다.")
-    @Test
-    void testFindAllAnsweredQuestionByCoupleId() {
-        // Given
-        Long coupleId = 1L;
-        int limit = 10;
-        long id = 0L;
-
-        Question mockQuestion1 = mock(Question.class);
-        Question mockQuestion2 = mock(Question.class);
-        QuestionForm questionForm1 = TestData.questionForm(1L);
-        QuestionForm questionForm2 = TestData.questionForm(2L);
-
-        // mockQuestion들이 리턴할 데이터 설정
-        given(mockQuestion1.getQuestionForm()).willReturn(questionForm1);
-        given(mockQuestion1.getId()).willReturn(1L);
-        given(mockQuestion2.getQuestionForm()).willReturn(questionForm2);
-        given(mockQuestion2.getId()).willReturn(2L);
-
-        // questionRepository가 리턴할 데이터 설정
-        given(questionRepository.findQuestionsByCoupleIdWithLimit(id, coupleId, limit)).willReturn(Arrays.asList(mockQuestion1, mockQuestion2));
-
-        // When
-        AnsweredQuestionResponse actualResponse = questionService.findAllAnsweredQuestionByCoupleId(id, coupleId, limit);
-
-        // Then
-        List<AnsweredQuestionResponse.QuestionResponse> expectedQuestionResponses = Arrays.asList(
-                AnsweredQuestionResponse.QuestionResponse.from(mockQuestion1),
-                AnsweredQuestionResponse.QuestionResponse.from(mockQuestion2)
-        );
-        AnsweredQuestionResponse expectedResponse = new AnsweredQuestionResponse(expectedQuestionResponses);
-
-        Assertions.assertThat(actualResponse).isEqualTo(expectedResponse);
-    }
-
-    @DisplayName("질문 상세를 조회한다.")
-    @Test
-    void testFindQuestionDetails() {
-        // Given
-        Long questionId = 1L;
-        Question mockQuestion = mock(Question.class);
-        QuestionForm questionForm = TestData.questionForm(1L);
-
-        given(questionRepository.findById(questionId)).willReturn(Optional.of(mockQuestion));
-        given(mockQuestion.getQuestionForm()).willReturn(questionForm);
-        given(mockQuestion.getBoyChoiceAnswer()).willReturn(questionForm.getQuestionChoices().getFirstChoice());
-        given(mockQuestion.getGirlChoiceAnswer()).willReturn(questionForm.getQuestionChoices().getSecondChoice());
-
-        QuestionDetailsResponse expectedResponse = QuestionDetailsResponse.from(mockQuestion);
-
-        // When
-        QuestionDetailsResponse actualResponse = questionService.findQuestionDetails(questionId);
-
-        // Then
-        Assertions.assertThat(actualResponse).isEqualTo(expectedResponse);
+            .isInstanceOf(OptimisticLockException.class);
     }
 
 }

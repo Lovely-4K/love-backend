@@ -8,7 +8,8 @@ import com.lovely4k.backend.question.QuestionFormType;
 import com.lovely4k.backend.question.repository.QuestionFormRepository;
 import com.lovely4k.backend.question.repository.QuestionRepository;
 import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
-import com.lovely4k.backend.question.service.response.*;
+import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
+import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.lovely4k.backend.common.ExceptionMessage.notFoundEntityMessage;
@@ -77,28 +77,6 @@ public class QuestionService {
             log.warn("[System Error] Something went wrong during increasing temperature", e);
             throw new IllegalStateException("System Error Occurred",e);
         }
-    }
-
-    public DailyQuestionResponse findDailyQuestion(Long coupleId) {
-        long questionDay = questionServiceSupporter.getQuestionDay(coupleId);
-        Question question = questionRepository
-                .findQuestionByCoupleIdAndQuestionDay(coupleId, questionDay)
-                .stream()
-                .reduce((first, second) -> second)
-                .orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("question", coupleId)));
-
-        return DailyQuestionResponse.from(question);
-    }
-
-    public QuestionDetailsResponse findQuestionDetails(Long id) {
-        Question question = questionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("question", id)));
-        return QuestionDetailsResponse.from(question);
-    }
-
-    public AnsweredQuestionResponse findAllAnsweredQuestionByCoupleId(Long id, Long coupleId, int limit) {
-        List<Question> questions= questionRepository.findQuestionsByCoupleIdWithLimit(id, coupleId, limit);
-        return AnsweredQuestionResponse.from(questions);
     }
 
     @Transactional
