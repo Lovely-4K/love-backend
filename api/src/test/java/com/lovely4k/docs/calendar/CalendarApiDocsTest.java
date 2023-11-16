@@ -63,7 +63,8 @@ class CalendarApiDocsTest extends RestDocsSupport {
                     LocalDate.now(),
                     LocalDate.now(),
                     "영화보기",
-                    ScheduleType.DATE)
+                    ScheduleType.DATE,
+                        1L)
                 )
             );
 
@@ -94,6 +95,7 @@ class CalendarApiDocsTest extends RestDocsSupport {
                     fieldWithPath("body.schedules[0].endDate").type(STRING).description("일정 종료 날짜"),
                     fieldWithPath("body.schedules[0].scheduleDetails").type(STRING).description("일정 상세"),
                     fieldWithPath("body.schedules[0].scheduleType").type(STRING).description("일정 타입(공통 일정이 아닌 경우 PRIVATE로 반환)"),
+                    fieldWithPath("body.schedules[0].ownerId").type(NUMBER).description("일정의 주인 id 공통 일정일 경우 0으로 응답."),
                     fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
                     fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
                 )
@@ -116,7 +118,8 @@ class CalendarApiDocsTest extends RestDocsSupport {
                     LocalDate.now(),
                     LocalDate.now(),
                     "영화보기",
-                    ScheduleType.DATE)
+                    ScheduleType.DATE,
+                        1L)
                 )
             );
 
@@ -144,6 +147,7 @@ class CalendarApiDocsTest extends RestDocsSupport {
                     fieldWithPath("body.schedules[0].endDate").type(JsonFieldType.STRING).description("일정 종료 날짜"),
                     fieldWithPath("body.schedules[0].scheduleDetails").type(JsonFieldType.STRING).description("일정 상세"),
                     fieldWithPath("body.schedules[0].scheduleType").type(JsonFieldType.STRING).description("일정 타입(공통 일정이 아닌 경우 PRIVATE로 반환)"),
+                    fieldWithPath("body.schedules[0].ownerId").type(NUMBER).description("일정의 주인 id 공통 일정일 경우 0으로 응답."),
                     fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
                     fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
                 )

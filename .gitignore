@@ -45,4 +45,4 @@ out/
 /api/src/main/resources/static/docs/index.html
 
 ### log ###
-/logs/**.log
+/logs/

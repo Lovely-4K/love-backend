@@ -1,6 +1,5 @@
 package com.lovely4k.backend.authentication;
 
-import com.lovely4k.backend.couple.repository.CoupleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +22,7 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 public class SecurityConfig {
 
     private final OAuth2UserService oAuth2UserService;
-    private final CoupleRepository coupleRepository;
+    private final CustomSuccessHandler customSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -72,7 +71,7 @@ public class SecurityConfig {
             .oauth2Login(
                 loginConfigurer -> loginConfigurer
                     .userInfoEndpoint(uI -> uI.userService(oAuth2UserService))
-                    .successHandler(new CustomSuccessHandler(coupleRepository))
+                    .successHandler(customSuccessHandler)
             );
 
         // Session 설정

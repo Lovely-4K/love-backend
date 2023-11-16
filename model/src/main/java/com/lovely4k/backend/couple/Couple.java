@@ -128,6 +128,14 @@ public class Couple extends BaseTimeEntity {
         return (this.boyId.equals(memberId) || this.girlId.equals(memberId));
     }
 
+    public void registerPartnerId(Long receivedMemberId) {
+        if (this.boyId == null) {
+            this.boyId = receivedMemberId;
+        } else {
+            this.girlId = receivedMemberId;
+        }
+    }
+  
     public boolean isExpired(LocalDate requestedDate) {
         LocalDate limitedDate = this.deletedDate.plusDays(30);
         return requestedDate.isAfter(limitedDate);

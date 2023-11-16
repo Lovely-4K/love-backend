@@ -1,9 +1,11 @@
 package com.lovely4k.backend.couple.service;
 
 import com.lovely4k.backend.couple.Couple;
+import com.lovely4k.backend.couple.repository.CoupleQueryRepository;
 import com.lovely4k.backend.couple.CoupleCreatedEvent;
 import com.lovely4k.backend.couple.CoupleUpdatedEvent;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
+import com.lovely4k.backend.couple.repository.response.FindCoupleProfileResponse;
 import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
@@ -27,11 +29,11 @@ public class CoupleService {
 
     private final CoupleRepository coupleRepository;
     private final MemberRepository memberRepository;
+    private final CoupleQueryRepository coupleQueryRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public InvitationCodeCreateResponse
-    createInvitationCode(Long requestedMemberId, String sex) {
+    public InvitationCodeCreateResponse createInvitationCode(Long requestedMemberId, String sex) {
         String invitationCode = UUID.randomUUID().toString();
 
         Couple couple = Couple.create(requestedMemberId, Sex.valueOf(sex), invitationCode);
@@ -43,32 +45,16 @@ public class CoupleService {
     @Transactional
     public void registerCouple(String invitationCode, Long receivedMemberId) {
         Couple couple = validateInvitationCode(invitationCode);
+        couple.registerPartnerId(receivedMemberId);
 
-        if (couple.getBoyId() == null) {
-            couple.registerBoyId(receivedMemberId);
-        } else {
-            couple.registerGirlId(receivedMemberId);
-        }
         registerCoupleId(couple);
         eventPublisher.publishEvent(new CoupleUpdatedEvent(couple));
     }
 
     public CoupleProfileGetResponse findCoupleProfile(Long memberId) {
 
-        Long coupleId = findMember(memberId).getCoupleId();
-
-        Couple couple = findCouple(coupleId);
-
-        Member my = findMember(memberId);
-        Optional<Member> opponent;
-
-        if (memberId.equals(couple.getGirlId())) {
-             opponent = findMemberOptional(couple.getBoyId());
-        } else {
-            opponent = findMemberOptional(couple.getGirlId());
-        }
-
-        return CoupleProfileGetResponse.from(my, opponent, couple.getMeetDay());
+        FindCoupleProfileResponse response = coupleQueryRepository.findCoupleProfile(memberId);
+        return CoupleProfileGetResponse.from(response);
     }
 
     @Transactional
