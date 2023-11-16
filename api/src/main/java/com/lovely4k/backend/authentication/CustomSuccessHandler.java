@@ -6,9 +6,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -16,8 +17,12 @@ import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
+@Component
 @Transactional(readOnly = true)
 public class CustomSuccessHandler implements AuthenticationSuccessHandler {
+
+    @Value("${love.service.redirect-url}")
+    private String redirectUrl;
 
     private final CoupleRepository coupleRepository;
 
@@ -42,35 +47,22 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     private void sendRecoupleCode(HttpServletResponse response, Long coupleId) {
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding("UTF-8");
+        String recoupleUrl = redirectUrl + "/recouple/" + coupleId;
+        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        response.setHeader("Location", redirectUrl);
+        response.setHeader("recouple-url", recoupleUrl);
         try {
-            String jsonResponse = String.format("""
-            {
-                "code": 200,
-                "message": "Recouple request is in progress. Do you want to recouple?",
-                "recoupleUrl": "https://love-back.kro.kr/recouple/%d"
-            }
-            """, coupleId);
-            response.getWriter().write(jsonResponse);
+            response.sendRedirect(redirectUrl);
         } catch (IOException e) {
             throw new IllegalStateException("Something went wrong while generating response message", e);
         }
     }
 
     private void sendCode(HttpServletResponse response) {
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        response.setHeader("Location", redirectUrl);
         try {
-            String jsonResponse = """
-            {
-                "code": 200,
-                "message": "Login success"
-            }
-            """;
-            response.getWriter().write(jsonResponse);
+            response.sendRedirect(redirectUrl);
         } catch (IOException e) {
             throw new IllegalStateException("Something went wrong while generating response message", e);
         }
