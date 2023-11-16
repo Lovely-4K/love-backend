@@ -48,22 +48,29 @@ public record HttpLogResponse(
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("ipAddress=").append(ipAddress)
-            .append(", header=").append(header)
-            .append(", uri=").append(uri)
-            .append(", requestBody=").append(requestBody)
-            .append(", responseBody=").append(responseBody)
-            .append(", httpMethod=").append(httpMethod)
-            .append(", status=").append(status);
+        sb.append("ipAddress=").append(quote(ipAddress))
+            .append(" header=").append(quote(header))
+            .append(" uri=").append(uri)
+            .append(" requestBody=").append(quote(requestBody))
+            .append(" responseBody=").append(quote(responseBody))
+            .append(" httpMethod=").append(quote(httpMethod))
+            .append(" status=").append(status);
 
-        sb.append(", parameter=");
+        sb.append(" parameter=");
         parameter.forEach((key, values) -> {
-            sb.append(key).append(":[");
+            sb.append(key).append("=[");
             sb.append(String.join(", ", values));
             sb.append("] ");
         });
 
         return sb.toString();
+    }
+
+    private String quote(String value) {
+        if (value == null) {
+            return "\"\"";
+        }
+        return "\"" + value.replace("\"", "\\\"") + "\"";
     }
 
 }
