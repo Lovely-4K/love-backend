@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,8 +68,8 @@ class DiaryRepositoryAdapterTest extends IntegrationTestSupport {
     @Test
     void findDiaryList() {
         // given
-        Location food = Location.create(1L, "경기도 고양시", "starbucks", Category.FOOD);
-        Location accomodation = Location.create(1L, "경기도 고양시", "starbucks", Category.ACCOMODATION);
+        Location food = Location.create(1L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.FOOD);
+        Location accomodation = Location.create(1L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.ACCOMODATION);
         Diary diary1 = Diary.builder()
                 .coupleId(1L)
                 .girlText("girl text")

@@ -6,6 +6,7 @@ import com.lovely4k.backend.member.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static com.lovely4k.backend.member.Sex.FEMALE;
@@ -29,8 +30,7 @@ class DiaryTest {
                 .coupleId(1L)
                 .build();
 
-        Location location = Location.create(2L, "경기도 고양시", "starbucks", Category.FOOD);
-
+        Location location = Location.create(2L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.FOOD);
         // when
         Diary diary = Diary.create(score, localDate, text, member, location);
 
@@ -57,7 +57,7 @@ class DiaryTest {
                 .coupleId(1L)
                 .build();
 
-        Location location = Location.create(2L, "경기도 고양시", "starbucks", Category.FOOD);
+        Location location = Location.create(2L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.FOOD);
 
         // when
         Diary diary = Diary.create(score, localDate, text, member, location);
@@ -84,7 +84,7 @@ class DiaryTest {
                 .sex(MALE)
                 .build();
 
-        Location location = Location.create(2L, "경기도 고양시", "starbucks", Category.FOOD);
+        Location location = Location.create(2L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.FOOD);
 
         // when && then
         assertThatThrownBy(
@@ -106,7 +106,7 @@ class DiaryTest {
                 .sex(MALE)
                 .build();
 
-        Location location = Location.create(2L, "경기도 고양시", "starbucks", Category.FOOD);
+        Location location = Location.create(2L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.FOOD);
 
         // when && then
         assertThatThrownBy(

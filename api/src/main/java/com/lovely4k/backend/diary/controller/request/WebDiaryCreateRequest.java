@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record WebDiaryCreateRequest(
@@ -32,10 +33,16 @@ public record WebDiaryCreateRequest(
         @EnumValue(enumClass = Category.class, message = "invalid category", ignoreCase = true)
         String category,
 
+        @NotNull
+        BigDecimal latitude,
+
+        @NotNull
+        BigDecimal longitude,
+
         @NotBlank(message = "text of diary must not be null and empty")
         String text
 ) {
         public DiaryCreateRequest toServiceRequest() {
-                return new DiaryCreateRequest(this.kakaoMapId, this.address, this.placeName, this.score, this.datingDay, this.category, this.text);
+                return new DiaryCreateRequest(this.kakaoMapId, this.address, this.placeName, this.score, this.datingDay, this.latitude, this.longitude, this.category, this.text);
         }
 }

@@ -42,7 +42,7 @@ public class DiaryService {
         Diary diary = diaryCreateRequest.toEntity(member);
         diary.addPhoto(Photos.create(uploadedImageUrls));
         Diary savedDiary = diaryRepositoryAdapter.save(diary);
-        increaseTemperature(savedDiary);
+//        increaseTemperature(savedDiary);
 
         return savedDiary.getId();
     }

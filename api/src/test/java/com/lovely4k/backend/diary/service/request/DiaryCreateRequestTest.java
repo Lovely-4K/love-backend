@@ -5,6 +5,7 @@ import com.lovely4k.backend.member.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static com.lovely4k.backend.member.Sex.MALE;
@@ -24,8 +25,7 @@ class DiaryCreateRequestTest {
                 .build();
 
         DiaryCreateRequest diaryCreateRequest =
-            new DiaryCreateRequest(1L, "경기도 고양시", "starbucks", 5, LocalDate.of(2023, 10, 20), "ACCOMODATION", "여기 되게 좋았어");
-
+            new DiaryCreateRequest(1L, "경기도 고양시", "starbucks", 5, LocalDate.of(2023, 10, 20), BigDecimal.ZERO, BigDecimal.ZERO, "ACCOMODATION", "여기 되게 좋았어");
         // when
         Diary diary = diaryCreateRequest.toEntity(member);
 

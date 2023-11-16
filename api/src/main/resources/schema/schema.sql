@@ -53,10 +53,12 @@ CREATE TABLE location (
     kakao_map_id BIGINT,
     address VARCHAR(255),
     category VARCHAR(50),
+    latitude DECIMAL(10,7),
+    longitude DECIMAL(11,7),
     place_name VARCHAR(30),
     created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_lacation_kakao_map_id (kakao_map_id)
+    INDEX idx_location_kakao_map_id (kakao_map_id)
 );
 
 -- Member 테이블

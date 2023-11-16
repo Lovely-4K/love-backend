@@ -18,6 +18,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
@@ -52,7 +53,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     void createDiary() throws Exception {
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
-        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", "starbucks", 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", "starbucks", 5, "2023-10-20", "ACCOMODATION", BigDecimal.ZERO, BigDecimal.ONE, "여기 숙소 좋았어..!");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
 
         mockMvc.perform(
@@ -73,6 +74,8 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("score").type(NUMBER).description("장소에 대한 평점"),
                         fieldWithPath("datingDay").type(STRING).description("데이트 한 날짜"),
                         fieldWithPath("category").type(STRING).description("장소 카테고리"),
+                        fieldWithPath("latitude").type(NUMBER).description("위도"),
+                        fieldWithPath("longitude").type(NUMBER).description("경도"),
                         fieldWithPath("text").type(STRING).description("장소에 대한 일기")
                     ),
                     requestParts(
