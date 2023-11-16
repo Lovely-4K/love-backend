@@ -22,20 +22,22 @@ CREATE TABLE couple
     INDEX idx_couple_invitation_code (invitation_code)
 );
 
-CREATE TABLE member
-(
-    id             BIGINT AUTO_INCREMENT PRIMARY KEY,
-    couple_id      BIGINT,
-    sex            VARCHAR(7),
-    name           VARCHAR(15),
-    nick_name      VARCHAR(50),
-    birthday       DATE,
-    mbti           VARCHAR(7),
+
+CREATE TABLE member (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    couple_id BIGINT,
+    sex VARCHAR(7),
+    nick_name VARCHAR(50),
+    birthday DATE,
+    mbti VARCHAR(7),
     calendar_color VARCHAR(31),
-    image_url      VARCHAR(255),
-    created_at     datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at     datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_couple_id (couple_id)
+    image_url VARCHAR(255),
+    age_range VARCHAR(10),
+    email VARCHAR(40),
+    role VARCHAR(10),
+    created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_couple_id(couple_id)
 );
 
 CREATE TABLE calendar
