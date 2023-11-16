@@ -84,7 +84,7 @@ class DiaryRepositoryAdapterTest extends IntegrationTestSupport {
                 .build();
 
         diaryRepository.saveAll(List.of(diary1, diary2));
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime"));
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
         // when
         Page<Diary> diaryPage = diaryRepositoryAdapter.findDiaryList(1L, Category.FOOD, pageRequest);
 

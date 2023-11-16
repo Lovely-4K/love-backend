@@ -29,8 +29,6 @@ class CalendarControllerTest extends ControllerTestSupport {
         mockMvc.perform(
                         post("/v1/calendars")
                                 .content(objectMapper.writeValueAsString(request))
-                                .param("coupleId", "1")
-                                .param("memberId", "1")
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isBadRequest())
@@ -78,7 +76,7 @@ class CalendarControllerTest extends ControllerTestSupport {
                 get("/v1/calendars")
                     .param("from", Optional.ofNullable(request.from()).map(LocalDate::toString).orElse(null))
                     .param("to", Optional.ofNullable(request.to()).map(LocalDate::toString).orElse(null))
-                    .param("coupleId", String.valueOf(request.coupleId()))
+                    .param("coupleId", "1L")
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isBadRequest())
@@ -89,8 +87,8 @@ class CalendarControllerTest extends ControllerTestSupport {
     static Stream<Arguments> provideInvalidFindCalendarsWithDateRequests() {
         LocalDate now = LocalDate.now();
         return Stream.of(
-            Arguments.of(new FindCalendarsWithDateRequest(null, now, 1L)), // 'from' is null
-            Arguments.of(new FindCalendarsWithDateRequest(now, null, 1L)) // 'to' is null
+            Arguments.of(new FindCalendarsWithDateRequest(null, now)), // 'from' is null
+            Arguments.of(new FindCalendarsWithDateRequest(now, null)) // 'to' is null
         );
     }
 

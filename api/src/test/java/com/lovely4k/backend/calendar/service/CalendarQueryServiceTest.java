@@ -62,8 +62,7 @@ class CalendarQueryServiceTest {
         // given
         FindCalendarsWithDateRepositoryRequest mockRequest = new FindCalendarsWithDateRepositoryRequest(
             LocalDate.of(2023, 11, 1),
-            LocalDate.of(2023, 11, 30),
-            1L
+            LocalDate.of(2023, 11, 30)
         );
         FindCalendarsWithDateResponse mockResponse = new FindCalendarsWithDateResponse(
             1L, 1L, "RED", 2L, "BLUE",
@@ -73,12 +72,12 @@ class CalendarQueryServiceTest {
             ScheduleType.DATE
         );
         List<FindCalendarsWithDateResponse> mockResponseList = Collections.singletonList(mockResponse);
-        given(repository.findCalendarsWithDate(any())).willReturn(mockResponseList);
+        given(repository.findCalendarsWithDate(any(), any())).willReturn(mockResponseList);
 
         FindCalendarsWithDateServiceResponse expectedResponse = FindCalendarsWithDateServiceResponse.from(mockResponseList);
 
         // when
-        FindCalendarsWithDateServiceResponse actualResponse = calendarQueryService.findCalendarsWithDate(mockRequest);
+        FindCalendarsWithDateServiceResponse actualResponse = calendarQueryService.findCalendarsWithDate(mockRequest, 1L);
 
         // then
         assertThat(actualResponse).isEqualTo(expectedResponse);

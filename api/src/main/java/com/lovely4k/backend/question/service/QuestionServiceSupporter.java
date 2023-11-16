@@ -23,6 +23,6 @@ public class QuestionServiceSupporter {
     public long getQuestionDay(Long coupleId) {
         Couple couple = coupleRepository.findById(coupleId)
                 .orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("couple", coupleId)));
-        return DateConverter.getDurationOfAppUsage(couple.getLocalDateTime());
+        return DateConverter.getDurationOfAppUsage(couple.getCreatedDate());
     }
 }
