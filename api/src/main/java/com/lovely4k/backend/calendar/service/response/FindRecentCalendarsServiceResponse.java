@@ -37,7 +37,8 @@ public record FindRecentCalendarsServiceResponse(
         LocalDate endDate,
 
         String scheduleDetails,
-        ScheduleType scheduleType
+        ScheduleType scheduleType,
+        long ownerId
     ) {
         private static ScheduleServiceResponse from(FindRecentCalendarsResponse response) {
             return new ScheduleServiceResponse(
@@ -45,7 +46,8 @@ public record FindRecentCalendarsServiceResponse(
                 response.startDate(),
                 response.endDate(),
                 response.scheduleDetails(),
-                response.scheduleType()
+                response.scheduleType(),
+                response.ownerId()
             );
         }
     }

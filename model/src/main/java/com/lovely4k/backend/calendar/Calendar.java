@@ -25,7 +25,7 @@ public class Calendar extends BaseTimeEntity {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "member_id")
+    @Column(name = "owner_id")
     private long ownerId;
 
     @Column(name = "couple_id")

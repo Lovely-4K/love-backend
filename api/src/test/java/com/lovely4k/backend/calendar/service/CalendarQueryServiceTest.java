@@ -42,7 +42,8 @@ class CalendarQueryServiceTest {
             LocalDate.of(2023, 11, 4),
             LocalDate.of(2023, 11, 5),
             "영화보기",
-            ScheduleType.DATE
+            ScheduleType.DATE,
+            1L
         );
         List<FindRecentCalendarsResponse> mockResponseList = Collections.singletonList(mockResponse);
         given(repository.findRecentCalendarsWithColors(anyLong(), anyInt())).willReturn(mockResponseList);
@@ -69,7 +70,8 @@ class CalendarQueryServiceTest {
             LocalDate.of(2023, 11, 4),
             LocalDate.of(2023, 11, 5),
             "영화보기",
-            ScheduleType.DATE
+            ScheduleType.DATE,
+            1L
         );
         List<FindCalendarsWithDateResponse> mockResponseList = Collections.singletonList(mockResponse);
         given(repository.findCalendarsWithDate(any(), any())).willReturn(mockResponseList);

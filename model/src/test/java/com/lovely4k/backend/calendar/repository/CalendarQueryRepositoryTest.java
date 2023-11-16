@@ -34,9 +34,10 @@ class CalendarQueryRepositoryTest extends QueryTestSupport {
         // then
         assertAll("Recent Calendars",
             () -> assertThat(result).hasSize(limit),
-            () -> assertThat(result.get(0).scheduleType()).isEqualTo(ScheduleType.DATE),
+            () -> assertThat(result.get(0).scheduleType()).isEqualTo(ScheduleType.PERSONAL),
             () -> assertThat(result.get(0).boyCalendarColor()).isEqualTo("RED"),
-            () -> assertThat(result.get(0).girlCalendarColor()).isEqualTo("BLUE")
+            () -> assertThat(result.get(0).girlCalendarColor()).isEqualTo("BLUE"),
+            () -> assertThat(result.get(0).ownerId()).isEqualTo(1L)
         );
     }
 
@@ -54,11 +55,12 @@ class CalendarQueryRepositoryTest extends QueryTestSupport {
         List<FindCalendarsWithDateResponse> result = calendarQueryRepository.findCalendarsWithDate(request, 1L);
 
         // then
-        assertAll("Recent Calendars",
-            () -> assertThat(result).hasSize(7),
-            () -> assertThat(result.get(0).scheduleType()).isEqualTo(ScheduleType.DATE),
+        assertAll("Find Calendars Between Start Date",
+            () -> assertThat(result).hasSize(8),
+            () -> assertThat(result.get(0).scheduleType()).isEqualTo(ScheduleType.PERSONAL),
             () -> assertThat(result.get(0).boyCalendarColor()).isEqualTo("RED"),
-            () -> assertThat(result.get(0).girlCalendarColor()).isEqualTo("BLUE")
+            () -> assertThat(result.get(0).girlCalendarColor()).isEqualTo("BLUE"),
+            () -> assertThat(result.get(0).ownerId()).isEqualTo(1L)
         );
     }
 }

@@ -30,7 +30,7 @@ public class CalendarQueryRepository {
                 boy.id, boy.calendarColor,
                 girl.id, girl.calendarColor,
                 calendar.startDate, calendar.endDate,
-                calendar.scheduleDetails, calendar.scheduleType))
+                calendar.scheduleDetails, calendar.scheduleType, calendar.ownerId))
             .from(calendar)
             .join(couple).on(calendar.coupleId.eq(couple.id))
             .join(boy).on(couple.boyId.eq(boy.id))
@@ -51,7 +51,7 @@ public class CalendarQueryRepository {
                 boy.id, boy.calendarColor,
                 girl.id, girl.calendarColor,
                 calendar.startDate, calendar.endDate,
-                calendar.scheduleDetails, calendar.scheduleType))
+                calendar.scheduleDetails, calendar.scheduleType, calendar.ownerId))
             .from(calendar)
             .join(couple).on(calendar.coupleId.eq(couple.id))
             .join(boy).on(couple.boyId.eq(boy.id))
@@ -59,7 +59,7 @@ public class CalendarQueryRepository {
             .where(
                 calendar.coupleId.eq(coupleId),
                 calendar.startDate.between(request.from(), request.to()))
-            .orderBy(calendar.id.desc())
+            .orderBy(calendar.id.asc())
             .fetch();
     }
 }
