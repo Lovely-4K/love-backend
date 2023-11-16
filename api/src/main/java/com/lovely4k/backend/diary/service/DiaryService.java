@@ -7,7 +7,9 @@ import com.lovely4k.backend.diary.DiaryRepositoryAdapter;
 import com.lovely4k.backend.diary.Photos;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
+import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
+import com.lovely4k.backend.diary.service.response.DiaryMarkerResponse;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.repository.MemberRepository;
@@ -42,12 +44,12 @@ public class DiaryService {
         Diary diary = diaryCreateRequest.toEntity(member);
         diary.addPhoto(Photos.create(uploadedImageUrls));
         Diary savedDiary = diaryRepositoryAdapter.save(diary);
-//        increaseTemperature(savedDiary);
+//        increaseTemperature(savedDiary);  // NOSONAR 추후 업데이트 예정
 
         return savedDiary.getId();
     }
 
-    private void increaseTemperature(Diary savedDiary) {
+    private void increaseTemperature(Diary savedDiary) {    // NOSONAR
         try {
             facade.increaseTemperature(savedDiary.getCoupleId());
         } catch (InterruptedException e) {  // NOSONAR
@@ -95,6 +97,17 @@ public class DiaryService {
             return Page.empty();
         }
         return pageDiary.map(DiaryListResponse::from);
+    }
+
+    public DiaryListByMarkerResponse findDiaryListByMarker(Long kakaoMapId, Long coupleId) {
+        List<Diary> diaries = diaryRepositoryAdapter.findByMarker(kakaoMapId, coupleId);
+        if (diaries == null) {
+            return DiaryListByMarkerResponse.emptyValue();
+        } else {
+            return DiaryListByMarkerResponse.from(diaries.stream().map(
+                DiaryMarkerResponse::from
+            ).toList());
+        }
     }
 
     @Transactional

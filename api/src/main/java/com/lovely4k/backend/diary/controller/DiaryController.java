@@ -1,14 +1,15 @@
 package com.lovely4k.backend.diary.controller;
 
 import com.lovely4k.backend.common.ApiResponse;
+import com.lovely4k.backend.common.sessionuser.LoginUser;
+import com.lovely4k.backend.common.sessionuser.SessionUser;
 import com.lovely4k.backend.diary.controller.request.DiaryEditRequest;
 import com.lovely4k.backend.diary.controller.request.WebDiaryCreateRequest;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
+import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
 import com.lovely4k.backend.location.Category;
-import com.lovely4k.backend.common.sessionuser.LoginUser;
-import com.lovely4k.backend.common.sessionuser.SessionUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -51,7 +52,7 @@ public class DiaryController {
 
         return ApiResponse.created(diaryId,
             linkTo(methodOn(DiaryController.class).createDiary(multipartFileList, request, sessionUser)).withSelfRel(),
-            linkTo(DiaryController.class.getMethod("getDiaryDetail", Long.class, SessionUser.class)).withRel(DETAIL),
+            linkTo(DiaryController.class.getMethod("getDiaryDetail", Long.class, SessionUser.class)).withRel(DETAIL),   // NOSONAR
             linkTo(DiaryController.class.getMethod("getDiaryList", SessionUser.class, Category.class, Pageable.class)).withRel("get list of diary"),
             linkTo(DiaryController.class).slash(diaryId).withRel(EDIT),
             linkTo(DiaryController.class).slash(diaryId).withRel(DELETE)
@@ -82,6 +83,17 @@ public class DiaryController {
                 linkTo(DiaryController.class.getMethod("getDiaryDetail", Long.class, SessionUser.class)).withRel(DETAIL),
                 linkTo(DiaryController.class.getMethod("editDiary", Long.class, SessionUser.class, DiaryEditRequest.class)).withRel(EDIT),
                 linkTo(DiaryController.class.getMethod("deleteDiary", Long.class, SessionUser.class)).withRel(DELETE)
+        );
+    }
+
+    @SneakyThrows
+    @GetMapping("/marker/{kakaoMapId}")
+    public ResponseEntity<ApiResponse<DiaryListByMarkerResponse>> getDiaryListByMarker(
+        @PathVariable Long kakaoMapId,
+        @LoginUser SessionUser sessionUser
+    ) {
+        return ApiResponse.ok(diaryService.findDiaryListByMarker(kakaoMapId, sessionUser.coupleId()),
+            linkTo(DiaryController.class.getMethod("getDiaryDetail", Long.class, SessionUser.class)).withRel(DETAIL)    // NOSONAR
         );
     }
 

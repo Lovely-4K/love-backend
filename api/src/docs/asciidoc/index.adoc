@@ -42,6 +42,7 @@ include::api/couple/couple-profile-edit.adoc[]
 include::api/diary/diary-create.adoc[]
 include::api/diary/diary-getDetail.adoc[]
 include::api/diary/diary-getList.adoc[]
+include::api/diary/diary-getListByMarker.adoc[]
 include::api/diary/diary-edit.adoc[]
 include::api/diary/diary-delete.adoc[]
 

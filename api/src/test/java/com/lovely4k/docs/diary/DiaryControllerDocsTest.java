@@ -2,9 +2,7 @@ package com.lovely4k.docs.diary;
 
 import com.lovely4k.backend.diary.controller.DiaryController;
 import com.lovely4k.backend.diary.service.DiaryService;
-import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
-import com.lovely4k.backend.diary.service.response.DiaryListResponse;
-import com.lovely4k.backend.diary.service.response.PhotoListResponse;
+import com.lovely4k.backend.diary.service.response.*;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.Disabled;
@@ -193,6 +191,40 @@ class DiaryControllerDocsTest extends RestDocsSupport {
             ));
     }
 
+    @DisplayName("Marker를 통해 다이어리 목록을 조회하는 API")
+    @Test
+    void getDiaryListByMarker() throws Exception {
+        // stubbing
+        List<DiaryMarkerResponse> diaryMarkerResponses = List.of(
+            new DiaryMarkerResponse(1L, "image-url1", LocalDate.of(2020, 10, 20)),
+            new DiaryMarkerResponse(2L, "image-url2", LocalDate.of(2021, 10, 20)),
+            new DiaryMarkerResponse(3L, "image-url3", LocalDate.of(2022, 10, 20))
+        );
+
+        when(diaryService.findDiaryListByMarker(any(), any()))
+            .thenReturn(new DiaryListByMarkerResponse(diaryMarkerResponses));
+
+        this.mockMvc.perform(
+            get("/v1/diaries/marker/{kakaoMapId}", 1L)
+        ).andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("diary-list-marker",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("kakaoMapId").description("kakao map id of place")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(NUMBER).description("코드"),
+                    fieldWithPath("body.diaries[0].diaryId").description("다이어리 id"),
+                    fieldWithPath("body.diaries[0].imageUrl").description("다이어리 사진 url"),
+                    fieldWithPath("body.diaries[0].datingDay").description("데이트 한 날짜"),
+                    fieldWithPath("links[0].rel").type(STRING).description("relation of url"),
+                    fieldWithPath("links[0].href").type(STRING).description("url of relation")
+                )
+                ));
+
+    }
 
     @Disabled("현재 미제공 API 이기 때문에 테스트를 수행하지 않습니다. ")
     @DisplayName("다이어리를 수정하는 API")

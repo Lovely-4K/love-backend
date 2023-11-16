@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -114,5 +115,34 @@ class DiaryRepositoryAdapterTest extends IntegrationTestSupport {
 
         // then
         assertThat(diaryRepository.findById(savedDiary.getId())).isEmpty();
+    }
+
+    @DisplayName("findByMarker를 통해 kakaoMapId에 해당하는 다이어리 목록들을 조회할 수 있다.")
+    @Test
+    void findByMarker() {
+        // given
+        Diary diary1 = buildDiaryWithLocationId(Category.ACCOMODATION, 1L, 2L);
+        Diary diary2 = buildDiaryWithLocationId(Category.ACCOMODATION, 1L, 2L);
+        Diary diary3 = buildDiaryWithLocationId(Category.ACCOMODATION, 2L, 2L);
+        Diary diary4 = buildDiaryWithLocationId(Category.ACCOMODATION, 1L, 3L);
+        diaryRepository.saveAll(List.of(diary1, diary2, diary3, diary4));
+
+        // when
+        List<Diary> diaries = diaryRepositoryAdapter.findByMarker(2L, 1L);
+
+        // then
+        assertThat(diaries).hasSize(2);
+    }
+
+    private static Diary buildDiaryWithLocationId(Category category, long coupleId, long kakaoMapId) {
+        return Diary.builder()
+            .coupleId(coupleId)
+            .location(Location.create(kakaoMapId, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ZERO, category))
+            .boyText("hello")
+            .girlText("hi")
+            .score(4)
+            .photos(Photos.builder().firstImage("test-image1").build())
+            .datingDay(LocalDate.of(2023, 10, 20))
+            .build();
     }
 }
