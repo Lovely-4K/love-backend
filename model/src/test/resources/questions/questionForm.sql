@@ -1,8 +1,5 @@
 DROP TABLE IF EXISTS question;
 DROP TABLE IF EXISTS question_form;
-DROP TABLE IF EXISTS member;
-DROP TABLE IF EXISTS diary;
-DROP TABLE IF EXISTS location;
 
 CREATE TABLE question_form
 (

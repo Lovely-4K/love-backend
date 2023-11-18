@@ -1,13 +1,22 @@
-package com.lovely4k.backend.authentication;
+package com.lovely4k.backend.authentication.token;
 
+import com.lovely4k.backend.authentication.CustomSuccessHandler;
+import com.lovely4k.backend.authentication.OAuth2UserService;
+import com.lovely4k.backend.authentication.exception.AccessDeniedHandlerException;
+import com.lovely4k.backend.authentication.exception.AuthenticationEntryPointException;
+import com.lovely4k.backend.member.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -21,15 +30,23 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 @Configuration
 public class SecurityConfig {
 
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
     private final OAuth2UserService oAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
+    private final TokenProvider tokenProvider;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final AuthenticationEntryPointException authenticationEntryPointException;
+    private final AccessDeniedHandlerException accessDeniedHandlerException;
 
     @Bean
+    @Order(SecurityProperties.BASIC_AUTH_ORDER)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         // h2-console 사용 && csrf 비활성화
         http
             .csrf(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable)
             .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
         ;
 
@@ -42,9 +59,9 @@ public class SecurityConfig {
                         antMatcher("/v1/**")
                     ).permitAll()
 
-//                .requestMatchers(
-//                    antMatcher("/v1/**")
-//                ).hasRole(Role.USER.name())
+//                    .requestMatchers(
+//                        antMatcher("/v1/**")
+//                    ).hasRole(Role.USER.name())
 
                     .anyRequest().permitAll()
             );
@@ -55,7 +72,6 @@ public class SecurityConfig {
                 logoutConfigurer -> logoutConfigurer
                     .logoutSuccessUrl("/")
                     .logoutUrl("/logout")
-                    .invalidateHttpSession(true)
                     .clearAuthentication(true))
         ;
 
@@ -72,18 +88,29 @@ public class SecurityConfig {
                 loginConfigurer -> loginConfigurer
                     .userInfoEndpoint(uI -> uI.userService(oAuth2UserService))
                     .successHandler(customSuccessHandler)
-            );
+            )
+        ;
+
+        // exception handling 설정
+        http
+            .exceptionHandling(
+                exceptionHandling -> {
+                    exceptionHandling.authenticationEntryPoint(authenticationEntryPointException);
+                    exceptionHandling.accessDeniedHandler(accessDeniedHandlerException);
+                }
+            )
+        ;
+
+        http
+            .addFilterBefore(new JwtFilter(SECRET_KEY, tokenProvider, userDetailsService), UsernamePasswordAuthenticationFilter.class)
+        ;
 
         // Session 설정
         http
             .sessionManagement((
                 sessionManagement -> sessionManagement
-                    .sessionFixation().changeSessionId() // session fixation 방지
-                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션 생성 전략
-                    .invalidSessionUrl("/") // 유효하지 않은 세션에서 요청시 리다이렉트 되는 url
-                    .maximumSessions(2) // 2개의 로그인만 가능
-                    .maxSessionsPreventsLogin(false)) // 새로운 로그인 발생시 기존 로그인이 아닌 새로운 로그인 허용
-            );
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)     // session 사용 안함 설정
+            ));
 
         return http.build();
     }

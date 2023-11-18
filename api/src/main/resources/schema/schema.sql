@@ -125,3 +125,10 @@ CREATE TABLE calendar(
      INDEX idx_calendar_end_Date (end_date),
      INDEX idx_calendar_couple_id (couple_id)
 );
+
+CREATE TABLE refresh_token
+(
+    id        VARCHAR(30),
+    member_id BIGINT,
+    key_value VARCHAR(255)
+);
