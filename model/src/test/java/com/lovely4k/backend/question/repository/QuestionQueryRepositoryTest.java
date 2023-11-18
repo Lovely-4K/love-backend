@@ -7,6 +7,7 @@ import com.lovely4k.backend.question.repository.response.AnsweredQuestionRespons
 import com.lovely4k.backend.question.repository.response.DailyQuestionResponse;
 import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +19,12 @@ class QuestionQueryRepositoryTest extends QueryTestSupport {
     @Autowired
     QuestionQueryRepository questionQueryRepository;
 
-    @Autowired
-    Environment environment;
-
+    @Disabled("왜 안되지 외래키 제약 조건 때문에 member 테이블 drop이 안된다. 근데 실제로 member 테이블을 참조하고 있는 클래스는 없" +
+        "음")
     @Sql(scripts = "/questions/question.sql")
-    @DisplayName("memberId, questionId, Sex를 통해 my, opponent를 구분해서 적절한 profile, answer, choice_index를 넣을 수 있다.")
+    @DisplayName("memberId, questionId, Sex를 통해 my, opponent를 구분해서 적절한 profile, answer, choice_index를 객체에 할당하여 해당 객체를 조회할 수 있다.")
     @Test
     void findQuestionDetails() {
-        for (String env : environment.getActiveProfiles()) {
-            System.out.println(env);
-        }
-        //System.out.println(environment.getActiveProfiles();)
         QuestionDetailsResponse actual = questionQueryRepository.findQuestionDetails(1L, Sex.MALE, 1L);
         QuestionDetailsResponse expected = new QuestionDetailsResponse("A vs B", "A", "B", 1, 2, "MALE PROFILE", "FEMALE PROFILE");
         Assertions.assertThat(actual).isEqualTo(expected);

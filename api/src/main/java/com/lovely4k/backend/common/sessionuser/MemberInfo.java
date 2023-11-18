@@ -6,5 +6,4 @@ public interface MemberInfo {
     String getSex();
     String getNickName();
     String getPicture();
-    String getName();
 }

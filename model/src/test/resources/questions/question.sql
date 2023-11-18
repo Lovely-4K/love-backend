@@ -1,10 +1,13 @@
 -- Drop tables if they exist
 DROP TABLE IF EXISTS question;
 DROP TABLE IF EXISTS question_form;
-DROP TABLE IF EXISTS member;
 DROP TABLE IF EXISTS couple;
 DROP TABLE IF EXISTS diary;
 DROP TABLE IF EXISTS location;
+DROP TABLE IF EXISTS calendar;
+DROP TABLE IF EXISTS member;
+
+
 
 -- Couple 테이블
 CREATE TABLE couple
