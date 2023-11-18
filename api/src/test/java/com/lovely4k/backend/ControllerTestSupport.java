@@ -2,6 +2,12 @@ package com.lovely4k.backend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lovely4k.backend.authentication.*;
+import com.lovely4k.backend.authentication.exception.AccessDeniedHandlerException;
+import com.lovely4k.backend.authentication.exception.AuthenticationEntryPointException;
+import com.lovely4k.backend.authentication.CustomSuccessHandler;
+import com.lovely4k.backend.authentication.token.SecurityConfig;
+import com.lovely4k.backend.authentication.token.TokenProvider;
+import com.lovely4k.backend.authentication.token.UserDetailsServiceImpl;
 import com.lovely4k.backend.calendar.controller.CalendarController;
 import com.lovely4k.backend.calendar.service.CalendarCommandService;
 import com.lovely4k.backend.calendar.service.CalendarQueryService;
@@ -87,6 +93,18 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected CustomSuccessHandler customSuccessHandler;
+
+    @MockBean
+    protected TokenProvider tokenProvider;
+
+    @MockBean
+    protected UserDetailsServiceImpl userDetailsServiceImpl;
+
+    @MockBean
+    AuthenticationEntryPointException authenticationEntryPointException;
+
+    @MockBean
+    AccessDeniedHandlerException accessDeniedHandlerException;
 
     @Mock
     protected Authentication authentication;

@@ -14,3 +14,7 @@ spring:
       mode: always
       encoding: UTF-8
       schema-locations: classpath:schema/schema.sql
+
+logging:
+  level:
+    com.lovely4k.backend.authentication: debug

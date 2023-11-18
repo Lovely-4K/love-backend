@@ -4,6 +4,7 @@ import com.lovely4k.backend.QueryTestSupport;
 import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.QuestionFormType;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+//@Disabled("단일로는 성공 하는데 왜 안되는지 모르겠네요.")
 class QuestionFormRepositoryTest extends QueryTestSupport {
 
     @Autowired

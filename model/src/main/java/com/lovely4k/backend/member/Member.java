@@ -87,4 +87,21 @@ public class Member extends BaseTimeEntity {
             throw new IllegalArgumentException("상대방은 커플 재결합을 할 수 있는 상태가 아닙니다.");
         }
     }
+
+//    @Override
+//    public String toString() {
+//        return "Member{" +
+//            "id=" + id +
+//            ", coupleId=" + coupleId +
+//            ", sex=" + sex +
+//            ", nickname='" + nickname + '\'' +
+//            ", birthday=" + birthday +
+//            ", mbti='" + mbti + '\'' +
+//            ", calendarColor='" + calendarColor + '\'' +
+//            ", imageUrl='" + imageUrl + '\'' +
+//            ", ageRange='" + ageRange + '\'' +
+//            ", email='" + email + '\'' +
+//            ", role=" + role +
+//            '}';
+//    }
 }
