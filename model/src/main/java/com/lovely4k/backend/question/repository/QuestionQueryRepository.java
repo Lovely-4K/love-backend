@@ -5,10 +5,7 @@ import com.lovely4k.backend.member.QMember;
 import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.QQuestion;
 import com.lovely4k.backend.question.QQuestionForm;
-import com.lovely4k.backend.question.repository.response.AnsweredQuestionResponse;
-import com.lovely4k.backend.question.repository.response.DailyQuestionResponse;
-import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse;
-import com.lovely4k.backend.question.repository.response.QuestionResponse;
+import com.lovely4k.backend.question.repository.response.*;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -16,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.lovely4k.backend.couple.QCouple.couple;
 import static com.lovely4k.backend.question.QQuestion.question;
@@ -138,4 +136,26 @@ public class QuestionQueryRepository {
     }
 
 
+    public Optional<QuestionGameResponse> findQuestionGame(Long coupleId, Sex sex) {
+
+        var opponentChoiceIndex = getOpponentChoiceIndex(sex);
+
+        return Optional.ofNullable(jpaQueryFactory.select(Projections.constructor(
+                QuestionGameResponse.class,
+                questionForm.questionContent,
+                questionForm.questionChoices.firstChoice,
+                questionForm.questionChoices.secondChoice,
+                questionForm.questionChoices.thirdChoice,
+                questionForm.questionChoices.fourthChoice,
+                opponentChoiceIndex
+            )).from(question)
+            .join(question.questionForm, questionForm)
+            .where(
+                question.coupleId.eq(coupleId),
+                question.boyChoiceIndex.ne(0),
+                question.girlChoiceIndex.ne(0)
+            )
+            .orderBy(Expressions.numberTemplate(Double.class, "RAND()").asc())
+            .fetchFirst());
+    }
 }

@@ -5,6 +5,8 @@ import com.lovely4k.backend.question.repository.QuestionQueryRepository;
 import com.lovely4k.backend.question.repository.response.AnsweredQuestionResponse;
 import com.lovely4k.backend.question.repository.response.DailyQuestionResponse;
 import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse;
+import com.lovely4k.backend.question.repository.response.QuestionGameResponse;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +23,15 @@ public class QuestionQueryService {
     }
 
     public AnsweredQuestionResponse findAllAnsweredQuestionByCoupleId(Long id, Long coupleId, Integer limit) {
-        return questionQueryRepository.findAnsweredQuestions(id ,coupleId, limit);
+        return questionQueryRepository.findAnsweredQuestions(id, coupleId, limit);
     }
 
     public DailyQuestionResponse findDailyQuestion(Long coupleId) {
         return questionQueryRepository.findDailyQuestion(coupleId);
+    }
+
+    public QuestionGameResponse findQuestionGame(Long coupleId, String sex) {
+        return questionQueryRepository.findQuestionGame(coupleId, Sex.valueOf(sex))
+            .orElseThrow(() -> new EntityNotFoundException(String.format("답변이 완료된 커플 질문이 없습니다. 커플 아이디: %d", coupleId)));
     }
 }

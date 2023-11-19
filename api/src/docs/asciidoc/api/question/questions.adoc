@@ -75,6 +75,22 @@ include::{snippets}/get-answered-questions/query-parameters.adoc[]
 include::{snippets}/get-answered-questions/http-response.adoc[]
 include::{snippets}/get-answered-questions/response-fields.adoc[]
 
+[[find-qeustion-game]]
+=== 답변한 질문 목록 조회
+
+게임을 위한 질문을 랜덤으로 하나 조회합니다.
+
+남,여 모두 답변한 질문들 중에서만 조회합니다.
+
+남,여 모두 답변한 질문이 없는 경우 예외가 발생합니다.
+
+==== Request
+include::{snippets}/find-question-game/http-request.adoc[]
+
+==== Response (Success)
+include::{snippets}/find-question-game/http-response.adoc[]
+include::{snippets}/find-question-game/response-fields.adoc[]
+
 [[delete-questions]]
 === 커스텀해서 만든 질문지 삭제 및 사용자와 연결되어 있는 전체 질문 전체 삭제(관리자용)
 
