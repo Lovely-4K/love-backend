@@ -35,7 +35,7 @@ public class Location extends BaseTimeEntity {
     @Enumerated(value = EnumType.STRING)
     private Category category;
 
-    public Location(Long kakaoMapId, String address, String placeName, BigDecimal latitude, BigDecimal longitude, Category category) {
+    private Location(Long kakaoMapId, String address, String placeName, BigDecimal latitude, BigDecimal longitude, Category category) {
         this.kakaoMapId = kakaoMapId;
         this.address = address;
         this.placeName = placeName;
@@ -50,5 +50,9 @@ public class Location extends BaseTimeEntity {
 
     public static Location create(Long kakaoMapId, String address, String placeName, BigDecimal latitude, BigDecimal longitude, Category category) {
         return new Location(kakaoMapId, address, placeName, latitude, longitude, category);
+    }
+
+    public void update(String category) {
+        this.category = Category.valueOf(category.toUpperCase());
     }
 }

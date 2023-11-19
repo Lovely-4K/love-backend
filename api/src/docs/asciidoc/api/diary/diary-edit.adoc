@@ -1,4 +1,13 @@
 [[diary-edit]]
 === 다이어리 수정
 
-현재 다이어리 수정의 경우 협의된 사항이 없기 때문에 해당 기능을 지원하지 않습니다.
+다이어리 수정에 사용되는 값들은 다음과 같습니다.
+include::{snippets}/diary-edit/request-part-texts-fields.adoc[]
+
+
+==== HTTP Request
+include::{snippets}/diary-create/http-request.adoc[]
+include::{snippets}/diary-edit/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/diary-edit/http-response.adoc[]

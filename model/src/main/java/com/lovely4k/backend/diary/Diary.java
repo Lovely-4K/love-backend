@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -89,5 +90,14 @@ public class Diary extends BaseTimeEntity {
             case FEMALE -> diaryBuilder.girlText(text);
             default -> throw new IllegalArgumentException("invalid input of sex");
         }
+    }
+
+    public void update(Integer score, LocalDate datingDay, String category, String boyText, String girlText, List<String> uploadedImageUrls) {
+        this.location.update(category);
+        this.photos.update(uploadedImageUrls);
+        this.score = score;
+        this.datingDay = datingDay;
+        this.boyText = boyText;
+        this.girlText = girlText;
     }
 }

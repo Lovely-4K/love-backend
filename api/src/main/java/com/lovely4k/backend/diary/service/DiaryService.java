@@ -5,7 +5,9 @@ import com.lovely4k.backend.couple.service.IncreaseTemperatureFacade;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepositoryAdapter;
 import com.lovely4k.backend.diary.Photos;
+import com.lovely4k.backend.diary.controller.request.WebDiaryEditRequest;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
+import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
@@ -75,7 +77,7 @@ public class DiaryService {
             return Collections.emptyList();
         }
 
-        return imageUploader.upload("diary/", multipartFileList);
+        return imageUploader.upload("diary/", multipartFileList);   // NOSONAR
     }
 
     public DiaryDetailResponse findDiaryDetail(Long diaryId, Long coupleId) {
@@ -108,6 +110,18 @@ public class DiaryService {
                 DiaryMarkerResponse::from
             ).toList());
         }
+    }
+
+    @Transactional
+    public void editDiary(Long diaryId, List<MultipartFile> multipartFileList, DiaryEditRequest request, Long coupleId) {
+        Diary diary = validateDiaryId(diaryId);
+        diary.checkAuthority(coupleId);
+
+        List<String> imageUrls = diary.getPhotos().getPhotoList();
+        imageUploader.delete("diary/", imageUrls);
+        List<String> uploadedImageUrls = imageUploader.upload("diary/", multipartFileList);
+
+        diary.update(request.score(), request.datingDay(), request.category(), request.boyText(), request.girlText(), uploadedImageUrls);
     }
 
     @Transactional

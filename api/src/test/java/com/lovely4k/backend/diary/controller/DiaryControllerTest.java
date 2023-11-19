@@ -1,12 +1,15 @@
 package com.lovely4k.backend.diary.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lovely4k.backend.ControllerTestSupport;
 import com.lovely4k.docs.diary.MockDiaryCreateRequest;
+import com.lovely4k.docs.diary.MockDiaryEditRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -219,6 +222,256 @@ class DiaryControllerTest extends ControllerTestSupport {
                     .file(mockMultipartFile)
             )
             .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+        ;
+    }
+
+    @DisplayName("다이어리를 수정한다.")
+    @Test
+    void editDiary() throws Exception {
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
+
+        MockDiaryEditRequest mockDiaryEditRequest =
+            new MockDiaryEditRequest(5, "2023-11-01", "ACCOMODATION", "여기 좋더라 다음에 또 올까~?", "다음달에도 꼭 오자 우리");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryEditRequest).getBytes(StandardCharsets.UTF_8));
+
+        MockHttpServletRequestBuilder builder = RestDocumentationRequestBuilders.multipart("/v1/diaries/{id}", 1L)
+            .file(firstImage)
+            .file(secondImage)
+            .file(mockMultipartFile)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .with(request -> {
+                request.setMethod("PATCH");
+                return request;
+            });
+        this.mockMvc.perform(
+                builder
+            ).andDo(print())
+            .andExpect(status().isOk())
+        ;
+    }
+
+    @DisplayName("다이어리를 수정시 score는 음수 일 수 없다.")
+    @Test
+    void editDiary_MinusScore() throws Exception {
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
+
+        MockDiaryEditRequest mockDiaryEditRequest =
+            new MockDiaryEditRequest(-1, "2023-11-01", "ACCOMODATION", "여기 좋더라 다음에 또 올까~?", "다음달에도 꼭 오자 우리");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryEditRequest).getBytes(StandardCharsets.UTF_8));
+
+        MockHttpServletRequestBuilder builder = RestDocumentationRequestBuilders.multipart("/v1/diaries/{id}", 1L)
+            .file(firstImage)
+            .file(secondImage)
+            .file(mockMultipartFile)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .with(request -> {
+                request.setMethod("PATCH");
+                return request;
+            });
+        this.mockMvc.perform(
+                builder
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+        ;
+    }
+
+    @DisplayName("다이어리를 수정시 score는 5점을 초과할 수 없다.")
+    @Test
+    void editDiary_ScoreOver5() throws Exception {
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
+
+        MockDiaryEditRequest mockDiaryEditRequest =
+            new MockDiaryEditRequest(6, "2023-11-01", "ACCOMODATION", "여기 좋더라 다음에 또 올까~?", "다음달에도 꼭 오자 우리");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryEditRequest).getBytes(StandardCharsets.UTF_8));
+
+        MockHttpServletRequestBuilder builder = RestDocumentationRequestBuilders.multipart("/v1/diaries/{id}", 1L)
+            .file(firstImage)
+            .file(secondImage)
+            .file(mockMultipartFile)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .with(request -> {
+                request.setMethod("PATCH");
+                return request;
+            });
+        this.mockMvc.perform(
+                builder
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+        ;
+    }
+
+    @DisplayName("다이어리를 수정시 datingDay는 null 이어서는 안된다. ")
+    @Test
+    void editDiary_NullDatingDay() throws Exception {
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
+
+        MockDiaryEditRequest mockDiaryEditRequest =
+            new MockDiaryEditRequest(4, null, "ACCOMODATION", "여기 좋더라 다음에 또 올까~?", "다음달에도 꼭 오자 우리");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryEditRequest).getBytes(StandardCharsets.UTF_8));
+
+        MockHttpServletRequestBuilder builder = RestDocumentationRequestBuilders.multipart("/v1/diaries/{id}", 1L)
+            .file(firstImage)
+            .file(secondImage)
+            .file(mockMultipartFile)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .with(request -> {
+                request.setMethod("PATCH");
+                return request;
+            });
+        this.mockMvc.perform(
+                builder
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+        ;
+    }
+
+    @DisplayName("다이어리를 수정시 datingDay는 yyyy-MM-dd 형식이어야 한다.")
+    @Test
+    void editDiary_InvalidDatingDay() throws Exception {
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
+
+        MockDiaryEditRequest mockDiaryEditRequest =
+            new MockDiaryEditRequest(4, "1490-2-2", "ACCOMODATION", "여기 좋더라 다음에 또 올까~?", "다음달에도 꼭 오자 우리");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryEditRequest).getBytes(StandardCharsets.UTF_8));
+
+        MockHttpServletRequestBuilder builder = RestDocumentationRequestBuilders.multipart("/v1/diaries/{id}", 1L)
+            .file(firstImage)
+            .file(secondImage)
+            .file(mockMultipartFile)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .with(request -> {
+                request.setMethod("PATCH");
+                return request;
+            });
+        this.mockMvc.perform(
+                builder
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("HttpMessageNotReadableException"))
+        ;
+    }
+
+    @DisplayName("다이어리를 수정시 category는 null 이어서는 안된다. ")
+    @Test
+    void editDiary_NullCategory() throws Exception {
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
+
+        MockDiaryEditRequest mockDiaryEditRequest =
+            new MockDiaryEditRequest(4, "2023-10-20", null, "여기 좋더라 다음에 또 올까~?", "다음달에도 꼭 오자 우리");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryEditRequest).getBytes(StandardCharsets.UTF_8));
+
+        MockHttpServletRequestBuilder builder = RestDocumentationRequestBuilders.multipart("/v1/diaries/{id}", 1L)
+            .file(firstImage)
+            .file(secondImage)
+            .file(mockMultipartFile)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .with(request -> {
+                request.setMethod("PATCH");
+                return request;
+            });
+        this.mockMvc.perform(
+                builder
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+        ;
+    }
+
+    @DisplayName("다이어리를 수정시 category는 주어진 타입 외에는 사용할 수 없다.")
+    @Test
+    void editDiary_InvalidCategory() throws Exception {
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
+
+        MockDiaryEditRequest mockDiaryEditRequest =
+            new MockDiaryEditRequest(4, "2023-10-20", "SPORTS", "여기 좋더라 다음에 또 올까~?", "다음달에도 꼭 오자 우리");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryEditRequest).getBytes(StandardCharsets.UTF_8));
+
+        MockHttpServletRequestBuilder builder = RestDocumentationRequestBuilders.multipart("/v1/diaries/{id}", 1L)
+            .file(firstImage)
+            .file(secondImage)
+            .file(mockMultipartFile)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .with(request -> {
+                request.setMethod("PATCH");
+                return request;
+            });
+        this.mockMvc.perform(
+                builder
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+        ;
+    }
+
+    @DisplayName("다이어리를 수정시 boyText는 null이어서는 안된다.")
+    @Test
+    void editDiary_NullBoyText() throws Exception {
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
+
+        MockDiaryEditRequest mockDiaryEditRequest =
+            new MockDiaryEditRequest(4, "2023-10-20", "ETC", null, "다음달에도 꼭 오자 우리");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryEditRequest).getBytes(StandardCharsets.UTF_8));
+
+        MockHttpServletRequestBuilder builder = RestDocumentationRequestBuilders.multipart("/v1/diaries/{id}", 1L)
+            .file(firstImage)
+            .file(secondImage)
+            .file(mockMultipartFile)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .with(request -> {
+                request.setMethod("PATCH");
+                return request;
+            });
+        this.mockMvc.perform(
+                builder
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("400"))
+            .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))
+        ;
+    }
+
+    @DisplayName("다이어리를 수정시 girlText는 null이어서는 안된다.")
+    @Test
+    void editDiary_NullGirlText() throws Exception {
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
+
+        MockDiaryEditRequest mockDiaryEditRequest =
+            new MockDiaryEditRequest(4, "2023-10-20", "ETC", "다음달에도 꼭 오자 우리", null);
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryEditRequest).getBytes(StandardCharsets.UTF_8));
+
+        MockHttpServletRequestBuilder builder = RestDocumentationRequestBuilders.multipart("/v1/diaries/{id}", 1L)
+            .file(firstImage)
+            .file(secondImage)
+            .file(mockMultipartFile)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .with(request -> {
+                request.setMethod("PATCH");
+                return request;
+            });
+        this.mockMvc.perform(
+                builder
+            ).andDo(print())
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value("400"))
             .andExpect(jsonPath("$.body.title").value("MethodArgumentNotValidException"))

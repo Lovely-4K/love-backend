@@ -7,7 +7,9 @@ import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.Photos;
+import com.lovely4k.backend.diary.controller.request.WebDiaryEditRequest;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
+import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
@@ -28,6 +30,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -258,6 +261,46 @@ class DiaryServiceTest extends IntegrationTestSupport {
             () -> diaryService.findDiaryDetail(diaryId, memberId)
         ).isInstanceOf(IllegalArgumentException.class)
             .hasMessage("you can only manage your couple's diary");
+    }
+
+    @Transactional
+    @DisplayName("editDiary 메서드를 통해 다이어리를 수정할 수 있다.")
+    @Test
+    void editDiary() {
+        // given
+        Diary diary = Diary.builder()
+            .location(Location.create(1L, "경기도 수원시 팔달구 팔달문로", "웨딩컨벤션", BigDecimal.valueOf(127.1255), BigDecimal.valueOf(90.6543), Category.ETC))
+            .coupleId(1L)
+            .boyText("우리도 곧 결혼하자")
+            .girlText("식장 이뿌더랑")
+            .score(5)
+            .datingDay(LocalDate.of(2023, 10, 23))
+            .photos(Photos.builder().firstImage("test-image").build())
+            .build();
+        Diary savedDiary = diaryRepository.save(diary);
+
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
+
+        DiaryEditRequest diaryEditRequest = new DiaryEditRequest(4, LocalDate.of(2023, 11, 1), "food", "boy-text", "girl-text");
+
+        // stubbing
+        given(imageUploader.upload(any(String.class), any())
+        ).willReturn(List.of("first-image-url", "second-image-url"));
+
+        // when
+        diaryService.editDiary(savedDiary.getId(), List.of(firstImage, secondImage), diaryEditRequest, 1L);
+
+        // then
+        Diary findDiary = diaryRepository.findById(savedDiary.getId()).orElseThrow();
+        assertAll(
+            () -> assertThat(findDiary.getScore()).isEqualTo(diaryEditRequest.score()),
+            () -> assertThat(findDiary.getDatingDay()).isEqualTo(diaryEditRequest.datingDay()),
+            () -> assertThat(findDiary.getLocation().getCategory()).isEqualTo(Category.FOOD),
+            () -> assertThat(findDiary.getBoyText()).isEqualTo(diaryEditRequest.boyText()),
+            () -> assertThat(findDiary.getGirlText()).isEqualTo(diaryEditRequest.girlText()),
+            () -> assertThat(findDiary.getPhotos().countOfImages()).isEqualTo(2)
+        );
     }
 
     @DisplayName("deleteDiary 메서드를 통해 다이어리를 삭제할 수 있다. ")

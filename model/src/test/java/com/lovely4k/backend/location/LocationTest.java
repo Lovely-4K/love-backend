@@ -32,4 +32,17 @@ class LocationTest {
         );
 
     }
+
+    @DisplayName("update를 통해서 Location의 카테고리를 업데이트 할 수 있다.")
+    @Test
+    void update() {
+        // given
+        Location location = Location.create(1L, "경기도 고양시", "카페베네", BigDecimal.ZERO, BigDecimal.ZERO, Category.ACCOMODATION);
+
+        // when
+        location.update("food");
+
+        // then
+        assertThat(location.getCategory()).isEqualTo(Category.FOOD);
+    }
 }
