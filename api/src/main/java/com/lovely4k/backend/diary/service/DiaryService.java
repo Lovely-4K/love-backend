@@ -6,8 +6,8 @@ import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepositoryAdapter;
 import com.lovely4k.backend.diary.Photos;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
-import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
-import com.lovely4k.backend.diary.service.response.DiaryListResponse;
+import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
+import com.lovely4k.backend.diary.service.response.*;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.repository.MemberRepository;
@@ -20,8 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -42,12 +45,12 @@ public class DiaryService {
         Diary diary = diaryCreateRequest.toEntity(member);
         diary.addPhoto(Photos.create(uploadedImageUrls));
         Diary savedDiary = diaryRepositoryAdapter.save(diary);
-        increaseTemperature(savedDiary);
+//        increaseTemperature(savedDiary);  // NOSONAR 추후 업데이트 예정
 
         return savedDiary.getId();
     }
 
-    private void increaseTemperature(Diary savedDiary) {
+    private void increaseTemperature(Diary savedDiary) {    // NOSONAR
         try {
             facade.increaseTemperature(savedDiary.getCoupleId());
         } catch (InterruptedException e) {  // NOSONAR
@@ -73,7 +76,7 @@ public class DiaryService {
             return Collections.emptyList();
         }
 
-        return imageUploader.upload("diary/", multipartFileList);
+        return imageUploader.upload("diary/", multipartFileList);   // NOSONAR
     }
 
     public DiaryDetailResponse findDiaryDetail(Long diaryId, Long coupleId) {
@@ -95,6 +98,37 @@ public class DiaryService {
             return Page.empty();
         }
         return pageDiary.map(DiaryListResponse::from);
+    }
+
+    public DiaryListByMarkerResponse findDiaryListByMarker(Long kakaoMapId, Long coupleId) {
+        List<Diary> diaries = diaryRepositoryAdapter.findByMarker(kakaoMapId, coupleId);
+        if (diaries == null) {
+            return DiaryListByMarkerResponse.emptyValue();
+        } else {
+            return DiaryListByMarkerResponse.from(diaries.stream().map(
+                DiaryMarkerResponse::from
+            ).toList());
+        }
+    }
+
+    public DiaryListInGridResponse findDiaryListInGrid(BigDecimal rLatitude, BigDecimal rLongitude, BigDecimal lLatitude, BigDecimal lLongitude, Long coupleId) {
+        List<Diary> diaryList = diaryRepositoryAdapter.findDiaryList(rLatitude, rLongitude, lLatitude, lLongitude, coupleId);
+
+        return new DiaryListInGridResponse(diaryList.stream().map(
+            DiaryGridResponse::from
+        ).toList());
+    }
+
+    @Transactional
+    public void editDiary(Long diaryId, List<MultipartFile> multipartFileList, DiaryEditRequest request, Long coupleId) {
+        Diary diary = validateDiaryId(diaryId);
+        diary.checkAuthority(coupleId);
+
+        List<String> imageUrls = diary.getPhotos().getPhotoList();
+        imageUploader.delete("diary/", imageUrls);
+        List<String> uploadedImageUrls = imageUploader.upload("diary/", multipartFileList);
+
+        diary.update(request.score(), request.datingDay(), request.category(), request.boyText(), request.girlText(), uploadedImageUrls);
     }
 
     @Transactional

@@ -6,9 +6,11 @@ import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
+import com.lovely4k.backend.diary.Photos;
+import com.lovely4k.backend.diary.controller.request.WebDiaryEditRequest;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
-import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
-import com.lovely4k.backend.diary.service.response.DiaryListResponse;
+import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
+import com.lovely4k.backend.diary.service.response.*;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.location.Location;
 import com.lovely4k.backend.location.LocationRepository;
@@ -25,8 +27,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -84,8 +88,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         List<MultipartFile> multipartFileList = List.of(firstImage, secondImage);
 
         DiaryCreateRequest diaryCreateRequest =
-            new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
-
+            new DiaryCreateRequest(1L, "경기도 일산", "starbucks", 4, LocalDate.of(2023, 10, 20), BigDecimal.ZERO, BigDecimal.ZERO, "ACCOMODATION", "테스트 다이어리");
         // stubbing
         given(imageUploader.upload(any(String.class), any())
         ).willReturn(List.of("first-image-url", "second-image-url"));
@@ -125,7 +128,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         ).willReturn(List.of("first-image-url", "second-image-url"));
 
         DiaryCreateRequest diaryCreateRequest =
-            new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
+            new DiaryCreateRequest(1L, "경기도 일산", "starbucks", 4, LocalDate.of(2023, 10, 20), BigDecimal.ZERO, BigDecimal.ZERO, "ACCOMODATION", "테스트 다이어리");
 
         // when && then
         assertThatThrownBy(
@@ -144,7 +147,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         Long memberId = member.getId();
 
         DiaryCreateRequest diaryCreateRequest =
-            new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
+            new DiaryCreateRequest(1L, "경기도 일산", "starbucks", 4, LocalDate.of(2023, 10, 20), BigDecimal.ZERO, BigDecimal.ZERO, "ACCOMODATION", "테스트 다이어리");
 
         // when
         Long savedDiaryId = diaryService.createDiary(Collections.emptyList(), diaryCreateRequest, memberId);
@@ -169,8 +172,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         ).willReturn(List.of("first-image-url", "second-image-url", "third-image-url", "fourth-image-url", "fifth-image-url", "sixth-image-url"));
 
         DiaryCreateRequest diaryCreateRequest =
-            new DiaryCreateRequest(1L, "경기도 일산", 4, LocalDate.of(2023, 10, 20), "ACCOMODATION", "테스트 다이어리");
-
+            new DiaryCreateRequest(1L, "경기도 일산", "starbucks", 4, LocalDate.of(2023, 10, 20), BigDecimal.ZERO, BigDecimal.ZERO, "ACCOMODATION", "테스트 다이어리");
         // when && then
         assertThatThrownBy(
             () -> diaryService.createDiary(multipartFileList, diaryCreateRequest, memberId)
@@ -193,7 +195,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
     void getDiaryDetail() {
         // given
 
-        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(10L, "경기도 고양시", "starbucks",BigDecimal.ZERO, BigDecimal.ZERO, Category.FOOD);
         Diary diary = buildDiary(location, 1L);
         diaryRepository.save(diary);
 
@@ -218,7 +220,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
     void getDiaryDetailInvalidDiaryId() {
         // given
 
-        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(10L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ZERO, Category.FOOD);
         Diary diary = buildDiary(location, 1L);
         diaryRepository.save(diary);
 
@@ -241,7 +243,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
     void getDiaryDetailNoAuthority() {
         // given
 
-        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(10L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ZERO, Category.FOOD);
         Diary diary = buildDiary(location, 2L);
         diaryRepository.save(diary);
 
@@ -258,11 +260,51 @@ class DiaryServiceTest extends IntegrationTestSupport {
             .hasMessage("you can only manage your couple's diary");
     }
 
+    @Transactional
+    @DisplayName("editDiary 메서드를 통해 다이어리를 수정할 수 있다.")
+    @Test
+    void editDiary() {
+        // given
+        Diary diary = Diary.builder()
+            .location(Location.create(1L, "경기도 수원시 팔달구 팔달문로", "웨딩컨벤션", BigDecimal.valueOf(127.1255), BigDecimal.valueOf(90.6543), Category.ETC))
+            .coupleId(1L)
+            .boyText("우리도 곧 결혼하자")
+            .girlText("식장 이뿌더랑")
+            .score(5)
+            .datingDay(LocalDate.of(2023, 10, 23))
+            .photos(Photos.builder().firstImage("test-image").build())
+            .build();
+        Diary savedDiary = diaryRepository.save(diary);
+
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
+
+        DiaryEditRequest diaryEditRequest = new DiaryEditRequest(4, LocalDate.of(2023, 11, 1), "food", "boy-text", "girl-text");
+
+        // stubbing
+        given(imageUploader.upload(any(String.class), any())
+        ).willReturn(List.of("first-image-url", "second-image-url"));
+
+        // when
+        diaryService.editDiary(savedDiary.getId(), List.of(firstImage, secondImage), diaryEditRequest, 1L);
+
+        // then
+        Diary findDiary = diaryRepository.findById(savedDiary.getId()).orElseThrow();
+        assertAll(
+            () -> assertThat(findDiary.getScore()).isEqualTo(diaryEditRequest.score()),
+            () -> assertThat(findDiary.getDatingDay()).isEqualTo(diaryEditRequest.datingDay()),
+            () -> assertThat(findDiary.getLocation().getCategory()).isEqualTo(Category.FOOD),
+            () -> assertThat(findDiary.getBoyText()).isEqualTo(diaryEditRequest.boyText()),
+            () -> assertThat(findDiary.getGirlText()).isEqualTo(diaryEditRequest.girlText()),
+            () -> assertThat(findDiary.getPhotos().countOfImages()).isEqualTo(2)
+        );
+    }
+
     @DisplayName("deleteDiary 메서드를 통해 다이어리를 삭제할 수 있다. ")
     @Test
     void deleteDiary() {
         // given
-        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(10L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ZERO, Category.FOOD);
         Diary diary = buildDiary(location, 1L);
         diaryRepository.save(diary);
 
@@ -315,11 +357,113 @@ class DiaryServiceTest extends IntegrationTestSupport {
         );
     }
 
+    @DisplayName("findDiaryListByMarker를 통해서 특정 kakaoMap에 해당하는 다이어리들을 조회 할 수 있다.")
+    @Test
+    void findDiaryListByMarker() {
+        // given
+        Diary food1 = buildDiaryWithLocationId(Category.FOOD, 1L, 1L);
+        Diary food2 = buildDiaryWithLocationId(Category.FOOD, 1L, 1L);
+        Diary accomodation1 = buildDiaryWithLocationId(Category.ACCOMODATION, 1L, 2L);
+        Diary accomodation2 = buildDiaryWithLocationId(Category.ACCOMODATION, 2L, 2L);
+        diaryRepository.saveAll(List.of(food1, food2, accomodation1, accomodation2));
+
+        DiaryMarkerResponse diaryMarkerResponse1 = new DiaryMarkerResponse(food1.getId(), food1.getPhotos().getFirstImage(), food1.getDatingDay());
+        DiaryMarkerResponse diaryMarkerResponse2 = new DiaryMarkerResponse(food2.getId(), food2.getPhotos().getFirstImage(), food2.getDatingDay());
+
+        // when
+        DiaryListByMarkerResponse diaryListByMarkerResponse = diaryService.findDiaryListByMarker(1L, 1L);
+
+        // then
+        assertThat(diaryListByMarkerResponse.diaries()).containsAll(List.of(diaryMarkerResponse1, diaryMarkerResponse2));
+
+    }
+
+    @DisplayName("diary가 존재하지 않을 경우 findDiaryListByMarker의 diaries는 empty 이다.")
+    @Test
+    void findDiaryListByMarkerEmpty() {
+        // when
+        DiaryListByMarkerResponse diaryListByMarkerResponse = diaryService.findDiaryListByMarker(1L, 1L);
+
+        // then
+        assertThat(diaryListByMarkerResponse.diaries()).isEmpty();
+    }
+
+    @DisplayName("findDiaryListInGrid를 통해 위치 기반 다이어리 목록을 조회할 수 있다.")
+    @Test
+    void findDiaryListInGrid() {
+        // given
+        Diary diary1 = Diary.builder()
+            .coupleId(1L)
+            .location(Location.create(1L, "서울시", "서울역", BigDecimal.valueOf(37.5563), BigDecimal.valueOf(126.9723), Category.ETC))
+            .boyText("hello")
+            .girlText("hi")
+            .score(4)
+            .photos(Photos.builder().firstImage("test-image1").build())
+            .datingDay(LocalDate.of(2023, 10, 20))
+            .build();
+
+        Diary diary2 = Diary.builder()
+            .coupleId(1L)
+            .location(Location.create(1098L, "부산시", "부산역", BigDecimal.valueOf(35.1151), BigDecimal.valueOf(129.0422), Category.ETC))
+            .boyText("hello")
+            .girlText("hi")
+            .score(3)
+            .photos(Photos.builder().firstImage("test-image1").build())
+            .datingDay(LocalDate.of(2023, 10, 20))
+            .build();
+
+        diaryRepository.saveAll(List.of(diary1, diary2));
+
+        // when
+        DiaryListInGridResponse result = diaryService.findDiaryListInGrid(BigDecimal.valueOf(38), BigDecimal.valueOf(127), BigDecimal.valueOf(36), BigDecimal.valueOf(126), 1L);
+
+        // then
+        assertAll(
+            () -> assertThat(result.diaries()).hasSize(1),
+            () -> assertThat(result.diaries().get(0).diaryId()).isEqualTo(diary1.getId())
+        );
+    }
+
+    @DisplayName("만족하는 결과가 없을경우 findDiaryListInGrid의 diaries는 Empty를 반환한다. ")
+    @Test
+    void findDiaryListInGrid_Empty() {
+        // given
+        Diary diary1 = Diary.builder()
+            .coupleId(1L)
+            .location(Location.create(1L, "서울시", "서울역", BigDecimal.valueOf(37.5563), BigDecimal.valueOf(126.9723), Category.ETC))
+            .boyText("hello")
+            .girlText("hi")
+            .score(4)
+            .photos(Photos.builder().firstImage("test-image1").build())
+            .datingDay(LocalDate.of(2023, 10, 20))
+            .build();
+
+        Diary diary2 = Diary.builder()
+            .coupleId(1L)
+            .location(Location.create(1098L, "부산시", "부산역", BigDecimal.valueOf(35.1151), BigDecimal.valueOf(129.0422), Category.ETC))
+            .boyText("hello")
+            .girlText("hi")
+            .score(3)
+            .photos(Photos.builder().firstImage("test-image1").build())
+            .datingDay(LocalDate.of(2023, 10, 20))
+            .build();
+
+        diaryRepository.saveAll(List.of(diary1, diary2));
+
+        // when
+        DiaryListInGridResponse result = diaryService.findDiaryListInGrid(BigDecimal.valueOf(35), BigDecimal.valueOf(127), BigDecimal.valueOf(34), BigDecimal.valueOf(126), 1L);
+
+        // then
+        assertAll(
+            () -> assertThat(result.diaries()).isEmpty()
+        );
+    }
+
     @DisplayName("다른 커플의 다이어리를 삭제할 수 없다.")
     @Test
     void deleteDiaryNoAuthority() {
         // given
-        Location location = Location.create(10L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(10L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ZERO, Category.FOOD);
         Diary diary = buildDiary(location, 2L);
         diaryRepository.save(diary);
 
@@ -351,10 +495,22 @@ class DiaryServiceTest extends IntegrationTestSupport {
     private static Diary buildDiary(Category category, long coupleId) {
         return Diary.builder()
             .coupleId(coupleId)
-            .location(Location.create(1L, "경기도 고양", category))
+            .location(Location.create(1L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ZERO, category))
             .boyText("hello")
             .girlText("hi")
             .score(4)
+            .datingDay(LocalDate.of(2023, 10, 20))
+            .build();
+    }
+
+    private static Diary buildDiaryWithLocationId(Category category, long coupleId, long kakaoMapId) {
+        return Diary.builder()
+            .coupleId(coupleId)
+            .location(Location.create(kakaoMapId, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ZERO, category))
+            .boyText("hello")
+            .girlText("hi")
+            .score(4)
+            .photos(Photos.builder().firstImage("test-image1").build())
             .datingDay(LocalDate.of(2023, 10, 20))
             .build();
     }

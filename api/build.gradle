@@ -50,6 +50,7 @@ ext { // 전역 변수
 }
 
 test {
+    jvmArgs '-Duser.timezone=Asia/Seoul'
     outputs.dir snippetsDir
     useJUnitPlatform()
 }

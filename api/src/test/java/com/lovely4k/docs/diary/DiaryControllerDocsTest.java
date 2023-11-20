@@ -2,12 +2,9 @@ package com.lovely4k.docs.diary;
 
 import com.lovely4k.backend.diary.controller.DiaryController;
 import com.lovely4k.backend.diary.service.DiaryService;
-import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
-import com.lovely4k.backend.diary.service.response.DiaryListResponse;
-import com.lovely4k.backend.diary.service.response.PhotoListResponse;
+import com.lovely4k.backend.diary.service.response.*;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.docs.RestDocsSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
@@ -17,7 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
@@ -28,13 +27,13 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
 import static org.springframework.restdocs.payload.JsonFieldType.STRING;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -52,7 +51,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     void createDiary() throws Exception {
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
-        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", 5, "2023-10-20", "ACCOMODATION", "여기 숙소 좋았어..!");
+        MockDiaryCreateRequest mockDiaryCreateRequest = new MockDiaryCreateRequest(1L, "서울 강동구 테헤란로", "starbucks", 5, "2023-10-20", "ACCOMODATION", BigDecimal.ZERO, BigDecimal.ONE, "여기 숙소 좋았어..!");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryCreateRequest).getBytes(StandardCharsets.UTF_8));
 
         mockMvc.perform(
@@ -69,9 +68,12 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                     requestPartFields("texts",
                         fieldWithPath("kakaoMapId").type(NUMBER).description("카카오 맵 id"),
                         fieldWithPath("address").type(STRING).description("장소에 대한 주소"),
+                        fieldWithPath("placeName").type(STRING).description("장소 이름"),
                         fieldWithPath("score").type(NUMBER).description("장소에 대한 평점"),
                         fieldWithPath("datingDay").type(STRING).description("데이트 한 날짜"),
                         fieldWithPath("category").type(STRING).description("장소 카테고리"),
+                        fieldWithPath("latitude").type(NUMBER).description("위도"),
+                        fieldWithPath("longitude").type(NUMBER).description("경도"),
                         fieldWithPath("text").type(STRING).description("장소에 대한 일기")
                     ),
                     requestParts(
@@ -107,7 +109,6 @@ class DiaryControllerDocsTest extends RestDocsSupport {
         this.mockMvc.perform(
                 get("/v1/diaries/{id}", 1L)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .with(csrf())
             )
             .andDo(print())
             .andExpect(status().isOk())
@@ -142,9 +143,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     void getDiaryList() throws Exception {
         // stubbing
         List<DiaryListResponse> diaryListResponseList = List.of(
-            new DiaryListResponse(3L, 103L, "image-url"),
-            new DiaryListResponse(2L, 103532L, "image-url"),
-            new DiaryListResponse(1L, 123562L, "image-url")
+            new DiaryListResponse(3L, 103L, "image-url", LocalDate.of(2023, 10, 20), "starbucks"),
+            new DiaryListResponse(2L, 103532L, "image-url", LocalDate.of(2023, 11, 20), "cafebenne"),
+            new DiaryListResponse(1L, 123562L, "image-url", LocalDate.of(2023, 12, 20), "삼시세끼")
         );
 
         PageImpl<DiaryListResponse> responsePage =
@@ -161,7 +162,6 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                     .queryParam("page", "0")
                     .queryParam("size", "10")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .with(csrf())
             )
             .andDo(print())
             .andExpect(status().isOk())
@@ -189,26 +189,82 @@ class DiaryControllerDocsTest extends RestDocsSupport {
             ));
     }
 
+    @DisplayName("Marker를 통해 다이어리 목록을 조회하는 API")
+    @Test
+    void getDiaryListByMarker() throws Exception {
+        // stubbing
+        List<DiaryMarkerResponse> diaryMarkerResponses = List.of(
+            new DiaryMarkerResponse(1L, "image-url1", LocalDate.of(2020, 10, 20)),
+            new DiaryMarkerResponse(2L, "image-url2", LocalDate.of(2021, 10, 20)),
+            new DiaryMarkerResponse(3L, "image-url3", LocalDate.of(2022, 10, 20))
+        );
 
-    @Disabled("현재 미제공 API 이기 때문에 테스트를 수행하지 않습니다. ")
+        when(diaryService.findDiaryListByMarker(any(), any()))
+            .thenReturn(new DiaryListByMarkerResponse(diaryMarkerResponses));
+
+        this.mockMvc.perform(
+                get("/v1/diaries/marker/{kakaoMapId}", 1L)
+            ).andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("diary-list-marker",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("kakaoMapId").description("kakao map id of place")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(NUMBER).description("코드"),
+                    fieldWithPath("body.diaries[0].diaryId").description("다이어리 id"),
+                    fieldWithPath("body.diaries[0].imageUrl").description("다이어리 사진 url"),
+                    fieldWithPath("body.diaries[0].datingDay").description("데이트 한 날짜"),
+                    fieldWithPath("links[0].rel").type(STRING).description("relation of url"),
+                    fieldWithPath("links[0].href").type(STRING).description("url of relation")
+                )
+            ));
+
+    }
+
     @DisplayName("다이어리를 수정하는 API")
     @Test
     void editDiary() throws Exception {
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "image-file".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
 
         MockDiaryEditRequest mockDiaryEditRequest =
-            new MockDiaryEditRequest("1L", "new-address", 5, "2023-10-23", "ACCOMODATION", "오늘 너무 좋았어");
+            new MockDiaryEditRequest(5, "2023-11-01", "ACCOMODATION", "여기 좋더라 다음에 또 올까~?", "다음달에도 꼭 오자 우리");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryEditRequest).getBytes(StandardCharsets.UTF_8));
 
+        MockHttpServletRequestBuilder builder = RestDocumentationRequestBuilders.multipart("/v1/diaries/{id}", 1L)
+            .file(firstImage)
+            .file(secondImage)
+            .file(mockMultipartFile)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .with(request -> {
+                request.setMethod("PATCH");
+                return request;
+            });
         this.mockMvc.perform(
-                patch("/v1/diaries/{id}", 1L)
-                    .content(objectMapper.writeValueAsString(mockDiaryEditRequest))
-                    .contentType("application/json")
-                    .with(csrf())
+                builder
             )
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("diary-edit",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
+                pathParameters(
+                    parameterWithName("id").description("diary ID")
+                ),
+                requestPartFields("texts",
+                    fieldWithPath("score").type(NUMBER).description("장소에 대한 평점"),
+                    fieldWithPath("datingDay").type(STRING).description("데이트 한 날짜"),
+                    fieldWithPath("category").type(STRING).description("장소 카테고리"),
+                    fieldWithPath("boyText").type(STRING).description("남자 일기"),
+                    fieldWithPath("girlText").type(STRING).description("여자 일기")
+                ),
+                requestParts(
+                    partWithName("texts").ignored(),
+                    partWithName("images").description("장소에 대한 이미지").optional()
+                ),
                 responseFields(
                     fieldWithPath("code").type(NUMBER).description("코드"),
                     fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디"),
@@ -216,6 +272,47 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                     fieldWithPath("links[0].href").type(STRING).description("url of relation")
                 )
             ));
+
+    }
+
+    @DisplayName("카카오 맵 위치 안에 존재하는 다이어리 목록 조회하는 API")
+    @Test
+    void getDiaryListInGrid() throws Exception {
+        // stubbing
+        List<DiaryGridResponse> diaryGridResponses = List.of(
+            new DiaryGridResponse(1L, BigDecimal.valueOf(37.5563), BigDecimal.valueOf(126.9723), "서울역", 1L)
+        );
+
+        when(diaryService.findDiaryListInGrid(any(), any(), any(), any(), any()))
+            .thenReturn(new DiaryListInGridResponse(diaryGridResponses));
+
+        this.mockMvc.perform(
+                get("/v1/diaries/location")
+                    .queryParam("right_latitude", String.valueOf(BigDecimal.valueOf(38)))
+                    .queryParam("right_longitude", String.valueOf(BigDecimal.valueOf(127)))
+                    .queryParam("left_latitude", String.valueOf(BigDecimal.valueOf(36)))
+                    .queryParam("left_longitude", String.valueOf(BigDecimal.valueOf(126)))
+            ).andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("diary-list-grid",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                queryParameters(
+                    parameterWithName("right_latitude").description("오른쪽 상위 위도"),
+                    parameterWithName("right_longitude").description("오른쪽 상위 경도"),
+                    parameterWithName("left_latitude").description("왼쪽 하위 위도"),
+                    parameterWithName("left_longitude").description("왼쪽 하위 경도")
+                ),
+                relaxedResponseFields(
+                    fieldWithPath("code").type(NUMBER).description("코드"),
+                    fieldWithPath("body.diaries[0].kakaoMapId").type(NUMBER).description("카카오맵 id"),
+                    fieldWithPath("body.diaries[0].latitude").type(NUMBER).description("위도"),
+                    fieldWithPath("body.diaries[0].longitude").type(NUMBER).description("경도"),
+                    fieldWithPath("body.diaries[0].placeName").type(STRING).description("장소 이름"),
+                    fieldWithPath("body.diaries[0].diaryId").type(NUMBER).description("다이어리 id")
+                )
+            ));
+
     }
 
     @DisplayName("다이어리를 삭제하는 API")
@@ -224,7 +321,6 @@ class DiaryControllerDocsTest extends RestDocsSupport {
         this.mockMvc.perform(
                 delete("/v1/diaries/{id}", 1L)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .with(csrf())
             )
             .andDo(print())
             .andExpect(status().isNoContent())
