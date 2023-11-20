@@ -4,10 +4,7 @@ import com.lovely4k.backend.question.QuestionFormType;
 import com.lovely4k.backend.question.controller.QuestionController;
 import com.lovely4k.backend.question.controller.request.AnswerQuestionRequest;
 import com.lovely4k.backend.question.controller.request.CreateQuestionFormRequest;
-import com.lovely4k.backend.question.repository.response.AnsweredQuestionResponse;
-import com.lovely4k.backend.question.repository.response.DailyQuestionResponse;
-import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse;
-import com.lovely4k.backend.question.repository.response.QuestionResponse;
+import com.lovely4k.backend.question.repository.response.*;
 import com.lovely4k.backend.question.service.QuestionQueryService;
 import com.lovely4k.backend.question.service.QuestionService;
 import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
@@ -243,6 +240,40 @@ class QuestionApiDocsTest extends RestDocsSupport {
                 )
 
             ));
+    }
+
+    @Test
+    @DisplayName("게임을 진행하는 API")
+    void getQuestionGame() throws Exception {
+        //given
+        given(questionQueryService.findQuestionGame(any(), any())).willReturn(
+            new QuestionGameResponse(
+                "testQuestionContent",
+                "firstChoice",
+                "secondChoice",
+                "thirdChoice",
+                "fourthChoice",
+                1
+            )
+        );
+
+        //when && then
+        mockMvc.perform(get("/v1/questions/games"))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("find-question-game",
+                responseFields(
+                    fieldWithPath("code").type(NUMBER).description("응답 코드"),
+                    fieldWithPath("body.questionContent").type(STRING).description("게임 질문 내용"),
+                    fieldWithPath("body.firstChoice").type(STRING).description("첫번째 보기"),
+                    fieldWithPath("body.secondChoice").type(STRING).description("두번째 보기"),
+                    fieldWithPath("body.thirdChoice").type(STRING).description("세번째 보기"),
+                    fieldWithPath("body.fourthChoice").type(STRING).description("네번째 보기"),
+                    fieldWithPath("body.opponentChoiceIndex").type(NUMBER).description("상대방 정답"),
+                    fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
+                    fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
+                ))
+            );
     }
 
     @DisplayName("질문 삭제, 커스텀 질문지 삭제하는 api docs")
