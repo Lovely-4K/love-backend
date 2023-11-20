@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class AnsweredQuestionParamRequest {
     @Min(0)
-    private Long id = 0L;
+    private Long id;
 
     @Min(1)
     private int limit = 10;

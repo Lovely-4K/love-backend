@@ -227,7 +227,7 @@ class QuestionApiDocsTest extends RestDocsSupport {
             .andDo(print())
             .andDo(document("get-answered-questions",
                 queryParameters(
-                    parameterWithName("id").description("조회를 시작할 id, default: 0").optional(),
+                    parameterWithName("id").description("조회를 시작할 id, 첫번째 조회시 할당하지 않기(null)").optional(),
                     parameterWithName("limit").description("조회할 개수 default: 10").optional()
                 ),
                 responseFields(
