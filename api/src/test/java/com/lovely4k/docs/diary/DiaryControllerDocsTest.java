@@ -275,6 +275,46 @@ class DiaryControllerDocsTest extends RestDocsSupport {
 
     }
 
+    @DisplayName("카카오 맵 위치 안에 존재하는 다이어리 목록 조회하는 API")
+    @Test
+    void getDiaryListInGrid() throws Exception {
+        // stubbing
+        List<DiaryGridResponse> diaryGridResponses = List.of(
+            new DiaryGridResponse(1L, BigDecimal.valueOf(37.5563), BigDecimal.valueOf(126.9723), "서울역", 1L)
+        );
+
+        when(diaryService.findDiaryListInGrid(any(), any(), any(), any(), any()))
+            .thenReturn(new DiaryListInGridResponse(diaryGridResponses));
+
+        this.mockMvc.perform(
+                get("/v1/diaries/location")
+                    .queryParam("right_latitude", String.valueOf(BigDecimal.valueOf(38)))
+                    .queryParam("right_longitude", String.valueOf(BigDecimal.valueOf(127)))
+                    .queryParam("left_latitude", String.valueOf(BigDecimal.valueOf(36)))
+                    .queryParam("left_longitude", String.valueOf(BigDecimal.valueOf(126)))
+            ).andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("diary-list-grid",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                queryParameters(
+                    parameterWithName("right_latitude").description("오른쪽 상위 위도"),
+                    parameterWithName("right_longitude").description("오른쪽 상위 경도"),
+                    parameterWithName("left_latitude").description("왼쪽 하위 위도"),
+                    parameterWithName("left_longitude").description("왼쪽 하위 경도")
+                ),
+                relaxedResponseFields(
+                    fieldWithPath("code").type(NUMBER).description("코드"),
+                    fieldWithPath("body.diaries[0].kakaoMapId").type(NUMBER).description("카카오맵 id"),
+                    fieldWithPath("body.diaries[0].latitude").type(NUMBER).description("위도"),
+                    fieldWithPath("body.diaries[0].longitude").type(NUMBER).description("경도"),
+                    fieldWithPath("body.diaries[0].placeName").type(STRING).description("장소 이름"),
+                    fieldWithPath("body.diaries[0].diaryId").type(NUMBER).description("다이어리 id")
+                )
+            ));
+
+    }
+
     @DisplayName("다이어리를 삭제하는 API")
     @Test
     void deleteDiary() throws Exception {

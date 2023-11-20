@@ -8,6 +8,7 @@ import com.lovely4k.backend.diary.controller.request.WebDiaryCreateRequest;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
+import com.lovely4k.backend.diary.service.response.DiaryListInGridResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
 import com.lovely4k.backend.location.Category;
 import jakarta.validation.Valid;
@@ -21,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
@@ -108,6 +110,18 @@ public class DiaryController {
                 linkTo(DiaryController.class).slash(id).withRel(DETAIL),
                 linkTo(DiaryController.class).slash(id).withRel(DELETE)
         );
+    }
+
+    @GetMapping("/location")
+    public ResponseEntity<ApiResponse<DiaryListInGridResponse>> getDiaryListInGrid(
+        @RequestParam("right_latitude") BigDecimal rLatitude,
+        @RequestParam("right_longitude") BigDecimal rLongitude,
+        @RequestParam("left_latitude") BigDecimal lLatitude,
+        @RequestParam("left_longitude") BigDecimal lLongitude,
+        @LoginUser SessionUser sessionUser
+    ) {
+
+        return ApiResponse.ok(diaryService.findDiaryListInGrid(rLatitude, rLongitude, lLatitude, lLongitude, sessionUser.coupleId()));
     }
 
     @DeleteMapping("/{id}")

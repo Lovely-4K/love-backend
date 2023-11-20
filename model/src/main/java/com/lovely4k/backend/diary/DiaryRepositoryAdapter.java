@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,10 @@ public class DiaryRepositoryAdapter {
 
     public Page<Diary> findDiaryList(Long coupleId, Category category, Pageable pageable) {
         return qDiaryRepository.findAll(coupleId, category, pageable);
+    }
+
+    public List<Diary> findDiaryList(BigDecimal rLatitude, BigDecimal rLongitude, BigDecimal lLatitude, BigDecimal lLongitude, Long coupleId) {
+        return diaryRepository.findInGrid(rLatitude, rLongitude, lLatitude, lLongitude, coupleId);
     }
 
     public void delete(Diary diary) {

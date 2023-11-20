@@ -5,13 +5,9 @@ import com.lovely4k.backend.couple.service.IncreaseTemperatureFacade;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepositoryAdapter;
 import com.lovely4k.backend.diary.Photos;
-import com.lovely4k.backend.diary.controller.request.WebDiaryEditRequest;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
 import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
-import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
-import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
-import com.lovely4k.backend.diary.service.response.DiaryListResponse;
-import com.lovely4k.backend.diary.service.response.DiaryMarkerResponse;
+import com.lovely4k.backend.diary.service.response.*;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.repository.MemberRepository;
@@ -24,8 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -110,6 +109,14 @@ public class DiaryService {
                 DiaryMarkerResponse::from
             ).toList());
         }
+    }
+
+    public DiaryListInGridResponse findDiaryListInGrid(BigDecimal rLatitude, BigDecimal rLongitude, BigDecimal lLatitude, BigDecimal lLongitude, Long coupleId) {
+        List<Diary> diaryList = diaryRepositoryAdapter.findDiaryList(rLatitude, rLongitude, lLatitude, lLongitude, coupleId);
+
+        return new DiaryListInGridResponse(diaryList.stream().map(
+            DiaryGridResponse::from
+        ).toList());
     }
 
     @Transactional
