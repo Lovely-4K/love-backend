@@ -99,7 +99,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private String resolveToken(HttpServletRequest request) {
-        log.debug(request.getHeader(AUTHORIZATION_HEADER));
+        log.debug("인증 헤더: {}", request.getHeader(AUTHORIZATION_HEADER));
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);
