@@ -6,6 +6,11 @@ import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.QQuestion;
 import com.lovely4k.backend.question.QQuestionForm;
 import com.lovely4k.backend.question.repository.response.*;
+import com.lovely4k.backend.question.repository.response.AnsweredQuestionResponse;
+import com.lovely4k.backend.question.repository.response.DailyQuestionResponse;
+import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse;
+import com.lovely4k.backend.question.repository.response.QuestionResponse;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -87,18 +92,19 @@ public class QuestionQueryRepository {
     public AnsweredQuestionResponse findAnsweredQuestions(Long id, Long coupleId, Integer limit) {
         QQuestion question = QQuestion.question;
 
-        // Constructing the query with conditions and projections
+        BooleanBuilder whereClause = new BooleanBuilder()
+            .and(question.coupleId.eq(coupleId))
+            .and(question.boyChoiceIndex.ne(0))
+            .and(question.girlChoiceIndex.ne(0));
+
+        if (id != null) whereClause.and(question.id.lt(id));
+
         List<QuestionResponse> result = jpaQueryFactory
             .select(Projections.constructor(QuestionResponse.class,
                 question.id,
                 question.questionForm.questionContent))
             .from(question)
-            .where(
-                question.id.gt(id),
-                question.coupleId.eq(coupleId),
-                question.boyChoiceIndex.ne(0),
-                question.girlChoiceIndex.ne(0)
-            )
+            .where(whereClause)
             .orderBy(question.id.desc())
             .limit(limit)
             .fetch();

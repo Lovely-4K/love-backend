@@ -20,6 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class QuestionQueryRepositoryTest extends QueryTestSupport {
 
@@ -44,9 +45,16 @@ class QuestionQueryRepositoryTest extends QueryTestSupport {
     @DisplayName("대답한 질문의 목록을 조회하는 테스트")
     @Test
     void findAnsweredQuestions() {
-        AnsweredQuestionResponse result = questionQueryRepository.findAnsweredQuestions(0L, 1L, 10);
+        AnsweredQuestionResponse firstResult = questionQueryRepository.findAnsweredQuestions(null, 1L, 10);
 
-        assertThat(result.answeredQuestions()).hasSize(10);
+        AnsweredQuestionResponse afterFirstResult = questionQueryRepository.findAnsweredQuestions(11L,
+            1L,
+            10);
+
+        assertAll("Answered Questions Validation",
+            () -> assertThat(firstResult.answeredQuestions()).hasSize(10),
+            () -> assertThat(afterFirstResult.answeredQuestions()).hasSize(10)
+        );
     }
 
     @Sql(scripts = "/questions/dailyQuestion.sql")
