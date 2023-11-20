@@ -18,6 +18,6 @@ public record FindCalendarsWithDateRequest(
 
 ) {
     public FindCalendarsWithDateRepositoryRequest toRepositoryDto() {
-        return new FindCalendarsWithDateRepositoryRequest(to, from);
+        return new FindCalendarsWithDateRepositoryRequest(from, to);
     }
 }

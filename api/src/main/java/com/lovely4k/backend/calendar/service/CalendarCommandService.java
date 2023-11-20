@@ -20,8 +20,8 @@ public class CalendarCommandService {
 
     private final CalendarCommandRepository calendarCommandRepository;
 
-    public CreateCalendarResponse createCalendar(Long coupleId, Long memberId, CreateCalendarServiceReqeust serviceDto) {
-        Calendar savedCalendar = calendarCommandRepository.save(serviceDto.toEntity(coupleId, memberId));
+    public CreateCalendarResponse createCalendar(Long coupleId, Long ownerId, CreateCalendarServiceReqeust serviceDto) {
+        Calendar savedCalendar = calendarCommandRepository.save(serviceDto.toEntity(coupleId, ownerId));
         return CreateCalendarResponse.from(savedCalendar);
     }
 
