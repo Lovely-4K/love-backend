@@ -60,7 +60,7 @@ class PhotosTest {
     @DisplayName("countOfImages 메서드를 통해 Photos에 담긴 이미지의 개수를 조회할 수 있다.")
     @MethodSource("provideImages")
     @ParameterizedTest
-    void countOfImages(List imageList, int size) {
+    void countOfImages(List<String> imageList, int size) {
         Photos photos = Photos.create(imageList);
 
         // when

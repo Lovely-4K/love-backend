@@ -6,7 +6,9 @@ import com.lovely4k.backend.member.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.lovely4k.backend.member.Sex.FEMALE;
 import static com.lovely4k.backend.member.Sex.MALE;
@@ -29,8 +31,7 @@ class DiaryTest {
                 .coupleId(1L)
                 .build();
 
-        Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
-
+        Location location = Location.create(2L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.FOOD);
         // when
         Diary diary = Diary.create(score, localDate, text, member, location);
 
@@ -57,7 +58,7 @@ class DiaryTest {
                 .coupleId(1L)
                 .build();
 
-        Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(2L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.FOOD);
 
         // when
         Diary diary = Diary.create(score, localDate, text, member, location);
@@ -84,7 +85,7 @@ class DiaryTest {
                 .sex(MALE)
                 .build();
 
-        Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(2L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.FOOD);
 
         // when && then
         assertThatThrownBy(
@@ -106,7 +107,7 @@ class DiaryTest {
                 .sex(MALE)
                 .build();
 
-        Location location = Location.create(2L, "경기도 고양시", Category.FOOD);
+        Location location = Location.create(2L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.FOOD);
 
         // when && then
         assertThatThrownBy(
@@ -183,6 +184,40 @@ class DiaryTest {
                 () -> assertThat(diary.getPhotos()).isNotNull(),
                 () -> assertThat(diary.getPhotos().countOfImages()).isEqualTo(2)
         );
+    }
+
+    @DisplayName("update를 통해 다이어리 관련된 값들을 업데이트 할 수 있다.")
+    @Test
+    void update() {
+        // given
+        Diary diary = Diary.builder()
+            .location(Location.create(1L, "경기도 수원시 팔달구 팔달문로", "웨딩컨벤션", BigDecimal.valueOf(127.1255), BigDecimal.valueOf(90.6543), Category.ETC))
+            .coupleId(1L)
+            .boyText("우리도 곧 결혼하자")
+            .girlText("식장 이뿌더랑")
+            .score(5)
+            .datingDay(LocalDate.of(2023, 10, 23))
+            .photos(Photos.builder().firstImage("test-image").build())
+            .build();
+
+        Integer score = 4;
+        LocalDate datingDay = LocalDate.of(2023, 11, 1);
+        String category = "ACCOMODATION";
+        String boyText = "여기가 더 좋았어!";
+        String girlText = "여기 꿈의 공간이야..!";
+        List<String> uploadedImageUrls = List.of("new-image1", "new-image2", "new-image3");
+
+        // when
+        diary.update(score, datingDay, category, boyText, girlText, uploadedImageUrls);
+
+        // then
+        assertAll(
+            () -> assertThat(diary.getScore()).isEqualTo(score),
+            () -> assertThat(diary.getDatingDay()).isEqualTo(datingDay),
+            () -> assertThat(diary.getLocation().getCategory()).isEqualTo(Category.valueOf(category)),
+            () -> assertThat(diary.getBoyText()).isEqualTo(boyText),
+            () -> assertThat(diary.getGirlText()).isEqualTo(girlText)
+            );
     }
 
 }

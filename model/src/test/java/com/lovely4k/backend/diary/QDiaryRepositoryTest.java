@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -91,13 +92,13 @@ class QDiaryRepositoryTest extends IntegrationTestSupport {
 
     private static Diary buildDiary(Category category, long coupleId) {
         return Diary.builder()
-                .location(Location.create(102L, "경기도 고양시", category))
-                .coupleId(coupleId)
-                .boyText("boy text")
-                .girlText("girl text")
-                .score(5)
-                .datingDay(LocalDate.of(2023,10,20))
-                .photos(Photos.builder().firstImage("first-image").secondImage("second-image").build())
-                .build();
+            .location(Location.create(102L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, category))
+            .coupleId(coupleId)
+            .boyText("boy text")
+            .girlText("girl text")
+            .score(5)
+            .datingDay(LocalDate.of(2023, 10, 20))
+            .photos(Photos.builder().firstImage("first-image").secondImage("second-image").build())
+            .build();
     }
 }

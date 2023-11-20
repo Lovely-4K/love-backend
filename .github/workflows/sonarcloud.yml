@@ -24,6 +24,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          java-options: '-Duser.timezone=Asia/Seoul'
       - name: gradlew 실행 권한 부여
         run: chmod +x ./gradlew
 

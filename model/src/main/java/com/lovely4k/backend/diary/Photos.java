@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -66,5 +67,24 @@ public class Photos {
         if (this.fourthImage != null) count ++;
         if (this.fifthImage != null) count ++;
         return count;
+    }
+
+    public List<String> getPhotoList() {
+        List<String> list = new ArrayList<>();
+        if (this.firstImage != null) list.add(this.firstImage);
+        if (this.secondImage != null) list.add(this.secondImage);
+        if (this.thirdImage != null) list.add(this.thirdImage);
+        if (this.fourthImage != null) list.add(this.fourthImage);
+        if (this.fifthImage != null) list.add(this.fifthImage);
+        return list;
+    }
+
+    public void update(List<String> uploadedImageUrls) {
+        Photos updatedPhotos = create(uploadedImageUrls);
+        this.firstImage = updatedPhotos.firstImage;
+        this.secondImage = updatedPhotos.secondImage;
+        this.thirdImage = updatedPhotos.thirdImage;
+        this.fourthImage = updatedPhotos.fourthImage;
+        this.fifthImage = updatedPhotos.fifthImage;
     }
 }

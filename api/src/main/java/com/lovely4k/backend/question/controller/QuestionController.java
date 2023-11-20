@@ -9,6 +9,7 @@ import com.lovely4k.backend.question.controller.request.CreateQuestionFormReques
 import com.lovely4k.backend.question.repository.response.AnsweredQuestionResponse;
 import com.lovely4k.backend.question.repository.response.DailyQuestionResponse;
 import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse;
+import com.lovely4k.backend.question.repository.response.QuestionGameResponse;
 import com.lovely4k.backend.question.service.QuestionQueryService;
 import com.lovely4k.backend.question.service.QuestionService;
 import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
@@ -98,6 +99,12 @@ public class QuestionController {
         return ApiResponse.ok(questionQueryService.findQuestionDetails(id, user.memberId(), user.sex()),
             linkTo(methodOn(getClass()).getQuestionDetails(id, user)).withSelfRel(),
             linkTo(getClass().getMethod(GET_ANSWERED_QUESTIONS, AnsweredQuestionParamRequest.class, SessionUser.class)).withRel(GET_ANSWERED_QUESTIONS));
+    }
+
+    @GetMapping("/games")
+    public ResponseEntity<ApiResponse<QuestionGameResponse>> getQuestionGame(@LoginUser SessionUser user) {
+        return ApiResponse.ok(questionQueryService.findQuestionGame(user.coupleId(), user.sex()),
+            linkTo(methodOn(getClass()).getQuestionGame(user)).withSelfRel());
     }
 
     //관리자용 엔드포인트
