@@ -2,7 +2,6 @@ package com.lovely4k.backend.couple.repository;
 
 import com.lovely4k.backend.couple.repository.response.FindCoupleProfileResponse;
 import com.lovely4k.backend.member.QMember;
-import com.lovely4k.backend.member.Sex;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +40,8 @@ public class CoupleQueryRepository {
             .from(my)
             .leftJoin(couple).on(my.coupleId.eq(couple.id))
             .leftJoin(opponent)
-            .on(my.sex.eq(Sex.valueOf("MALE")).and(couple.girlId.eq(opponent.id))
-                .or(my.sex.eq(Sex.valueOf("FEMALE")).and(couple.boyId.eq(opponent.id))))
+            .on(my.id.eq(couple.boyId).and(couple.girlId.eq(opponent.id))
+                .or(my.id.eq(couple.girlId).and(couple.boyId.eq(opponent.id))))
             .where(my.id.eq(memberId))
             .fetchOne();
     }
