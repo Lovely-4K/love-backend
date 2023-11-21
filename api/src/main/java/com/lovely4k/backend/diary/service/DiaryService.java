@@ -1,7 +1,8 @@
 package com.lovely4k.backend.diary.service;
 
+import com.lovely4k.backend.common.event.Events;
 import com.lovely4k.backend.common.imageuploader.ImageUploader;
-import com.lovely4k.backend.couple.service.IncreaseTemperatureFacade;
+import com.lovely4k.backend.couple.IncreaseTemperatureEvent;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepositoryAdapter;
 import com.lovely4k.backend.diary.Photos;
@@ -21,10 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,7 +33,6 @@ public class DiaryService {
 
     private final ImageUploader imageUploader;
     private final MemberRepository memberRepository;
-    private final IncreaseTemperatureFacade facade;
     private final DiaryRepositoryAdapter diaryRepositoryAdapter;
 
     @Transactional
@@ -45,20 +43,10 @@ public class DiaryService {
         Diary diary = diaryCreateRequest.toEntity(member);
         diary.addPhoto(Photos.create(uploadedImageUrls));
         Diary savedDiary = diaryRepositoryAdapter.save(diary);
-//        increaseTemperature(savedDiary);  // NOSONAR 추후 업데이트 예정
 
+        Events.raise(new IncreaseTemperatureEvent(member.getCoupleId()));
         return savedDiary.getId();
     }
-
-    private void increaseTemperature(Diary savedDiary) {    // NOSONAR
-        try {
-            facade.increaseTemperature(savedDiary.getCoupleId());
-        } catch (InterruptedException e) {  // NOSONAR
-            log.warn("[System Error] Something went wrong during increasing temperature", e);
-            throw new IllegalStateException("System Error Occurred",e);
-        }
-    }
-
     private Member validateMemberId(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(
                 () -> new EntityNotFoundException("invalid member id")

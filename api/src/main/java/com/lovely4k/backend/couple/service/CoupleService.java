@@ -12,11 +12,13 @@ import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -59,6 +61,7 @@ public class CoupleService {
         couple.update(request.meetDay());
     }
 
+    @Retryable(retryFor = ObjectOptimisticLockingFailureException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     @Transactional
     public void increaseTemperature(Long coupleId) {
         Couple couple = coupleRepository.findByIdWithOptimisticLock(coupleId)
@@ -80,10 +83,6 @@ public class CoupleService {
         findMember(opponentId).checkReCoupleCondition(coupleId);
 
         couple.recouple(memberId, requestedDate);
-    }
-
-    private Optional<Member> findMemberOptional(Long memberId) {
-        return memberRepository.findById(memberId);
     }
 
     private Member findMember(Long memberId) {

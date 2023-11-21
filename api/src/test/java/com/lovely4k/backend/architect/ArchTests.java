@@ -155,6 +155,7 @@ class ArchTests {
             .and().haveSimpleNameNotEndingWith("QueryService")
             .and().haveSimpleNameNotEndingWith("CommandService")
             .and().haveSimpleNameNotStartingWith("OAuth2")
+            .and().haveSimpleNameNotEndingWith("EventHandler")
             .should(haveTransactionalReadOnly())
             .andShould(haveOtherMethodsTransactional());
 
