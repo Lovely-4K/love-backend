@@ -152,6 +152,30 @@ class CoupleServiceTest extends IntegrationTestSupport {
     }
 
     @Test
+    @DisplayName("동성 커플일 경우에도 프로필 조회를 할 수 있다.")
+    void getCoupleProfileSameSex() {
+        //given
+        Member boy1 = createMember(MALE, "ESTJ", "듬직이");
+        Member boy2 = createMember(MALE, "INFP", "깜찍이");
+        memberRepository.saveAll(List.of(boy1, boy2));
+
+        InvitationCodeCreateResponse codeCreateResponse = coupleService.createInvitationCode(boy1.getId(), boy1.getSex().name());
+
+        coupleService.registerCouple(codeCreateResponse.invitationCode(), boy2.getId());
+
+        //when
+        CoupleProfileGetResponse profileGetResponse = coupleService.findCoupleProfile(boy1.getId());
+
+        //then
+        assertAll(
+            () -> assertThat(profileGetResponse.myMbti()).isEqualTo(boy1.getMbti()),
+            () -> assertThat(profileGetResponse.myNickname()).isEqualTo(boy1.getNickname()),
+            () -> assertThat(profileGetResponse.opponentMbti()).isEqualTo(boy2.getMbti()),
+            () -> assertThat(profileGetResponse.opponentNickname()).isEqualTo(boy2.getNickname())
+        );
+    }
+
+    @Test
     @DisplayName("커플 프로필을 수정할 수 있다.")
     void updateCoupleProfile() {
         //given

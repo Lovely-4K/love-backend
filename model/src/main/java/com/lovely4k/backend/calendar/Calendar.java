@@ -76,7 +76,7 @@ public class Calendar extends BaseTimeEntity {
     public static Calendar create(LocalDate startDate, LocalDate endDate, long ownerId, String scheduleType, String scheduleDetails, long coupleId) {
         ScheduleType type = ScheduleType.valueOf(scheduleType.toUpperCase());
 
-        if (type == ScheduleType.PERSONAL) {
+        if (type != ScheduleType.PERSONAL) {
             ownerId = 0L;
         }
         return new Calendar(startDate, endDate, ownerId, type, scheduleDetails, coupleId);

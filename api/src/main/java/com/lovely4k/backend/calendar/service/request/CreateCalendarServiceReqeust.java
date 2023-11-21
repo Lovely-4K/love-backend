@@ -17,7 +17,7 @@ public record CreateCalendarServiceReqeust(
 
         String scheduleType
 ) {
-    public Calendar toEntity(long ownerId, long memberId) {
-        return Calendar.create(startDate, endDate, ownerId, scheduleType, scheduleDetails, memberId);
+    public Calendar toEntity(long coupleId, long ownerId) {
+        return Calendar.create(startDate, endDate, ownerId, scheduleType, scheduleDetails, coupleId);
     }
 }

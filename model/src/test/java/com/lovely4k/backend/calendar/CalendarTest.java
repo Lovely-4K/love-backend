@@ -30,7 +30,7 @@ class CalendarTest {
         // 검증
         assertThat(calendar).isNotNull()
                 .extracting(Calendar::getStartDate, Calendar::getEndDate, Calendar::getOwnerId, Calendar::getScheduleType, Calendar::getScheduleDetails, Calendar::getCoupleId)
-                .containsExactly(startDate, endDate, 0L, ScheduleType.valueOf(scheduleType), scheduleDetails, coupleId);
+                .containsExactly(startDate, endDate, ownerId, ScheduleType.valueOf(scheduleType), scheduleDetails, coupleId);
     }
 
     @ParameterizedTest
