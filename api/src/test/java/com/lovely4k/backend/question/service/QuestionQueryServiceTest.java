@@ -1,6 +1,5 @@
 package com.lovely4k.backend.question.service;
 
-import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.QuestionFormType;
 import com.lovely4k.backend.question.repository.QuestionQueryRepository;
 import com.lovely4k.backend.question.repository.response.AnsweredQuestionResponse;
@@ -35,7 +34,7 @@ class QuestionQueryServiceTest {
         // given
         long questionId = 1L;
         long memberId = 2L;
-        Sex sex = Sex.MALE;
+        String picture = "test";
         QuestionDetailsResponse mockResponse = new QuestionDetailsResponse(
             "What is your favorite color?",
             "Blue",
@@ -46,10 +45,10 @@ class QuestionQueryServiceTest {
             "Profile of opponent"
         );
 
-        given(questionQueryRepository.findQuestionDetails(questionId, sex, memberId)).willReturn(mockResponse);
+        given(questionQueryRepository.findQuestionDetails(questionId, memberId, picture)).willReturn(mockResponse);
 
         // when
-        QuestionDetailsResponse result = questionQueryService.findQuestionDetails(questionId, memberId, sex.name());
+        QuestionDetailsResponse result = questionQueryService.findQuestionDetails(questionId, memberId, picture);
 
         // then
         assertThat(result).isNotNull()

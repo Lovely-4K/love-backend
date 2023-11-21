@@ -1,7 +1,6 @@
 package com.lovely4k.backend.question.repository;
 
 import com.lovely4k.backend.QueryTestSupport;
-import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionChoices;
 import com.lovely4k.backend.question.QuestionForm;
@@ -30,14 +29,13 @@ class QuestionQueryRepositoryTest extends QueryTestSupport {
     @Autowired
     QuestionRepository questionRepository;
 
-    @Disabled("왜 안되지 외래키 제약 조건 때문에 member 테이블 drop이 안된다. 근데 실제로 member 테이블을 참조하고 있는 클래스는 없" +
-        "음")
+    @Disabled("단일 실행은 통과하는데 통합 테스트에서 통과하지 못함..")
     @Sql(scripts = "/questions/question.sql")
     @DisplayName("memberId, questionId, Sex를 통해 my, opponent를 구분해서 적절한 profile, answer, choice_index를 객체에 할당하여 해당 객체를 조회할 수 있다.")
     @Test
     void findQuestionDetails() {
-        QuestionDetailsResponse actual = questionQueryRepository.findQuestionDetails(1L, Sex.MALE, 1L);
-        QuestionDetailsResponse expected = new QuestionDetailsResponse("A vs B", "A", "B", 1, 2, "MALE PROFILE", "FEMALE PROFILE");
+        QuestionDetailsResponse actual = questionQueryRepository.findQuestionDetails(1L, 1L, "testURL");
+        QuestionDetailsResponse expected = new QuestionDetailsResponse("A vs B", "A", "B", 1, 2, "testURL", "HIS REAL SEX IS MALE. BUT IN COUPLE, HIS ROLE IS FEMALE");
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -73,23 +71,26 @@ class QuestionQueryRepositoryTest extends QueryTestSupport {
     void findQuestionGame() {
         //given
         Long coupleId = 1L;
-        Sex userSex = Sex.MALE;
+        Long loginUserId = 1L;
+        Long boyId = 1L;
+        Long opponentId = 2L;
+
         QuestionChoices questionChoices = QuestionChoices.create("test1", "test2", null, null);
         QuestionForm questionForm1 = QuestionForm.create(coupleId, "testQuestionContent1", questionChoices, 1L, QuestionFormType.SERVER);
         QuestionForm questionForm2 = QuestionForm.create(coupleId, "testQuestionContent2", questionChoices, 2L, QuestionFormType.SERVER);
         Question question1 = Question.create(coupleId, questionForm1, 1L);
         Question question2 = Question.create(coupleId, questionForm2, 2L);
 
-        question1.updateAnswer(1, Sex.MALE);
-        question1.updateAnswer(2, Sex.FEMALE);
-        question2.updateAnswer(1, Sex.MALE);
-        question2.updateAnswer(2, Sex.FEMALE);
+        question1.updateAnswer(1, boyId, loginUserId);
+        question1.updateAnswer(2, boyId, opponentId);
+        question2.updateAnswer(1, boyId, loginUserId);
+        question2.updateAnswer(2, boyId, opponentId);
 
         questionRepository.save(question1);
         questionRepository.save(question2);
 
         //when
-        QuestionGameResponse response = questionQueryRepository.findQuestionGame(coupleId, userSex).orElseThrow();
+        QuestionGameResponse response = questionQueryRepository.findQuestionGame(coupleId, loginUserId).orElseThrow();
 
         //then
         Assertions.assertAll(
@@ -101,24 +102,27 @@ class QuestionQueryRepositoryTest extends QueryTestSupport {
     @Sql(scripts = "/questions/findQuestionGame.sql")
     @Test
     @DisplayName("커플 남,여 모두 답변을 하지 않은 질문은 조회할 수 없다.")
-    void notFindOneRandomQuestion() throws Exception {
+    void notFindOneRandomQuestion() {
         //given
         Long coupleId = 1L;
-        Sex userSex = Sex.MALE;
+        Long loginUserId = 1L;
+        Long boyId = 1L;
+        Long opponentId = 2L;
+
         QuestionChoices questionChoices = QuestionChoices.create("test1", "test2", null, null);
         QuestionForm questionForm1 = QuestionForm.create(coupleId, "testQuestionContent1", questionChoices, 1L, QuestionFormType.SERVER);
         QuestionForm questionForm2 = QuestionForm.create(coupleId, "testQuestionContent2", questionChoices, 2L, QuestionFormType.SERVER);
         Question question1 = Question.create(coupleId, questionForm1, 1L);
         Question question2 = Question.create(coupleId, questionForm2, 2L);
 
-        question1.updateAnswer(1, Sex.MALE);
-        question2.updateAnswer(1, Sex.FEMALE);
+        question1.updateAnswer(1, boyId, loginUserId);
+        question2.updateAnswer(1, boyId, opponentId);
 
         questionRepository.save(question1);
         questionRepository.save(question2);
 
         //when && then
-        assertThatThrownBy(() -> questionQueryRepository.findQuestionGame(coupleId, userSex)
+        assertThatThrownBy(() -> questionQueryRepository.findQuestionGame(coupleId, loginUserId)
             .orElseThrow(() -> new EntityNotFoundException(String.format("답변이 완료된 커플 질문이 없습니다. 커플 아이디: %d", coupleId))))
             .isInstanceOf(EntityNotFoundException.class)
             .hasMessage(String.format("답변이 완료된 커플 질문이 없습니다. 커플 아이디: %d", coupleId));
