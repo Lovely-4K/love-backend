@@ -78,7 +78,7 @@ public class DiaryController {
     public ResponseEntity<ApiResponse<Page<DiaryListResponse>>> getDiaryList(
             @LoginUser SessionUser sessionUser,
             @RequestParam(required = false) Category category,
-            @PageableDefault(size = 10, sort = "localDateTime", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(size = 10, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ApiResponse.ok(diaryService.findDiaryList(sessionUser.coupleId(), category, pageable),
                 linkTo(DiaryController.class.getMethod("getDiaryDetail", Long.class, SessionUser.class)).withRel(DETAIL),
