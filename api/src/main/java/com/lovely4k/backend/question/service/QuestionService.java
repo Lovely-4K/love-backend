@@ -1,6 +1,7 @@
 package com.lovely4k.backend.question.service;
 
-import com.lovely4k.backend.couple.service.IncreaseTemperatureFacade;
+import com.lovely4k.backend.common.event.Events;
+import com.lovely4k.backend.couple.IncreaseTemperatureEvent;
 import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
@@ -33,7 +34,6 @@ public class QuestionService {
     private final QuestionFormRepository questionFormRepository;
     private final QuestionValidator questionValidator;
     private final QuestionServiceSupporter questionServiceSupporter;
-    private final IncreaseTemperatureFacade facade;
     private static final int LOCK_TIME_OUT = 3;
 
     @Transactional(timeout = LOCK_TIME_OUT)
@@ -63,20 +63,12 @@ public class QuestionService {
 
     @Retryable(retryFor = ObjectOptimisticLockingFailureException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     @Transactional
-    public void updateQuestionAnswer(Long id, String sex, int answer) {
+    public void updateQuestionAnswer(Long id, Long coupleId, Long loginUserId, int answer) {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(notFoundEntityMessage("question", id)));  // NOSONAR
-        question.updateAnswer(answer, Sex.valueOf(sex));
-        increaseTemperature(question);
-    }
 
-    private void increaseTemperature(Question question) {
-        try {
-            facade.increaseTemperature(question.getCoupleId());
-        } catch (InterruptedException e) {  // NOSONAR
-            log.warn("[System Error] Something went wrong during increasing temperature", e);
-            throw new IllegalStateException("System Error Occurred",e);
-        }
+        question.updateAnswer(answer, questionServiceSupporter.getBoyId(coupleId), loginUserId);
+        Events.raise(new IncreaseTemperatureEvent(question.getCoupleId()));
     }
 
     @Transactional

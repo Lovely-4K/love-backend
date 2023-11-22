@@ -155,7 +155,7 @@ class QuestionApiDocsTest extends RestDocsSupport {
     @Test
     void answerQuestion() throws Exception {
         // questionService.updateQuestionAnswer()가 호출되면 아무런 동작도 하지 않도록 설정
-        willDoNothing().given(questionService).updateQuestionAnswer(any(), any(), anyInt());
+        willDoNothing().given(questionService).updateQuestionAnswer(any(), any(), any(), anyInt());
         AnswerQuestionRequest request = new AnswerQuestionRequest(1);
 
         mockMvc.perform(patch("/v1/questions/{id}/answers", 1L)

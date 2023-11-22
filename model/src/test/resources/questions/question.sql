@@ -1,4 +1,5 @@
 -- Drop tables if they exist
+DROP TABLE IF EXISTS refresh_token;
 DROP TABLE IF EXISTS question;
 DROP TABLE IF EXISTS question_form;
 DROP TABLE IF EXISTS couple;
@@ -83,9 +84,9 @@ CREATE TABLE question_form
 );
 
 insert into member (couple_id, sex, image_url)
-values (1, 'MALE', 'MALE PROFILE');
+values (1, 'MALE', 'MALE PROFILE1');
 insert into member (couple_id, sex, image_url)
-values (2, 'FEMALE', 'FEMALE PROFILE');
+values (2, 'MALE', 'HIS REAL SEX IS MALE. BUT IN COUPLE, HIS ROLE IS FEMALE');
 insert into couple (boy_id, girl_id)
 values (1, 2);
 insert into question_form (question_content, first_choice, second_choice, question_day, question_form_type)

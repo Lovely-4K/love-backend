@@ -1,6 +1,5 @@
 package com.lovely4k.backend.question;
 
-import com.lovely4k.backend.member.Sex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +31,7 @@ class QuestionTest {
         QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L, QuestionFormType.SERVER);
 
         Question question1 = Question.create(1L, questionForm, 1L);
-        question1.updateAnswer(1, Sex.MALE);
+        question1.updateAnswer(1, 1L, 1L);
 
         assertThatThrownBy(question1::validateAnswer)
             .isInstanceOf(IllegalStateException.class)
@@ -51,8 +50,8 @@ class QuestionTest {
         QuestionChoices questionChoices = QuestionChoices.create("choice1", "choice2", null, null);
         QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L, QuestionFormType.SERVER);
         Question question = Question.create(1L, questionForm, 1L);
-        question.updateAnswer(1, Sex.MALE);
-        question.updateAnswer(2, Sex.FEMALE);
+        question.updateAnswer(1, 1L, 1L);
+        question.updateAnswer(2, 1L, 2L);
 
         assertThatCode(question::validateAnswer).doesNotThrowAnyException();
     }
@@ -64,7 +63,7 @@ class QuestionTest {
         QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L, QuestionFormType.SERVER);
         Question question = Question.create(1L, questionForm, 1L);
 
-        assertThatThrownBy(() -> question.updateAnswer(5, Sex.MALE))
+        assertThatThrownBy(() -> question.updateAnswer(5, 1L, 1L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("유효하지 않은 선택입니다.");
     }
@@ -101,11 +100,11 @@ class QuestionTest {
         QuestionForm questionForm = QuestionForm.create(1L, "questionContent", questionChoices, 1L, QuestionFormType.SERVER);
         Question question = Question.create(1L, questionForm, 1L);
 
-        assertThatThrownBy(() -> question.updateAnswer(3, Sex.MALE))
+        assertThatThrownBy(() -> question.updateAnswer(3, 1L, 1L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("유효하지 않은 선택입니다.: 3");
 
-        assertThatThrownBy(() -> question.updateAnswer(4, Sex.FEMALE))
+        assertThatThrownBy(() -> question.updateAnswer(4, 1L, 2L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("유효하지 않은 선택입니다.: 4");
     }

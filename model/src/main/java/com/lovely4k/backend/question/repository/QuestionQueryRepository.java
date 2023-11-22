@@ -2,17 +2,17 @@ package com.lovely4k.backend.question.repository;
 
 import com.lovely4k.backend.couple.QCouple;
 import com.lovely4k.backend.member.QMember;
-import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.QQuestion;
+import com.lovely4k.backend.question.QQuestionChoices;
 import com.lovely4k.backend.question.QQuestionForm;
 import com.lovely4k.backend.question.repository.response.*;
-import com.lovely4k.backend.question.repository.response.AnsweredQuestionResponse;
-import com.lovely4k.backend.question.repository.response.DailyQuestionResponse;
-import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse;
-import com.lovely4k.backend.question.repository.response.QuestionResponse;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.*;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.lovely4k.backend.couple.QCouple.couple;
 import static com.lovely4k.backend.question.QQuestion.question;
 import static com.lovely4k.backend.question.QQuestionForm.questionForm;
 
@@ -30,63 +29,62 @@ public class QuestionQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public QuestionDetailsResponse findQuestionDetails(long questionId, Sex sex, long memberId) {
-        QMember memberBoy = new QMember("memberBoy");
-        QMember memberGirl = new QMember("memberGirl");
+    /**
+     * 1. 질문id가 questionId인 Question row에서 girlChoiceIndex, boyChoiceIndex를 얻어서
+     * QuestionForm 테이블과 조인한 후 girlAnswer과 boyAnswer, questionContent를 얻어온다.
+     * 2. 1에서 조회된 Question과 Couple 테이블을 couple_id로 join해서 Couple을 가져온다.
+     * 3. 2에서 가져온 Couple에서 boy_id가 loginUserId 같을 경우 myChoiceIndex에 Question에서 얻어온
+     * boyChoiceIndex를 할당하고 해당 값이 n이면 1에서 얻어온 QuestionForm의 n번째 선택지를 myAnswer에 할당해준다.
+     * (else 조건도 동일한 식으로 진행)
+     * 5. 3에서 가져온 couple row에서 boy_id, girl_id를 비교하며 상대방에 해당하는 id와 member를 조인해서 상대방의 프로필 정보를 가져온다.
+     * */
+    public QuestionDetailsResponse findQuestionDetails(Long questionId, Long loginUserId, String picture) {
+        QCouple couple = QCouple.couple;
+        QMember opponentMember = new QMember("opponentMember");
 
-        var myChoiceIndex = getMyChoiceIndex(sex);
-        var opponentChoiceIndex = getOpponentChoiceIndex(sex);
-        var myProfile = getMyProfile(sex, memberBoy, memberGirl);
-        var opponentProfile = getOpponentProfile(sex, memberBoy, memberGirl);
-        var memberFilter = getMemberFilter(sex, memberId, couple);
+        var myChoiceIndex = getMyChoiceIndex(loginUserId, couple);
+        var opponentChoiceIndex = getOpponentChoiceIndex(loginUserId, couple);
 
         return jpaQueryFactory
             .select(Projections.constructor(QuestionDetailsResponse.class,
                 questionForm.questionContent,
-                new CaseBuilder()
-                    .when(myChoiceIndex.eq(1)).then(questionForm.questionChoices.firstChoice)
-                    .when(myChoiceIndex.eq(2)).then(questionForm.questionChoices.secondChoice)
-                    .when(myChoiceIndex.eq(3)).then(questionForm.questionChoices.thirdChoice)
-                    .when(myChoiceIndex.eq(4)).then(questionForm.questionChoices.fourthChoice)
-                    .otherwise(""),
-                new CaseBuilder()
-                    .when(opponentChoiceIndex.eq(1)).then(questionForm.questionChoices.firstChoice)
-                    .when(opponentChoiceIndex.eq(2)).then(questionForm.questionChoices.secondChoice)
-                    .when(opponentChoiceIndex.eq(3)).then(questionForm.questionChoices.thirdChoice)
-                    .when(opponentChoiceIndex.eq(4)).then(questionForm.questionChoices.fourthChoice)
-                    .otherwise(""),
+                getChoiceCase(myChoiceIndex, questionForm.questionChoices),
+                getChoiceCase(opponentChoiceIndex, questionForm.questionChoices),
                 myChoiceIndex,
                 opponentChoiceIndex,
-                myProfile,
-                opponentProfile
+                ConstantImpl.create(picture),
+                opponentMember.imageUrl
             ))
             .from(question)
-            .join(question.questionForm, questionForm)
-            .join(couple).on(question.coupleId.eq(couple.id))
-            .leftJoin(memberBoy).on(couple.boyId.eq(memberBoy.id))
-            .leftJoin(memberGirl).on(couple.girlId.eq(memberGirl.id))
-            .where(question.id.eq(questionId).and(memberFilter))
+            .innerJoin(question.questionForm, questionForm)
+            .innerJoin(couple).on(question.coupleId.eq(couple.id))
+            .innerJoin(opponentMember).on(
+                couple.boyId.eq(loginUserId).and(couple.girlId.eq(opponentMember.id))
+                    .or(couple.girlId.eq(loginUserId).and(couple.boyId.eq(opponentMember.id)))
+            )
+            .where(question.id.eq(questionId))
             .fetchOne();
     }
 
-    private NumberExpression<Integer> getMyChoiceIndex(Sex sex) {
-        return sex == Sex.MALE ? question.boyChoiceIndex : question.girlChoiceIndex;
+    private StringExpression getChoiceCase(NumberExpression<Integer> choiceIndex, QQuestionChoices questionChoices) {
+        return new CaseBuilder()
+            .when(choiceIndex.eq(1)).then(questionChoices.firstChoice)
+            .when(choiceIndex.eq(2)).then(questionChoices.secondChoice)
+            .when(choiceIndex.eq(3)).then(questionChoices.thirdChoice)
+            .when(choiceIndex.eq(4)).then(questionChoices.fourthChoice)
+            .otherwise("");
     }
 
-    private NumberExpression<Integer> getOpponentChoiceIndex(Sex sex) {
-        return sex == Sex.MALE ? question.girlChoiceIndex : question.boyChoiceIndex;
+    private NumberExpression<Integer> getMyChoiceIndex(Long memberId, QCouple couple) {
+        return new CaseBuilder()
+            .when(couple.boyId.eq(memberId)).then(question.boyChoiceIndex)
+            .otherwise(question.girlChoiceIndex);
     }
 
-    private StringExpression getMyProfile(Sex sex, QMember memberBoy, QMember memberGirl) {
-        return sex == Sex.MALE ? memberBoy.imageUrl : memberGirl.imageUrl;
-    }
-
-    private StringExpression getOpponentProfile(Sex sex, QMember memberBoy, QMember memberGirl) {
-        return sex == Sex.MALE ? memberGirl.imageUrl : memberBoy.imageUrl;
-    }
-
-    private BooleanExpression getMemberFilter(Sex sex, long memberId, QCouple couple) {
-        return sex == Sex.MALE ? couple.boyId.eq(memberId) : couple.girlId.eq(memberId);
+    private NumberExpression<Integer> getOpponentChoiceIndex(Long memberId, QCouple couple) {
+        return new CaseBuilder()
+            .when(couple.boyId.eq(memberId)).then(question.girlChoiceIndex)
+            .otherwise(question.boyChoiceIndex);
     }
 
     public AnsweredQuestionResponse findAnsweredQuestions(Long id, Long coupleId, Integer limit) {
@@ -142,9 +140,9 @@ public class QuestionQueryRepository {
     }
 
 
-    public Optional<QuestionGameResponse> findQuestionGame(Long coupleId, Sex sex) {
-
-        var opponentChoiceIndex = getOpponentChoiceIndex(sex);
+    public Optional<QuestionGameResponse> findQuestionGame(Long coupleId, Long loginUserId) {
+        QCouple couple = QCouple.couple;
+        var opponentChoiceIndex = getOpponentChoiceIndex(loginUserId, couple);
 
         return Optional.ofNullable(jpaQueryFactory.select(Projections.constructor(
                 QuestionGameResponse.class,
@@ -155,7 +153,8 @@ public class QuestionQueryRepository {
                 questionForm.questionChoices.fourthChoice,
                 opponentChoiceIndex
             )).from(question)
-            .join(question.questionForm, questionForm)
+            .innerJoin(question.questionForm, questionForm)
+            .innerJoin(couple).on(question.coupleId.eq(coupleId))
             .where(
                 question.coupleId.eq(coupleId),
                 question.boyChoiceIndex.ne(0),

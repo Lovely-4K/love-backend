@@ -63,7 +63,7 @@ public class QuestionController {
 
 
     @SneakyThrows
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     public ResponseEntity<ApiResponse<CreateQuestionResponse>> createQuestion(@LoginUser SessionUser user) {
         CreateQuestionResponse response = questionService.createQuestion(user.coupleId());
 
@@ -76,7 +76,7 @@ public class QuestionController {
     @SneakyThrows
     @PatchMapping(path = "/{id}/answers", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Void>> answerQuestion(@PathVariable("id") Long id, @LoginUser SessionUser user, @RequestBody @Valid AnswerQuestionRequest request) {
-        questionService.updateQuestionAnswer(id, user.sex(), request.choiceNumber());
+        questionService.updateQuestionAnswer(id, user.coupleId(), user.memberId(), request.choiceNumber());
 
         return ApiResponse.ok(
             linkTo(methodOn(getClass()).answerQuestion(id, user, request)).withSelfRel(),
@@ -96,14 +96,14 @@ public class QuestionController {
     @SneakyThrows
     @GetMapping("/details/{id}")
     public ResponseEntity<ApiResponse<QuestionDetailsResponse>> getQuestionDetails(@PathVariable("id") Long id, @LoginUser SessionUser user) {
-        return ApiResponse.ok(questionQueryService.findQuestionDetails(id, user.memberId(), user.sex()),
+        return ApiResponse.ok(questionQueryService.findQuestionDetails(id, user.memberId(), user.picture()),
             linkTo(methodOn(getClass()).getQuestionDetails(id, user)).withSelfRel(),
             linkTo(getClass().getMethod(GET_ANSWERED_QUESTIONS, AnsweredQuestionParamRequest.class, SessionUser.class)).withRel(GET_ANSWERED_QUESTIONS));
     }
 
     @GetMapping("/games")
     public ResponseEntity<ApiResponse<QuestionGameResponse>> getQuestionGame(@LoginUser SessionUser user) {
-        return ApiResponse.ok(questionQueryService.findQuestionGame(user.coupleId(), user.sex()),
+        return ApiResponse.ok(questionQueryService.findQuestionGame(user.coupleId(), user.memberId()),
             linkTo(methodOn(getClass()).getQuestionGame(user)).withSelfRel());
     }
 
