@@ -3,6 +3,7 @@ package com.lovely4k.backend.question.repository;
 import com.lovely4k.backend.couple.QCouple;
 import com.lovely4k.backend.member.QMember;
 import com.lovely4k.backend.question.QQuestion;
+import com.lovely4k.backend.question.QQuestionChoices;
 import com.lovely4k.backend.question.QQuestionForm;
 import com.lovely4k.backend.question.repository.response.*;
 import com.querydsl.core.BooleanBuilder;
@@ -11,6 +12,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -43,22 +45,11 @@ public class QuestionQueryRepository {
         var myChoiceIndex = getMyChoiceIndex(loginUserId, couple);
         var opponentChoiceIndex = getOpponentChoiceIndex(loginUserId, couple);
 
-
         return jpaQueryFactory
             .select(Projections.constructor(QuestionDetailsResponse.class,
                 questionForm.questionContent,
-                new CaseBuilder()
-                    .when(myChoiceIndex.eq(1)).then(questionForm.questionChoices.firstChoice)
-                    .when(myChoiceIndex.eq(2)).then(questionForm.questionChoices.secondChoice)
-                    .when(myChoiceIndex.eq(3)).then(questionForm.questionChoices.thirdChoice)
-                    .when(myChoiceIndex.eq(4)).then(questionForm.questionChoices.fourthChoice)
-                    .otherwise(""),
-                new CaseBuilder()
-                    .when(opponentChoiceIndex.eq(1)).then(questionForm.questionChoices.firstChoice)
-                    .when(opponentChoiceIndex.eq(2)).then(questionForm.questionChoices.secondChoice)
-                    .when(opponentChoiceIndex.eq(3)).then(questionForm.questionChoices.thirdChoice)
-                    .when(opponentChoiceIndex.eq(4)).then(questionForm.questionChoices.fourthChoice)
-                    .otherwise(""),
+                getChoiceCase(myChoiceIndex, questionForm.questionChoices),
+                getChoiceCase(opponentChoiceIndex, questionForm.questionChoices),
                 myChoiceIndex,
                 opponentChoiceIndex,
                 ConstantImpl.create(picture),
@@ -73,6 +64,15 @@ public class QuestionQueryRepository {
             )
             .where(question.id.eq(questionId))
             .fetchOne();
+    }
+
+    private StringExpression getChoiceCase(NumberExpression<Integer> choiceIndex, QQuestionChoices questionChoices) {
+        return new CaseBuilder()
+            .when(choiceIndex.eq(1)).then(questionChoices.firstChoice)
+            .when(choiceIndex.eq(2)).then(questionChoices.secondChoice)
+            .when(choiceIndex.eq(3)).then(questionChoices.thirdChoice)
+            .when(choiceIndex.eq(4)).then(questionChoices.fourthChoice)
+            .otherwise("");
     }
 
     private NumberExpression<Integer> getMyChoiceIndex(Long memberId, QCouple couple) {

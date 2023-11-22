@@ -11,7 +11,6 @@ import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse
 import com.lovely4k.backend.question.repository.response.QuestionGameResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ class QuestionQueryRepositoryTest extends QueryTestSupport {
     @Autowired
     QuestionRepository questionRepository;
 
-    @Disabled("단일 실행은 통과하는데 통합 테스트에서 통과하지 못함..")
     @Sql(scripts = "/questions/question.sql")
     @DisplayName("memberId, questionId, Sex를 통해 my, opponent를 구분해서 적절한 profile, answer, choice_index를 객체에 할당하여 해당 객체를 조회할 수 있다.")
     @Test

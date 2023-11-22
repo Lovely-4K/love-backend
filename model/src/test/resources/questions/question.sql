@@ -1,4 +1,5 @@
 -- Drop tables if they exist
+DROP TABLE IF EXISTS refresh_token;
 DROP TABLE IF EXISTS question;
 DROP TABLE IF EXISTS question_form;
 DROP TABLE IF EXISTS couple;
