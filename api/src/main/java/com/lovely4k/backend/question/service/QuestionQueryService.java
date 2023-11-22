@@ -1,6 +1,5 @@
 package com.lovely4k.backend.question.service;
 
-import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.repository.QuestionQueryRepository;
 import com.lovely4k.backend.question.repository.response.AnsweredQuestionResponse;
 import com.lovely4k.backend.question.repository.response.DailyQuestionResponse;
@@ -18,8 +17,8 @@ public class QuestionQueryService {
 
     private final QuestionQueryRepository questionQueryRepository;
 
-    public QuestionDetailsResponse findQuestionDetails(Long questionId, Long memberId, String sex) {
-        return questionQueryRepository.findQuestionDetails(questionId, Sex.valueOf(sex), memberId);
+    public QuestionDetailsResponse findQuestionDetails(Long questionId, Long memberId, String picture) {
+        return questionQueryRepository.findQuestionDetails(questionId, memberId, picture);
     }
 
     public AnsweredQuestionResponse findAllAnsweredQuestionByCoupleId(Long id, Long coupleId, Integer limit) {
@@ -30,8 +29,8 @@ public class QuestionQueryService {
         return questionQueryRepository.findDailyQuestion(coupleId);
     }
 
-    public QuestionGameResponse findQuestionGame(Long coupleId, String sex) {
-        return questionQueryRepository.findQuestionGame(coupleId, Sex.valueOf(sex))
+    public QuestionGameResponse findQuestionGame(Long coupleId, Long loginUserId) {
+        return questionQueryRepository.findQuestionGame(coupleId, loginUserId)
             .orElseThrow(() -> new EntityNotFoundException(String.format("답변이 완료된 커플 질문이 없습니다. 커플 아이디: %d", coupleId)));
     }
 }

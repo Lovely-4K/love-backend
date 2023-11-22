@@ -1,7 +1,7 @@
 package com.lovely4k.backend.question.service;
 
 import com.lovely4k.TestData;
-import com.lovely4k.backend.member.Sex;
+
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.repository.QuestionFormRepository;
@@ -101,18 +101,20 @@ class QuestionServiceTest  {
     void testUpdateQuestionAnswer() {
         // Given
         Long questionId = 1L;
-        Sex sex = Sex.MALE;
+        Long coupleId = 1L;
+        Long loginUserId = 1L;
+        Long boyId = 1L;
         int answer = 1;
         Question mockQuestion = mock(Question.class);
 
         // 성공적으로 Question을 조회할 수 있다고 가정
         given(questionRepository.findById(questionId)).willReturn(Optional.of(mockQuestion));
-
+        given(questionServiceSupporter.getBoyId(coupleId)).willReturn(boyId);
         // When
-        questionService.updateQuestionAnswer(questionId, sex.name(), answer);
+        questionService.updateQuestionAnswer(questionId, coupleId, loginUserId, answer);
 
         // Then
-        verify(mockQuestion, times(1)).updateAnswer(answer, sex);
+        verify(mockQuestion, times(1)).updateAnswer(answer, boyId, loginUserId);
     }
 
     @DisplayName("updateQuestionAnswer 메서드 실패 (OptimisticLockException) 테스트")
@@ -120,17 +122,20 @@ class QuestionServiceTest  {
     void testUpdateQuestionAnswerOptimisticLockException() {
         // Given
         Long questionId = 1L;
-        Sex sex = Sex.MALE;
+        Long coupleId = 1L;
+        Long loginUserId = 1L;
         int answer = 1;
+        Long boyId = 1L;
         Question mockQuestion = mock(Question.class);
 
         // 성공적으로 Question을 조회할 수 있다고 가정
         given(questionRepository.findById(questionId)).willReturn(Optional.of(mockQuestion));
+        given(questionServiceSupporter.getBoyId(coupleId)).willReturn(boyId);
         // updateAnswer 호출시 OptimisticLockException 발생
-        doThrow(OptimisticLockException.class).when(mockQuestion).updateAnswer(answer, sex);
+        doThrow(OptimisticLockException.class).when(mockQuestion).updateAnswer(answer, boyId, loginUserId);
 
         // When & Then
-        Assertions.assertThatThrownBy(() -> questionService.updateQuestionAnswer(questionId, sex.name(), answer))
+        Assertions.assertThatThrownBy(() -> questionService.updateQuestionAnswer(questionId, coupleId, loginUserId, answer))
             .isInstanceOf(OptimisticLockException.class);
     }
 

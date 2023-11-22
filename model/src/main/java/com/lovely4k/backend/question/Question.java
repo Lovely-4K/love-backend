@@ -1,7 +1,6 @@
 package com.lovely4k.backend.question;
 
 import com.lovely4k.backend.common.jpa.BaseTimeEntity;
-import com.lovely4k.backend.member.Sex;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -29,7 +28,7 @@ public class Question extends BaseTimeEntity {
     private QuestionForm questionForm;
 
     @Column(name = "boy_choice_index")
-    private int boyChoiceIndex;  // 1, 2, 3, or 4
+    private int boyChoiceIndex;
 
     @Column(name = "girl_choice_index")
     private int girlChoiceIndex;
@@ -61,11 +60,13 @@ public class Question extends BaseTimeEntity {
         }
     }
 
-    public void updateAnswer(int answer, Sex sex) {
+    public void updateAnswer(int answer, Long boyId, Long loginUserId) {
         validateChoice(answer);
-        switch (sex) {  // NOSONAR
-            case MALE -> this.boyChoiceIndex = answer;
-            case FEMALE -> this.girlChoiceIndex = answer;
+
+        if (boyId.equals(loginUserId)) {
+            this.boyChoiceIndex = answer;
+        } else {
+            this.girlChoiceIndex = answer;
         }
     }
 

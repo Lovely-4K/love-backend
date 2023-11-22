@@ -1,6 +1,5 @@
 package com.lovely4k.backend.question.service;
 
-import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.controller.request.CreateQuestionFormRequest;
 import com.lovely4k.backend.question.repository.QuestionRepository;
@@ -72,7 +71,8 @@ class QuestionServiceConcurrencyTest {
         final AtomicInteger successCounter = new AtomicInteger(0);
         final AtomicInteger requestCounter = new AtomicInteger(0);
         final long questionId = 1L;
-
+        final Long coupleId = 1L;
+        final Long loginUserId = 1L;
         Question initialQuestion = questionRepository.findById(questionId)
                 .orElseThrow();
         long initialVersion = initialQuestion.getVersion();
@@ -82,7 +82,7 @@ class QuestionServiceConcurrencyTest {
                 try {
                     int currentRequest = requestCounter.incrementAndGet();
                     int answer = (currentRequest == 1) ? 3 : 4;
-                    questionService.updateQuestionAnswer(questionId, Sex.MALE.name(), answer);
+                    questionService.updateQuestionAnswer(questionId, coupleId, loginUserId, answer);
                     successCounter.incrementAndGet();
                 } finally {
                     latch.countDown();
