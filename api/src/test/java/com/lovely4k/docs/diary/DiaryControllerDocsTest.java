@@ -98,13 +98,15 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     @Test
     void getDiaryDetail() throws Exception {
         // stubbing
-        when(diaryService.findDiaryDetail(any(), any()))
+        when(diaryService.findDiaryDetail(any(), any(), any()))
             .thenReturn(
                 new DiaryDetailResponse(102L,
                     LocalDate.of(2021, 10, 20), 5, Category.FOOD,
                     "여기 음식 최고", "포브스 선정 맛집 답다.",
                     PhotoListResponse.builder().firstImage("image-url1").secondImage("image-url2").build()
+                    , "하이라디오", BigDecimal.valueOf(93.887), BigDecimal.valueOf(123.986)
                 ));
+
 
         this.mockMvc.perform(
                 get("/v1/diaries/{id}", 1L)
@@ -124,13 +126,16 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                     fieldWithPath("body.datingDay").type(STRING).description("데이트 날짜"),
                     fieldWithPath("body.score").type(NUMBER).description("장소에 대한 평점"),
                     fieldWithPath("body.category").type(STRING).description("장소 카테고리"),
-                    fieldWithPath("body.boyText").type(STRING).description("남자친구 다이어리 내용"),
-                    fieldWithPath("body.girlText").type(STRING).description("여자친구 다이어리 내용"),
-                    fieldWithPath("body.pictures.firstImage").type(STRING).optional().description("이미지 주소"),
-                    fieldWithPath("body.pictures.secondImage").type(STRING).optional().description("이미지 주소"),
-                    fieldWithPath("body.pictures.thirdImage").type(STRING).optional().description("이미지 주소"),
-                    fieldWithPath("body.pictures.fourthImage").type(STRING).optional().description("이미지 주소"),
-                    fieldWithPath("body.pictures.fifthImage").type(STRING).optional().description("이미지 주소"),
+                    fieldWithPath("body.myText").type(STRING).description("내 다이어리 내용"),
+                    fieldWithPath("body.opponentText").type(STRING).description("연인 다이어리 내용"),
+                    fieldWithPath("body.pictures.firstImage").type(STRING).optional().description("이미지1 주소"),
+                    fieldWithPath("body.pictures.secondImage").type(STRING).optional().description("이미지2 주소"),
+                    fieldWithPath("body.pictures.thirdImage").type(STRING).optional().description("이미지3 주소"),
+                    fieldWithPath("body.pictures.fourthImage").type(STRING).optional().description("이미지4 주소"),
+                    fieldWithPath("body.pictures.fifthImage").type(STRING).optional().description("이미지5 주소"),
+                    fieldWithPath("body.placeName").type(STRING).description("장소 이름"),
+                    fieldWithPath("body.latitude").type(NUMBER).description("장소 위도"),
+                    fieldWithPath("body.longitude").type(NUMBER).description("장소 경도"),
                     fieldWithPath("links[0].rel").type(STRING).description("relation of url"),
                     fieldWithPath("links[0].href").type(STRING).description("url of relation")
                 )
@@ -200,7 +205,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
         );
 
         when(diaryService.findDiaryListByMarker(any(), any()))
-            .thenReturn(new DiaryListByMarkerResponse(diaryMarkerResponses));
+            .thenReturn(new DiaryListByMarkerResponse(BigDecimal.valueOf(98.1234), BigDecimal.valueOf(123.1231), "starbucks", diaryMarkerResponses));
 
         this.mockMvc.perform(
                 get("/v1/diaries/marker/{kakaoMapId}", 1L)
@@ -214,6 +219,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                 ),
                 responseFields(
                     fieldWithPath("code").type(NUMBER).description("코드"),
+                    fieldWithPath("body.latitude").description("데이트 장소의 위도"),
+                    fieldWithPath("body.longitude").description("데이트 장소의 경도"),
+                    fieldWithPath("body.placeName").description("데이트 장소의 위치명"),
                     fieldWithPath("body.diaries[0].diaryId").description("다이어리 id"),
                     fieldWithPath("body.diaries[0].imageUrl").description("다이어리 사진 url"),
                     fieldWithPath("body.diaries[0].datingDay").description("데이트 한 날짜"),
