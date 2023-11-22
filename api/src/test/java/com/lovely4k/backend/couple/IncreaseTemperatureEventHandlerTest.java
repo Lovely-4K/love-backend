@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.transaction.TestTransaction;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -53,6 +54,7 @@ class IncreaseTemperatureEventHandlerTest extends IntegrationTestSupport {
     }
 
     @TestConfiguration
+    @EnableAsync
     static class TestConfig {
         @Bean(name = "taskExecutor")
         public Executor taskExecutor() {
