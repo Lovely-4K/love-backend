@@ -26,9 +26,6 @@ dependencies {
     // spring security
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-    // spring session jdbc
-    implementation 'org.springframework.session:spring-session-jdbc'
-
     // sprint security test
     testImplementation 'org.springframework.security:spring-security-test'
 
