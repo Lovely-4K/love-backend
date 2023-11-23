@@ -58,7 +58,7 @@ public record HttpLogResponse(
 
         sb.append(" parameter=");
         parameter.forEach((key, values) -> {
-            sb.append(key).append("=[");
+            sb.append(key).append(" [");
             sb.append(String.join(", ", values));
             sb.append("] ");
         });
