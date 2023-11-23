@@ -5,6 +5,7 @@ import com.lovely4k.backend.calendar.ScheduleType;
 import com.lovely4k.backend.calendar.repository.response.FindRecentCalendarsResponse;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 public record FindRecentCalendarsServiceResponse(
@@ -53,6 +54,10 @@ public record FindRecentCalendarsServiceResponse(
     }
 
     public static FindRecentCalendarsServiceResponse from(List<FindRecentCalendarsResponse> responses) {
+        if (responses.isEmpty()) {
+            return new FindRecentCalendarsServiceResponse(null, Collections.emptyList());
+        }
+
         List<ScheduleServiceResponse> scheduleServiceResponses = responses
             .stream()
             .map(ScheduleServiceResponse::from)
