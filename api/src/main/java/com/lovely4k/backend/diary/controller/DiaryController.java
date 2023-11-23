@@ -11,6 +11,7 @@ import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListInGridResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
 import com.lovely4k.backend.location.Category;
+import com.lovely4k.backend.member.Sex;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -67,7 +68,7 @@ public class DiaryController {
             @LoginUser SessionUser sessionUser
     ) {
 
-        return ApiResponse.ok(diaryService.findDiaryDetail(id, sessionUser.coupleId()),
+        return ApiResponse.ok(diaryService.findDiaryDetail(id, sessionUser.coupleId(), sessionUser.sex()),
                 linkTo(methodOn(DiaryController.class).getDiaryDetail(id, sessionUser)).withSelfRel(),
                 linkTo(DiaryController.class.getMethod("editDiary", Long.class, List.class, WebDiaryEditRequest.class, SessionUser.class)).withRel(EDIT),
                 linkTo(DiaryController.class).slash(id).withRel(DELETE)

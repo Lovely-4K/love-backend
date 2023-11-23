@@ -11,6 +11,7 @@ import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
 import com.lovely4k.backend.diary.service.response.*;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.member.Member;
+import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -67,11 +68,11 @@ public class DiaryService {
         return imageUploader.upload("diary/", multipartFileList);   // NOSONAR
     }
 
-    public DiaryDetailResponse findDiaryDetail(Long diaryId, Long coupleId) {
+    public DiaryDetailResponse findDiaryDetail(Long diaryId, Long coupleId, String sex) {
         Diary diary = validateDiaryId(diaryId);
         diary.checkAuthority(coupleId);
 
-        return DiaryDetailResponse.of(diary);
+        return DiaryDetailResponse.of(diary, Sex.valueOf(sex));
     }
 
     private Diary validateDiaryId(Long diaryId) {
@@ -90,10 +91,12 @@ public class DiaryService {
 
     public DiaryListByMarkerResponse findDiaryListByMarker(Long kakaoMapId, Long coupleId) {
         List<Diary> diaries = diaryRepositoryAdapter.findByMarker(kakaoMapId, coupleId);
-        if (diaries == null) {
+        if (diaries.isEmpty()) {
             return DiaryListByMarkerResponse.emptyValue();
         } else {
-            return DiaryListByMarkerResponse.from(diaries.stream().map(
+            return DiaryListByMarkerResponse.from(
+                diaries.get(0),
+                diaries.stream().map(
                 DiaryMarkerResponse::from
             ).toList());
         }

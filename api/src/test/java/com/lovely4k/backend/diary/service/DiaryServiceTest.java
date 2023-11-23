@@ -7,7 +7,6 @@ import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.Photos;
-import com.lovely4k.backend.diary.controller.request.WebDiaryEditRequest;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
 import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
 import com.lovely4k.backend.diary.service.response.*;
@@ -16,6 +15,7 @@ import com.lovely4k.backend.location.Location;
 import com.lovely4k.backend.location.LocationRepository;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.Role;
+import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.AfterEach;
@@ -204,13 +204,13 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // when
         DiaryDetailResponse diaryDetailResponse =
-            diaryService.findDiaryDetail(diary.getId(), member.getCoupleId());
+            diaryService.findDiaryDetail(diary.getId(), member.getCoupleId(), member.getSex().toString());
 
         // then
         assertAll(
             () -> assertThat(diaryDetailResponse.kakaoMapId()).isEqualTo(10L),
-            () -> assertThat(diaryDetailResponse.boyText()).isEqualTo("hello"),
-            () -> assertThat(diaryDetailResponse.girlText()).isEqualTo("hi"),
+            () -> assertThat(diaryDetailResponse.myText()).isEqualTo("hello"),
+            () -> assertThat(diaryDetailResponse.opponentText()).isEqualTo("hi"),
             () -> assertThat(diaryDetailResponse.score()).isEqualTo(4)
         );
     }
@@ -229,10 +229,11 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         Long invalidDiaryId = diary.getId() + 1;
         Long memberId = member.getId();
+        String sex = member.getSex().toString();
 
         // when && then
         assertThatThrownBy(
-            () -> diaryService.findDiaryDetail(invalidDiaryId, memberId)
+            () -> diaryService.findDiaryDetail(invalidDiaryId, memberId, sex)
         ).isInstanceOf(EntityNotFoundException.class)
             .hasMessage("invalid diary id");
 
@@ -252,10 +253,11 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         Long diaryId = diary.getId();
         Long memberId = member.getId();
+        String sex = member.getSex().toString();
 
         // when && then
         assertThatThrownBy(
-            () -> diaryService.findDiaryDetail(diaryId, memberId)
+            () -> diaryService.findDiaryDetail(diaryId, memberId, sex)
         ).isInstanceOf(IllegalArgumentException.class)
             .hasMessage("you can only manage your couple's diary");
     }
@@ -385,7 +387,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         DiaryListByMarkerResponse diaryListByMarkerResponse = diaryService.findDiaryListByMarker(1L, 1L);
 
         // then
-        assertThat(diaryListByMarkerResponse.diaries()).isEmpty();
+        assertThat(diaryListByMarkerResponse.diaries()).isNull();
     }
 
     @DisplayName("findDiaryListInGrid를 통해 위치 기반 다이어리 목록을 조회할 수 있다.")
