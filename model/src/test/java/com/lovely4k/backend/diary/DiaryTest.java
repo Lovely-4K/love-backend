@@ -188,7 +188,7 @@ class DiaryTest {
 
     @DisplayName("update를 통해 다이어리 관련된 값들을 업데이트 할 수 있다.")
     @Test
-    void update() {
+    void update_Boy() {
         // given
         Diary diary = Diary.builder()
             .location(Location.create(1L, "경기도 수원시 팔달구 팔달문로", "웨딩컨벤션", BigDecimal.valueOf(127.1255), BigDecimal.valueOf(90.6543), Category.ETC))
@@ -208,7 +208,7 @@ class DiaryTest {
         List<String> uploadedImageUrls = List.of("new-image1", "new-image2", "new-image3");
 
         // when
-        diary.update(score, datingDay, category, boyText, girlText, uploadedImageUrls);
+        diary.update(MALE, score, datingDay, category, boyText, girlText, uploadedImageUrls);
 
         // then
         assertAll(
@@ -218,6 +218,40 @@ class DiaryTest {
             () -> assertThat(diary.getBoyText()).isEqualTo(boyText),
             () -> assertThat(diary.getGirlText()).isEqualTo(girlText)
             );
+    }
+
+    @DisplayName("update를 통해 다이어리 관련된 값들을 업데이트 할 수 있다.")
+    @Test
+    void update_Girl() {
+        // given
+        Diary diary = Diary.builder()
+            .location(Location.create(1L, "경기도 수원시 팔달구 팔달문로", "웨딩컨벤션", BigDecimal.valueOf(127.1255), BigDecimal.valueOf(90.6543), Category.ETC))
+            .coupleId(1L)
+            .boyText("우리도 곧 결혼하자")
+            .girlText("식장 이뿌더랑")
+            .score(5)
+            .datingDay(LocalDate.of(2023, 10, 23))
+            .photos(Photos.builder().firstImage("test-image").build())
+            .build();
+
+        Integer score = 4;
+        LocalDate datingDay = LocalDate.of(2023, 11, 1);
+        String category = "ACCOMODATION";
+        String myText = "여기가 더 좋았어!";
+        String opponentText = "여기 꿈의 공간이야..!";
+        List<String> uploadedImageUrls = List.of("new-image1", "new-image2", "new-image3");
+
+        // when
+        diary.update(FEMALE, score, datingDay, category, myText, opponentText, uploadedImageUrls);
+
+        // then
+        assertAll(
+            () -> assertThat(diary.getScore()).isEqualTo(score),
+            () -> assertThat(diary.getDatingDay()).isEqualTo(datingDay),
+            () -> assertThat(diary.getLocation().getCategory()).isEqualTo(Category.valueOf(category)),
+            () -> assertThat(diary.getBoyText()).isEqualTo(opponentText),
+            () -> assertThat(diary.getGirlText()).isEqualTo(myText)
+        );
     }
 
 }
