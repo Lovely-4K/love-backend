@@ -6,10 +6,10 @@ import java.time.LocalDate;
 
 public record FindRecentCalendarsResponse(
     long calendarId,
-    long boyId,
-    String boyCalendarColor,
-    long girlId,
-    String girlCalendarColor,
+    long myId,
+    String myCalendarColor,
+    long opponentId,
+    String opponentCalendarColor,
     LocalDate startDate,
     LocalDate endDate,
     String scheduleDetails,

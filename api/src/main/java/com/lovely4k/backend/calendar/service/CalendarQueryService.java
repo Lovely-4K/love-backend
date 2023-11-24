@@ -19,13 +19,13 @@ public class CalendarQueryService {
 
     private final CalendarQueryRepository calendarQueryRepository;
 
-    public FindCalendarsWithDateServiceResponse findCalendarsWithDate(FindCalendarsWithDateRepositoryRequest request, Long coupleId) {
-        List<FindCalendarsWithDateResponse> responses = calendarQueryRepository.findCalendarsWithDate(request, coupleId);
+    public FindCalendarsWithDateServiceResponse findCalendarsWithDate(FindCalendarsWithDateRepositoryRequest request, Long coupleId, Long loginUserId) {
+        List<FindCalendarsWithDateResponse> responses = calendarQueryRepository.findCalendarsWithDate(request, coupleId, loginUserId);
         return FindCalendarsWithDateServiceResponse.from(responses);
     }
 
-    public FindRecentCalendarsServiceResponse findRecentCalendars(Long coupleId, Integer limit) {
-        List<FindRecentCalendarsResponse> result = calendarQueryRepository.findRecentCalendarsWithColors(coupleId, limit);
+    public FindRecentCalendarsServiceResponse findRecentCalendars(Long coupleId, Integer limit, Long loginUserId) {
+        List<FindRecentCalendarsResponse> result = calendarQueryRepository.findRecentCalendarsWithColors(coupleId, limit, loginUserId);
         return FindRecentCalendarsServiceResponse.from(result);
     }
 }

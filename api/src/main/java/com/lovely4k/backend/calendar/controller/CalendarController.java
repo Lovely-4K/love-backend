@@ -41,7 +41,7 @@ public class CalendarController {
     @GetMapping
     public ResponseEntity<ApiResponse<FindCalendarsWithDateServiceResponse>> findAllSchedulesWithDate(@ModelAttribute @Valid FindCalendarsWithDateRequest request, @LoginUser SessionUser sessionUser) {
         return ApiResponse.ok(
-                calendarQueryService.findCalendarsWithDate(request.toRepositoryDto(), sessionUser.coupleId()),
+                calendarQueryService.findCalendarsWithDate(request.toRepositoryDto(), sessionUser.coupleId(), sessionUser.memberId()),
                 linkTo(methodOn(getClass()).findAllSchedulesWithDate(request, sessionUser)).withSelfRel(),
                 linkTo(getClass().getMethod(CREATE_SCHEDULE, SessionUser.class, CreateCalendarRequest.class)).withRel(CREATE_SCHEDULE),
                 linkTo(getClass().getMethod(EDIT_SCHEDULE_BY_ID, Long.class, UpdateCalendarRequest.class)).withRel(EDIT_SCHEDULE_BY_ID),
@@ -55,7 +55,7 @@ public class CalendarController {
         @LoginUser SessionUser sessionUser,
         @RequestParam(value = "limit", defaultValue = "5") Integer limit) {
         return ApiResponse.ok(
-                calendarQueryService.findRecentCalendars(sessionUser.coupleId(), limit),
+                calendarQueryService.findRecentCalendars(sessionUser.coupleId(), limit, sessionUser.memberId()),
                 linkTo(methodOn(getClass()).findRecentSchedules(sessionUser, limit)).withSelfRel(),
                 linkTo(getClass().getMethod(EDIT_SCHEDULE_BY_ID, Long.class, UpdateCalendarRequest.class)).withRel(EDIT_SCHEDULE_BY_ID)
         );
