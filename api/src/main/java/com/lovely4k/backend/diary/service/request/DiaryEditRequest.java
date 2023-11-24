@@ -6,7 +6,7 @@ public record DiaryEditRequest(
     Integer score,
     LocalDate datingDay,
     String category,
-    String boyText,
-    String girlText
+    String myText,
+    String opponentText
 ) {
 }

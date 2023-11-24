@@ -266,8 +266,8 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                     fieldWithPath("score").type(NUMBER).description("장소에 대한 평점"),
                     fieldWithPath("datingDay").type(STRING).description("데이트 한 날짜"),
                     fieldWithPath("category").type(STRING).description("장소 카테고리"),
-                    fieldWithPath("boyText").type(STRING).description("남자 일기"),
-                    fieldWithPath("girlText").type(STRING).description("여자 일기")
+                    fieldWithPath("myText").type(STRING).description("나의 일기"),
+                    fieldWithPath("opponentText").type(STRING).description("연인의 일기")
                 ),
                 requestParts(
                     partWithName("texts").ignored(),
