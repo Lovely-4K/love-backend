@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public record HttpLogResponse(
@@ -53,14 +54,17 @@ public record HttpLogResponse(
             .append(" uri=").append(uri)
             .append(" requestBody=").append(quote(requestBody))
             .append(" responseBody=").append(quote(responseBody))
-            .append(" httpMethod=").append(quote(httpMethod))
+            .append(" httpMethod=").append(httpMethod)
             .append(" status=").append(status);
 
         sb.append(" parameter=");
         parameter.forEach((key, values) -> {
-            sb.append(key).append(" [");
-            sb.append(String.join(", ", values));
-            sb.append("] ");
+            sb.append(key).append(":");
+            sb.append(Arrays.toString(values)
+                .replaceAll("\\s+", "")
+                .replace("\"", "")
+                .replace(",", " "));
+            sb.append(" ");
         });
 
         return sb.toString();
