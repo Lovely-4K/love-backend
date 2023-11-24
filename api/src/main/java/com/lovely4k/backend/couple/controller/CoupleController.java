@@ -11,6 +11,7 @@ import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.hibernate.Session;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -73,8 +74,8 @@ public class CoupleController {
     @DeleteMapping("/{coupleId}")
     public ResponseEntity<Void> deleteCouple(
         @PathVariable Long coupleId,
-        @RequestParam Long memberId) {
-        coupleService.deleteCouple(coupleId, memberId);
+        @LoginUser SessionUser sessionUser) {
+        coupleService.deleteCouple(coupleId, sessionUser.memberId());
         return ResponseEntity.noContent().build();
     }
 

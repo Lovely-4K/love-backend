@@ -1,0 +1,17 @@
+[[couple-delete]]
+=== 커플 끊기
+
+해당 API를 통해 커플 관계를 끊어낼 수 있습니다.
+
+==== Http Request
+
+include::{snippets}/couple-delete/http-request.adoc[]
+include::{snippets}/couple-delete/path-parameters.adoc[]
+
+커플 프로필의 값 중 수정할 수 있는 값은 다음과 같습니다.
+
+==== Http Response
+
+커플 삭제의 경우 별다른 응답이 포함되지 않습니다.
+
+include::{snippets}/couple-delete/http-response.adoc[]
