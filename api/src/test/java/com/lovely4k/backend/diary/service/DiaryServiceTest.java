@@ -4,6 +4,8 @@ import com.lovely4k.backend.IntegrationTestSupport;
 import com.lovely4k.backend.common.imageuploader.ImageUploader;
 import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
+import com.lovely4k.backend.couple.service.CoupleService;
+import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.Photos;
@@ -15,7 +17,6 @@ import com.lovely4k.backend.location.Location;
 import com.lovely4k.backend.location.LocationRepository;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.Role;
-import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.AfterEach;
@@ -36,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.lovely4k.backend.member.Sex.FEMALE;
 import static com.lovely4k.backend.member.Sex.MALE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -59,6 +61,9 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
     @Autowired
     CoupleRepository coupleRepository;
+
+    @Autowired
+    CoupleService coupleService;
 
     @MockBean
     ImageUploader imageUploader;
@@ -196,15 +201,40 @@ class DiaryServiceTest extends IntegrationTestSupport {
         // given
 
         Location location = Location.create(10L, "경기도 고양시", "starbucks",BigDecimal.ZERO, BigDecimal.ZERO, Category.FOOD);
-        Diary diary = buildDiary(location, 1L);
+
+        Member member1 = Member.builder()
+            .sex(MALE)
+            .nickname("Tommy")
+            .role(Role.USER)
+            .build();
+
+        Member member2 = Member.builder()
+            .sex(FEMALE)
+            .nickname("LIA")
+            .role(Role.USER)
+            .build();
+        memberRepository.saveAll(List.of(member1, member2));
+
+        InvitationCodeCreateResponse invitationCode = coupleService.createInvitationCode(member1.getId(), "MALE");
+        coupleService.registerCouple(invitationCode.invitationCode(), member2.getId());
+
+
+        Diary diary = Diary.builder()
+            .coupleId(invitationCode.coupleId())
+            .location(location)
+            .boyText("hello")
+            .girlText("hi")
+            .score(4)
+            .datingDay(LocalDate.of(2023, 10, 20))
+            .build();
+
         diaryRepository.save(diary);
 
-        Member member = buildMember();
-        memberRepository.save(member);
+        Member boy = memberRepository.findById(member1.getId()).orElseThrow();
 
         // when
         DiaryDetailResponse diaryDetailResponse =
-            diaryService.findDiaryDetail(diary.getId(), member.getCoupleId(), member.getSex().toString());
+            diaryService.findDiaryDetail(diary.getId(), boy.getCoupleId(), boy.getId());
 
         // then
         assertAll(
@@ -228,12 +258,12 @@ class DiaryServiceTest extends IntegrationTestSupport {
         memberRepository.save(member);
 
         Long invalidDiaryId = diary.getId() + 1;
+        Long coupleId = member.getCoupleId();
         Long memberId = member.getId();
-        String sex = member.getSex().toString();
 
         // when && then
         assertThatThrownBy(
-            () -> diaryService.findDiaryDetail(invalidDiaryId, memberId, sex)
+            () -> diaryService.findDiaryDetail(invalidDiaryId, coupleId, memberId)
         ).isInstanceOf(EntityNotFoundException.class)
             .hasMessage("invalid diary id");
 
@@ -252,12 +282,12 @@ class DiaryServiceTest extends IntegrationTestSupport {
         memberRepository.save(member);
 
         Long diaryId = diary.getId();
+        Long coupleId = member.getCoupleId();
         Long memberId = member.getId();
-        String sex = member.getSex().toString();
 
         // when && then
         assertThatThrownBy(
-            () -> diaryService.findDiaryDetail(diaryId, memberId, sex)
+            () -> diaryService.findDiaryDetail(diaryId, coupleId, memberId)
         ).isInstanceOf(IllegalArgumentException.class)
             .hasMessage("you can only manage your couple's diary");
     }
@@ -267,9 +297,15 @@ class DiaryServiceTest extends IntegrationTestSupport {
     @Test
     void editDiary() {
         // given
+
+        Couple couple = Couple.builder()
+            .boyId(1L)
+            .girlId(2L)
+            .build();
+        coupleRepository.save(couple);
         Diary diary = Diary.builder()
             .location(Location.create(1L, "경기도 수원시 팔달구 팔달문로", "웨딩컨벤션", BigDecimal.valueOf(127.1255), BigDecimal.valueOf(90.6543), Category.ETC))
-            .coupleId(1L)
+            .coupleId(couple.getId())
             .boyText("우리도 곧 결혼하자")
             .girlText("식장 이뿌더랑")
             .score(5)
@@ -288,7 +324,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         ).willReturn(List.of("first-image-url", "second-image-url"));
 
         // when
-        diaryService.editDiary(savedDiary.getId(), List.of(firstImage, secondImage), diaryEditRequest, 1L);
+        diaryService.editDiary(savedDiary.getId(), List.of(firstImage, secondImage), diaryEditRequest, 1L, 1L);
 
         // then
         Diary findDiary = diaryRepository.findById(savedDiary.getId()).orElseThrow();
@@ -296,8 +332,8 @@ class DiaryServiceTest extends IntegrationTestSupport {
             () -> assertThat(findDiary.getScore()).isEqualTo(diaryEditRequest.score()),
             () -> assertThat(findDiary.getDatingDay()).isEqualTo(diaryEditRequest.datingDay()),
             () -> assertThat(findDiary.getLocation().getCategory()).isEqualTo(Category.FOOD),
-            () -> assertThat(findDiary.getBoyText()).isEqualTo(diaryEditRequest.boyText()),
-            () -> assertThat(findDiary.getGirlText()).isEqualTo(diaryEditRequest.girlText()),
+            () -> assertThat(findDiary.getBoyText()).isEqualTo(diaryEditRequest.myText()),
+            () -> assertThat(findDiary.getGirlText()).isEqualTo(diaryEditRequest.opponentText()),
             () -> assertThat(findDiary.getPhotos().countOfImages()).isEqualTo(2)
         );
     }

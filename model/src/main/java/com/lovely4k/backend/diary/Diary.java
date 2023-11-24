@@ -3,6 +3,7 @@ package com.lovely4k.backend.diary;
 import com.lovely4k.backend.common.jpa.BaseTimeEntity;
 import com.lovely4k.backend.location.Location;
 import com.lovely4k.backend.member.Member;
+import com.lovely4k.backend.member.Sex;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -92,12 +93,18 @@ public class Diary extends BaseTimeEntity {
         }
     }
 
-    public void update(Integer score, LocalDate datingDay, String category, String boyText, String girlText, List<String> uploadedImageUrls) {
+    public void update(Sex sex, Integer score, LocalDate datingDay, String category, String myText, String opponentText, List<String> uploadedImageUrls) {
         this.location.update(category);
         this.photos.update(uploadedImageUrls);
         this.score = score;
         this.datingDay = datingDay;
-        this.boyText = boyText;
-        this.girlText = girlText;
+        if (sex == Sex.MALE) {
+            this.boyText = myText;
+            this.girlText = opponentText;
+        } else {
+            this.girlText = myText;
+            this.boyText = opponentText;
+        }
+
     }
 }

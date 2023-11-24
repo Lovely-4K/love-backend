@@ -2,7 +2,9 @@ package com.lovely4k.backend.diary.service;
 
 import com.lovely4k.backend.common.event.Events;
 import com.lovely4k.backend.common.imageuploader.ImageUploader;
+import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.couple.IncreaseTemperatureEvent;
+import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepositoryAdapter;
 import com.lovely4k.backend.diary.Photos;
@@ -35,6 +37,7 @@ public class DiaryService {
     private final ImageUploader imageUploader;
     private final MemberRepository memberRepository;
     private final DiaryRepositoryAdapter diaryRepositoryAdapter;
+    private final CoupleRepository coupleRepository;
 
     @Transactional
     public Long createDiary(List<MultipartFile> multipartFileList, DiaryCreateRequest diaryCreateRequest, Long memberId) {
@@ -68,11 +71,12 @@ public class DiaryService {
         return imageUploader.upload("diary/", multipartFileList);   // NOSONAR
     }
 
-    public DiaryDetailResponse findDiaryDetail(Long diaryId, Long coupleId, String sex) {
+    public DiaryDetailResponse findDiaryDetail(Long diaryId, Long coupleId, Long memberId) {
         Diary diary = validateDiaryId(diaryId);
         diary.checkAuthority(coupleId);
-
-        return DiaryDetailResponse.of(diary, Sex.valueOf(sex));
+        Couple couple = validateCoupleId(coupleId);
+        Sex sex = getCoupleRole(memberId, couple);
+        return DiaryDetailResponse.of(diary, sex);
     }
 
     private Diary validateDiaryId(Long diaryId) {
@@ -111,15 +115,33 @@ public class DiaryService {
     }
 
     @Transactional
-    public void editDiary(Long diaryId, List<MultipartFile> multipartFileList, DiaryEditRequest request, Long coupleId) {
+    public void editDiary(Long diaryId, List<MultipartFile> multipartFileList, DiaryEditRequest request, Long coupleId, Long memberId) {
         Diary diary = validateDiaryId(diaryId);
         diary.checkAuthority(coupleId);
 
         List<String> imageUrls = diary.getPhotos().getPhotoList();
         imageUploader.delete("diary/", imageUrls);
         List<String> uploadedImageUrls = imageUploader.upload("diary/", multipartFileList);
+        Couple couple = validateCoupleId(coupleId);
+        Sex sex = getCoupleRole(memberId, couple);
 
-        diary.update(request.score(), request.datingDay(), request.category(), request.boyText(), request.girlText(), uploadedImageUrls);
+        diary.update(sex, request.score(), request.datingDay(), request.category(), request.myText(), request.opponentText(), uploadedImageUrls);
+    }
+
+    private Couple validateCoupleId(Long coupleId) {
+        return coupleRepository.findById(coupleId).orElseThrow(
+            () -> new EntityNotFoundException("존재하는 couple이 없습니다.")
+        );
+    }
+
+    private  Sex getCoupleRole(Long memberId, Couple couple) {
+        Sex sex;
+        if (couple.getBoyId().equals(memberId)) {
+            sex = Sex.MALE;
+        } else {
+            sex = Sex.FEMALE;
+        }
+        return sex;
     }
 
     @Transactional

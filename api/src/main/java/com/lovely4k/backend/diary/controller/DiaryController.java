@@ -68,7 +68,7 @@ public class DiaryController {
             @LoginUser SessionUser sessionUser
     ) {
 
-        return ApiResponse.ok(diaryService.findDiaryDetail(id, sessionUser.coupleId(), sessionUser.sex()),
+        return ApiResponse.ok(diaryService.findDiaryDetail(id, sessionUser.coupleId(), sessionUser.memberId()),
                 linkTo(methodOn(DiaryController.class).getDiaryDetail(id, sessionUser)).withSelfRel(),
                 linkTo(DiaryController.class.getMethod("editDiary", Long.class, List.class, WebDiaryEditRequest.class, SessionUser.class)).withRel(EDIT),
                 linkTo(DiaryController.class).slash(id).withRel(DELETE)
@@ -106,7 +106,7 @@ public class DiaryController {
             @RequestPart(value = "texts") @Valid WebDiaryEditRequest request,
             @LoginUser SessionUser sessionUser
     ) {
-        diaryService.editDiary(id, multipartFileList, request.toServiceRequest(), sessionUser.coupleId());
+        diaryService.editDiary(id, multipartFileList, request.toServiceRequest(), sessionUser.coupleId(), sessionUser.memberId());
         return ApiResponse.ok(
                 linkTo(DiaryController.class).slash(id).withRel(DETAIL),
                 linkTo(DiaryController.class).slash(id).withRel(DELETE)

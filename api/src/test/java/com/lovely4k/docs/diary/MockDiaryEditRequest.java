@@ -4,7 +4,7 @@ public record MockDiaryEditRequest(
     Integer score,
     String datingDay,
     String category,
-    String boyText,
-    String girlText
+    String myText,
+    String opponentText
 ) {
 }
