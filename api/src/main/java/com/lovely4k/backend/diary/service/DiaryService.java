@@ -18,6 +18,7 @@ import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -34,16 +34,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DiaryService {
 
-    private final ImageUploader imageUploader;
     private final MemberRepository memberRepository;
     private final DiaryRepositoryAdapter diaryRepositoryAdapter;
     private final CoupleRepository coupleRepository;
+    private final DiaryImageUploader diaryImageUploader;
+
 
     @Transactional
     public Long createDiary(List<MultipartFile> multipartFileList, DiaryCreateRequest diaryCreateRequest, Long memberId) {
         Member member = validateMemberId(memberId);
         checkCountOfImage(multipartFileList);
-        List<String> uploadedImageUrls = uploadImages(multipartFileList);
+        List<String> uploadedImageUrls = diaryImageUploader.uploadImages(multipartFileList);
         Diary diary = diaryCreateRequest.toEntity(member);
         diary.addPhoto(Photos.create(uploadedImageUrls));
         Diary savedDiary = diaryRepositoryAdapter.save(diary);
@@ -58,18 +59,15 @@ public class DiaryService {
     }
 
     private void checkCountOfImage(List<MultipartFile> multipartFileList) {
+        if (multipartFileList == null) {
+            return;
+        }
         if (multipartFileList.size() > 5) {
             throw new IllegalArgumentException("Image file can be uploaded maximum 5");
         }
     }
 
-    private List<String> uploadImages(List<MultipartFile> multipartFileList) {
-        if (multipartFileList.isEmpty()) {
-            return Collections.emptyList();
-        }
 
-        return imageUploader.upload("diary/", multipartFileList);   // NOSONAR
-    }
 
     public DiaryDetailResponse findDiaryDetail(Long diaryId, Long coupleId, Long memberId) {
         Diary diary = validateDiaryId(diaryId);
@@ -120,13 +118,17 @@ public class DiaryService {
         diary.checkAuthority(coupleId);
 
         List<String> imageUrls = diary.getPhotos().getPhotoList();
-        imageUploader.delete("diary/", imageUrls);
-        List<String> uploadedImageUrls = imageUploader.upload("diary/", multipartFileList);
+
+        diaryImageUploader.deleteImages(imageUrls);
+
+        List<String> uploadedImageUrls = diaryImageUploader.uploadImages(multipartFileList);
+
         Couple couple = validateCoupleId(coupleId);
         Sex sex = getCoupleRole(memberId, couple);
 
         diary.update(sex, request.score(), request.datingDay(), request.category(), request.myText(), request.opponentText(), uploadedImageUrls);
     }
+
 
     private Couple validateCoupleId(Long coupleId) {
         return coupleRepository.findById(coupleId).orElseThrow(
