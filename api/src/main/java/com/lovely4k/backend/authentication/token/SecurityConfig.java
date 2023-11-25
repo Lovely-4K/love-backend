@@ -4,7 +4,6 @@ import com.lovely4k.backend.authentication.CustomSuccessHandler;
 import com.lovely4k.backend.authentication.OAuth2UserService;
 import com.lovely4k.backend.authentication.exception.AccessDeniedHandlerException;
 import com.lovely4k.backend.authentication.exception.AuthenticationEntryPointException;
-import com.lovely4k.backend.member.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
