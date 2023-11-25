@@ -59,18 +59,16 @@ public class AWSS3Uploader implements ImageUploader {
         String searchPattern = ".com/";
         int index = url.indexOf(searchPattern) + searchPattern.length();
         String newPart = DEFAULT_DIRECTORY + directory;
-        String modifiedURL = url.substring(0, index) + newPart + url.substring(index);
 
-        return modifiedURL;
+        return url.substring(0, index) + newPart + url.substring(index);
     }
 
     @Override
     public void delete(String directory, List<String> imageUrls) {
         String splitStr = ".com/";
-
         imageUrls.stream()
             .map(imageUrl -> imageUrl.substring(imageUrl.lastIndexOf(splitStr) + splitStr.length()))
-            .map(fileName -> new DeleteObjectRequest(bucket, DEFAULT_DIRECTORY + directory + fileName))
+            .map(fileName -> new DeleteObjectRequest(bucket, fileName))
             .forEach(amazonS3::deleteObject);
     }
 
