@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 public class AnsweredQuestionParamRequest {
-    @Min(0)
+    @Min(value = 0, message = "id는 0 이상이어야 합니다.")
     private Long id;
 
-    @Min(1)
+    @Min(value = 1, message = "1개 이상의 limit을 입력하세요.")
     private int limit = 10;
 }

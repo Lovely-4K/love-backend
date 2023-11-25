@@ -13,17 +13,17 @@ public record FindCalendarsWithDateServiceResponse(
     List<ScheduleServiceResponse> schedules
 ) {
     private record ColorResponse(
-        long boyId,
-        String boyCalendarColor,
-        long girlId,
-        String girlCalendarColor
+        long myId,
+        String myCalendarColor,
+        long opponentId,
+        String opponentCalendarColor
     ) {
         private static ColorResponse from(FindCalendarsWithDateResponse response) {
             return new ColorResponse(
-                response.boyId(),
-                response.boyCalendarColor(),
-                response.girlId(),
-                response.girlCalendarColor()
+                response.myId(),
+                response.myCalendarColor(),
+                response.opponentId(),
+                response.opponentCalendarColor()
             );
         }
     }

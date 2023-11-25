@@ -37,6 +37,7 @@ class CalendarQueryServiceTest {
         // given
         long coupleId = 1L;
         int limit = 5;
+        long loginUserId= 1L;
         FindRecentCalendarsResponse mockResponse = new FindRecentCalendarsResponse(
             1L, 1L, "RED", 2L, "BLUE",
             LocalDate.of(2023, 11, 4),
@@ -46,12 +47,12 @@ class CalendarQueryServiceTest {
             1L
         );
         List<FindRecentCalendarsResponse> mockResponseList = Collections.singletonList(mockResponse);
-        given(repository.findRecentCalendarsWithColors(anyLong(), anyInt())).willReturn(mockResponseList);
+        given(repository.findRecentCalendarsWithColors(anyLong(), anyInt(), anyLong())).willReturn(mockResponseList);
 
         FindRecentCalendarsServiceResponse expectedResponse = FindRecentCalendarsServiceResponse.from(mockResponseList);
 
         // when
-        FindRecentCalendarsServiceResponse actualResponse = calendarQueryService.findRecentCalendars(coupleId, limit);
+        FindRecentCalendarsServiceResponse actualResponse = calendarQueryService.findRecentCalendars(coupleId, limit, loginUserId);
 
         // then
         assertThat(actualResponse).isEqualTo(expectedResponse);
@@ -74,12 +75,12 @@ class CalendarQueryServiceTest {
             1L
         );
         List<FindCalendarsWithDateResponse> mockResponseList = Collections.singletonList(mockResponse);
-        given(repository.findCalendarsWithDate(any(), any())).willReturn(mockResponseList);
+        given(repository.findCalendarsWithDate(any(), any(), any())).willReturn(mockResponseList);
 
         FindCalendarsWithDateServiceResponse expectedResponse = FindCalendarsWithDateServiceResponse.from(mockResponseList);
 
         // when
-        FindCalendarsWithDateServiceResponse actualResponse = calendarQueryService.findCalendarsWithDate(mockRequest, 1L);
+        FindCalendarsWithDateServiceResponse actualResponse = calendarQueryService.findCalendarsWithDate(mockRequest, 1L, 1L);
 
         // then
         assertThat(actualResponse).isEqualTo(expectedResponse);

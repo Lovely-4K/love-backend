@@ -56,6 +56,8 @@ love:
     max-affordable-time: 3
   service:
     redirect-url: test-redirect-url
+  image:
+    diary-url: test-url
 
 jwt:
   secret: merongmerongmerongmerongmerongmerongmerongmerongmerongmerongmerong

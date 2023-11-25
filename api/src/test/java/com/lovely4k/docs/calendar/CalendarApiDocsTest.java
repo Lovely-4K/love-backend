@@ -12,12 +12,14 @@ import com.lovely4k.backend.calendar.service.CalendarCommandService;
 import com.lovely4k.backend.calendar.service.CalendarQueryService;
 import com.lovely4k.backend.calendar.service.request.CreateCalendarServiceReqeust;
 import com.lovely4k.backend.calendar.service.request.UpdateCalendarServiceRequest;
-import com.lovely4k.backend.calendar.service.response.*;
+import com.lovely4k.backend.calendar.service.response.CreateCalendarResponse;
+import com.lovely4k.backend.calendar.service.response.FindCalendarsWithDateServiceResponse;
+import com.lovely4k.backend.calendar.service.response.FindRecentCalendarsServiceResponse;
+import com.lovely4k.backend.calendar.service.response.UpdateCalendarResponse;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.payload.JsonFieldType;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -69,7 +71,7 @@ class CalendarApiDocsTest extends RestDocsSupport {
             );
 
 
-        given(calendarQueryService.findCalendarsWithDate(any(FindCalendarsWithDateRepositoryRequest.class), any()))
+        given(calendarQueryService.findCalendarsWithDate(any(FindCalendarsWithDateRepositoryRequest.class), any(), any()))
             .willReturn(response);
 
         mockMvc.perform(get("/v1/calendars")
@@ -86,10 +88,10 @@ class CalendarApiDocsTest extends RestDocsSupport {
                 ),
                 responseFields(
                     fieldWithPath("code").type(NUMBER).description("코드"),
-                    fieldWithPath("body.colorInfo.boyId").type(NUMBER).description("남자의 회원 ID"),
-                    fieldWithPath("body.colorInfo.boyCalendarColor").type(STRING).description("남자의 달력 색상"),
-                    fieldWithPath("body.colorInfo.girlId").type(NUMBER).description("여자의 회원 ID"),
-                    fieldWithPath("body.colorInfo.girlCalendarColor").type(STRING).description("여자의 달력 색상"),
+                    fieldWithPath("body.colorInfo.myId").type(NUMBER).description("나의 id"),
+                    fieldWithPath("body.colorInfo.myCalendarColor").type(STRING).description("나의 달력 색상"),
+                    fieldWithPath("body.colorInfo.opponentId").type(NUMBER).description("상대방의 회원 ID"),
+                    fieldWithPath("body.colorInfo.opponentCalendarColor").type(STRING).description("상대방의 달력 색상"),
                     fieldWithPath("body.schedules[0].calendarId").type(NUMBER).description("일정의 id"),
                     fieldWithPath("body.schedules[0].startDate").type(STRING).description("일정 시작 날짜"),
                     fieldWithPath("body.schedules[0].endDate").type(STRING).description("일정 종료 날짜"),
@@ -123,7 +125,7 @@ class CalendarApiDocsTest extends RestDocsSupport {
                 )
             );
 
-        given(calendarQueryService.findRecentCalendars(any(), any()))
+        given(calendarQueryService.findRecentCalendars(any(), any(), any()))
             .willReturn(response);
 
         mockMvc.perform(get("/v1/calendars/recent")
@@ -138,15 +140,15 @@ class CalendarApiDocsTest extends RestDocsSupport {
                 ),
                 responseFields(
                     fieldWithPath("code").type(NUMBER).description("코드"),
-                    fieldWithPath("body.colorInfo.boyId").type(NUMBER).description("남자의 회원 ID"),
-                    fieldWithPath("body.colorInfo.boyCalendarColor").type(STRING).description("남자의 달력 색상"),
-                    fieldWithPath("body.colorInfo.girlId").type(NUMBER).description("여자의 회원 ID"),
-                    fieldWithPath("body.colorInfo.girlCalendarColor").type(STRING).description("여자의 달력 색상"),
+                    fieldWithPath("body.colorInfo.myId").type(NUMBER).description("나의 ID"),
+                    fieldWithPath("body.colorInfo.myCalendarColor").type(STRING).description("나의 달력 색상"),
+                    fieldWithPath("body.colorInfo.opponentId").type(NUMBER).description("상대방의 회원 ID"),
+                    fieldWithPath("body.colorInfo.opponentCalendarColor").type(STRING).description("상대방의 달력 색상"),
                     fieldWithPath("body.schedules[0].calendarId").type(NUMBER).description("일정의 id"),
                     fieldWithPath("body.schedules[0].startDate").type(STRING).description("일정 시작 날짜"),
-                    fieldWithPath("body.schedules[0].endDate").type(JsonFieldType.STRING).description("일정 종료 날짜"),
-                    fieldWithPath("body.schedules[0].scheduleDetails").type(JsonFieldType.STRING).description("일정 상세"),
-                    fieldWithPath("body.schedules[0].scheduleType").type(JsonFieldType.STRING).description("일정 타입(공통 일정이 아닌 경우 PRIVATE로 반환)"),
+                    fieldWithPath("body.schedules[0].endDate").type(STRING).description("일정 종료 날짜"),
+                    fieldWithPath("body.schedules[0].scheduleDetails").type(STRING).description("일정 상세"),
+                    fieldWithPath("body.schedules[0].scheduleType").type(STRING).description("일정 타입(공통 일정이 아닌 경우 PRIVATE로 반환)"),
                     fieldWithPath("body.schedules[0].ownerId").type(NUMBER).description("일정의 주인 id 공통 일정일 경우 0으로 응답."),
                     fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
                     fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
@@ -174,18 +176,18 @@ class CalendarApiDocsTest extends RestDocsSupport {
             .andExpect(status().isCreated())
             .andDo(document("create-schedules",
                 requestFields(
-                    fieldWithPath("startDate").type(JsonFieldType.STRING).description("일정 시작 날짜"),
-                    fieldWithPath("endDate").type(JsonFieldType.STRING).description("일정 종료 날짜"),
-                    fieldWithPath("scheduleDetails").type(JsonFieldType.STRING).description("일정에 대한 상세 설명"),
-                    fieldWithPath("scheduleType").type(JsonFieldType.STRING).description("일정의 유형 (DATE, TIME 등)")
+                    fieldWithPath("startDate").type(STRING).description("일정 시작 날짜"),
+                    fieldWithPath("endDate").type(STRING).description("일정 종료 날짜"),
+                    fieldWithPath("scheduleDetails").type(STRING).description("일정에 대한 상세 설명"),
+                    fieldWithPath("scheduleType").type(STRING).description("일정의 유형 (DATE, TIME 등)")
                 ),
                 responseFields(
-                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("코드"),
-                    fieldWithPath("body.id").type(JsonFieldType.NUMBER).description("생성된 일정의 ID"),
-                    fieldWithPath("body.startDate").type(JsonFieldType.STRING).description("일정 시작 날짜"),
+                    fieldWithPath("code").type(NUMBER).description("코드"),
+                    fieldWithPath("body.id").type(NUMBER).description("생성된 일정의 ID"),
+                    fieldWithPath("body.startDate").type(STRING).description("일정 시작 날짜"),
                     fieldWithPath("body.endDate").type(STRING).description("일정 종료 날짜"),
-                    fieldWithPath("body.scheduleDetails").type(JsonFieldType.STRING).description("일정 상세 정보"),
-                    fieldWithPath("body.scheduleType").type(JsonFieldType.STRING).description("일정 유형"),
+                    fieldWithPath("body.scheduleDetails").type(STRING).description("일정 상세 정보"),
+                    fieldWithPath("body.scheduleType").type(STRING).description("일정 유형"),
                     fieldWithPath("body.ownerId").type(NUMBER).description("일정의 주인 아이디(공유 일정일 경우 0)"),
                     fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
                     fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
@@ -216,17 +218,17 @@ class CalendarApiDocsTest extends RestDocsSupport {
                     parameterWithName("id").description("일정 ID")
                 ),
                 requestFields(
-                    fieldWithPath("startDate").type(JsonFieldType.STRING).description("일정 시작 날짜"),
-                    fieldWithPath("endDate").type(JsonFieldType.STRING).description("일정 종료 날짜"),
-                    fieldWithPath("scheduleDetails").type(JsonFieldType.STRING).description("일정에 대한 상세 설명"),
-                    fieldWithPath("scheduleType").type(JsonFieldType.STRING).description("일정의 유형 (DATE, TIME 등)")
+                    fieldWithPath("startDate").type(STRING).description("일정 시작 날짜"),
+                    fieldWithPath("endDate").type(STRING).description("일정 종료 날짜"),
+                    fieldWithPath("scheduleDetails").type(STRING).description("일정에 대한 상세 설명"),
+                    fieldWithPath("scheduleType").type(STRING).description("일정의 유형 (DATE, TIME 등)")
                 ),
                 responseFields(
-                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
-                    fieldWithPath("body.startDate").type(JsonFieldType.STRING).description("수정된 일정 시작 날짜"),
-                    fieldWithPath("body.endDate").type(JsonFieldType.STRING).description("수정된 일정 종료 날짜"),
-                    fieldWithPath("body.scheduleDetails").type(JsonFieldType.STRING).description("수정된 일정 상세 정보"),
-                    fieldWithPath("body.scheduleType").type(JsonFieldType.STRING).description("수정된 일정 유형"),
+                    fieldWithPath("code").type(NUMBER).description("응답 코드"),
+                    fieldWithPath("body.startDate").type(STRING).description("수정된 일정 시작 날짜"),
+                    fieldWithPath("body.endDate").type(STRING).description("수정된 일정 종료 날짜"),
+                    fieldWithPath("body.scheduleDetails").type(STRING).description("수정된 일정 상세 정보"),
+                    fieldWithPath("body.scheduleType").type(STRING).description("수정된 일정 유형"),
                     fieldWithPath("links[0].rel").type(STRING).description("URL과의 관계"),
                     fieldWithPath("links[0].href").type(STRING).description("URL의 링크")
                 )

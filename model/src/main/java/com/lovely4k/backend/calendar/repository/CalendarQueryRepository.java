@@ -3,7 +3,9 @@ package com.lovely4k.backend.calendar.repository;
 import com.lovely4k.backend.calendar.repository.response.FindCalendarsWithDateResponse;
 import com.lovely4k.backend.calendar.repository.response.FindRecentCalendarsResponse;
 import com.lovely4k.backend.member.QMember;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -20,15 +22,20 @@ public class CalendarQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public List<FindRecentCalendarsResponse> findRecentCalendarsWithColors(long coupleId, int limit) {
+    public List<FindRecentCalendarsResponse> findRecentCalendarsWithColors(long coupleId, int limit, Long loginUserId) {
         QMember boy = new QMember("boy");
         QMember girl = new QMember("girl");
+
+        var myId = myId(boy, girl, loginUserId);
+        var opponentId = opponentId(boy, girl, loginUserId);
+        var myCalendarColor = myCalendarColor(boy, girl, loginUserId);
+        var opponentCalendarColor = opponentCalendarColor(boy, girl, loginUserId);
 
         return jpaQueryFactory
             .select(Projections.constructor(FindRecentCalendarsResponse.class,
                 calendar.id,
-                boy.id, boy.calendarColor,
-                girl.id, girl.calendarColor,
+                myId, myCalendarColor,
+                opponentId, opponentCalendarColor,
                 calendar.startDate, calendar.endDate,
                 calendar.scheduleDetails, calendar.scheduleType, calendar.ownerId))
             .from(calendar)
@@ -41,15 +48,44 @@ public class CalendarQueryRepository {
             .fetch();
     }
 
-    public List<FindCalendarsWithDateResponse> findCalendarsWithDate(FindCalendarsWithDateRepositoryRequest request, Long coupleId) {
+    private Expression<Long> myId(QMember boy, QMember girl, Long loginUserId) {
+        return new CaseBuilder()
+            .when(boy.id.eq(loginUserId)).then(boy.id)
+            .otherwise(girl.id);
+    }
+
+    private Expression<String> myCalendarColor(QMember boy, QMember girl, Long loginUserId) {
+       return new CaseBuilder()
+            .when(boy.id.eq(loginUserId)).then(boy.calendarColor)
+            .otherwise(girl.calendarColor);
+    }
+
+    private Expression<Long> opponentId(QMember boy, QMember girl, Long loginUserId) {
+        return new CaseBuilder()
+            .when(boy.id.eq(loginUserId)).then(girl.id)
+            .otherwise(boy.id);
+    }
+
+    private Expression<String> opponentCalendarColor(QMember boy, QMember girl, Long loginUserId) {
+        return new CaseBuilder()
+            .when(boy.id.eq(loginUserId)).then(girl.calendarColor)
+            .otherwise(boy.calendarColor);
+    }
+
+    public List<FindCalendarsWithDateResponse> findCalendarsWithDate(FindCalendarsWithDateRepositoryRequest request, Long coupleId, Long loginUserId) {
         QMember boy = new QMember("boy");
         QMember girl = new QMember("girl");
+
+        var myId = myId(boy, girl, loginUserId);
+        var opponentId = opponentId(boy, girl, loginUserId);
+        var myCalendarColor = myCalendarColor(boy, girl, loginUserId);
+        var opponentCalendarColor = opponentCalendarColor(boy, girl, loginUserId);
 
         return jpaQueryFactory
             .select(Projections.constructor(FindCalendarsWithDateResponse.class,
                 calendar.id,
-                boy.id, boy.calendarColor,
-                girl.id, girl.calendarColor,
+                myId, myCalendarColor,
+                opponentId, opponentCalendarColor,
                 calendar.startDate, calendar.endDate,
                 calendar.scheduleDetails, calendar.scheduleType, calendar.ownerId))
             .from(calendar)
