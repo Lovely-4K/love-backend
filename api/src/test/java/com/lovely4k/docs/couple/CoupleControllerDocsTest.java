@@ -23,8 +23,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -222,15 +221,14 @@ class CoupleControllerDocsTest extends RestDocsSupport {
         // when && then
         this.mockMvc.perform(
                 delete("/v1/couples/{coupleId}", 1)
-                    .queryParam("memberId", "1")
             )
             .andDo(print())
             .andExpect(status().isNoContent())
             .andDo(document("couple-delete",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                queryParameters(
-                    parameterWithName("memberId").description("회원 아이디")
+                pathParameters(
+                    parameterWithName("coupleId").description("id of couple")
                 )
             ))
         ;
@@ -242,15 +240,14 @@ class CoupleControllerDocsTest extends RestDocsSupport {
         // when && then
         this.mockMvc.perform(
                 post("/v1/couples/recouple/{coupleId}", 1)
-                    .queryParam("memberId", "1")
             )
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("couple-recouple",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                queryParameters(
-                    parameterWithName("memberId").description("회원 아이디")
+                pathParameters(
+                    parameterWithName("coupleId").description("id of couple")
                 ),
                 responseFields(
                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),

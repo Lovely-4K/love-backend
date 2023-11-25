@@ -142,7 +142,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
             .hasMessage("invalid member id");
     }
 
-    @DisplayName("이미지가 없는 경우 이미지업로드가 되지 않고, emptyList를 반환한다.")
+    @DisplayName("이미지가 없는 경우 이미지업로드가 되지 않고, 서비스에서 제공하는 이미지로 채워진다.")
     @Test
     void createDiaryNoImage() throws InterruptedException {
         // given
@@ -159,7 +159,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // then
         Diary findDiary = diaryRepository.findById(savedDiaryId).orElseThrow();
-        assertThat(findDiary.getPhotos()).isNull();
+        assertThat(findDiary.getPhotos()).isNotNull();
     }
 
     @DisplayName("5개 이상의 이미지를 업로드 하려고 하는 경우 IllegalArgumentException이 발생한다.")

@@ -24,19 +24,20 @@ class CalendarQueryRepositoryTest extends QueryTestSupport {
     @DisplayName("커플 id를 가지고 최근 일정, 커플의 구성원의 (id, 색상)을 조회할 수 있다.")
     @Test
     void findRecentCalendars() {
-        // given -> calendar.sql
+        // given -> calendar.sql 로그인 유저는 남자임
         int limit = 5;
         long coupleId = 1;
+        long loginUserId = 1L;
 
         // when
-        List<FindRecentCalendarsResponse> result = calendarQueryRepository.findRecentCalendarsWithColors(coupleId, limit);
+        List<FindRecentCalendarsResponse> result = calendarQueryRepository.findRecentCalendarsWithColors(coupleId, limit, loginUserId);
 
         // then
         assertAll("Recent Calendars",
             () -> assertThat(result).hasSize(limit),
             () -> assertThat(result.get(0).scheduleType()).isEqualTo(ScheduleType.PERSONAL),
-            () -> assertThat(result.get(0).boyCalendarColor()).isEqualTo("RED"),
-            () -> assertThat(result.get(0).girlCalendarColor()).isEqualTo("BLUE"),
+            () -> assertThat(result.get(0).myCalendarColor()).isEqualTo("RED"),
+            () -> assertThat(result.get(0).opponentCalendarColor()).isEqualTo("BLUE"),
             () -> assertThat(result.get(0).ownerId()).isEqualTo(1L)
         );
     }
@@ -50,16 +51,17 @@ class CalendarQueryRepositoryTest extends QueryTestSupport {
             LocalDate.of(2123, 11, 1),
             LocalDate.of(2123, 11, 30)
         );
+        Long loginUserId = 1L;
 
         // when
-        List<FindCalendarsWithDateResponse> result = calendarQueryRepository.findCalendarsWithDate(request, 1L);
+        List<FindCalendarsWithDateResponse> result = calendarQueryRepository.findCalendarsWithDate(request, 1L, loginUserId);
 
         // then
         assertAll("Find Calendars Between Start Date",
             () -> assertThat(result).hasSize(8),
             () -> assertThat(result.get(0).scheduleType()).isEqualTo(ScheduleType.PERSONAL),
-            () -> assertThat(result.get(0).boyCalendarColor()).isEqualTo("RED"),
-            () -> assertThat(result.get(0).girlCalendarColor()).isEqualTo("BLUE"),
+            () -> assertThat(result.get(0).myCalendarColor()).isEqualTo("RED"),
+            () -> assertThat(result.get(0).opponentCalendarColor()).isEqualTo("BLUE"),
             () -> assertThat(result.get(0).ownerId()).isEqualTo(1L)
         );
     }

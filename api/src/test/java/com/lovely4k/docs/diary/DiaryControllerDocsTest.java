@@ -148,9 +148,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     void getDiaryList() throws Exception {
         // stubbing
         List<DiaryListResponse> diaryListResponseList = List.of(
-            new DiaryListResponse(3L, 103L, "image-url", LocalDate.of(2023, 10, 20), "starbucks", BigDecimal.valueOf(97.1235), BigDecimal.valueOf(123.5642)),
-            new DiaryListResponse(2L, 103532L, "image-url", LocalDate.of(2023, 11, 20), "cafebenne",BigDecimal.valueOf(98.1235), BigDecimal.valueOf(122.3300)),
-            new DiaryListResponse(1L, 123562L, "image-url", LocalDate.of(2023, 12, 20), "삼시세끼",BigDecimal.valueOf(94.1235), BigDecimal.valueOf(124.4623))
+            new DiaryListResponse(3L, 103L, "image-url", LocalDate.of(2023, 10, 20), "starbucks", "경기도 고양시", BigDecimal.valueOf(97.1235), BigDecimal.valueOf(123.5642)),
+            new DiaryListResponse(2L, 103532L, "image-url", LocalDate.of(2023, 11, 20), "cafebenne", "수원시 팔달구", BigDecimal.valueOf(98.1235), BigDecimal.valueOf(122.3300)),
+            new DiaryListResponse(1L, 123562L, "image-url", LocalDate.of(2023, 12, 20), "삼시세끼", "강원도 원주시", BigDecimal.valueOf(94.1235), BigDecimal.valueOf(124.4623))
         );
 
         PageImpl<DiaryListResponse> responsePage =
@@ -182,6 +182,11 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                     fieldWithPath("body.content[0].diaryId").description("다이어리 id"),
                     fieldWithPath("body.content[0].kakaoMapId").description("카카오 맵 id"),
                     fieldWithPath("body.content[0].imageUrl").description("이미지 주소").optional(),
+                    fieldWithPath("body.content[0].datingDay").description("데이트 한 날짜"),
+                    fieldWithPath("body.content[0].placeName").description("데이트 장소명"),
+                    fieldWithPath("body.content[0].address").description("데이트 장소 주소"),
+                    fieldWithPath("body.content[0].latitude").description("데이트 장소 위도"),
+                    fieldWithPath("body.content[0].longitude").description("데이트 장소 경도"),
                     fieldWithPath("body.pageable.pageNumber").description("페이지 번호"),
                     fieldWithPath("body.pageable.pageSize").description("페이지 사이즈"),
                     fieldWithPath("body.first").description("첫번째 페이지 여부"),
