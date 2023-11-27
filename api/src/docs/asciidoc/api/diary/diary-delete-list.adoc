@@ -1,0 +1,16 @@
+[[diary-delete-list]]
+=== 다이어리 다중 삭제
+
+해당 API는 다이어리를 다중 삭제할 수 있는 API입니다.
+
+다른 커플의 다이어리는 삭제 할 수 없습니다.
+
+다이어리 삭제 목록 중 하나라도 권한이 없는 다이어리에 대해 잘못된 요청이 올 경우
+
+요청 전부에 대해 삭제 처리를 취소합니다.
+
+==== HTTP Request
+include::{snippets}/diary-delete-list/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/diary-delete-list/http-response.adoc[]

@@ -9,6 +9,7 @@ import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.Photos;
+import com.lovely4k.backend.diary.controller.request.DiaryDeleteRequest;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
 import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
 import com.lovely4k.backend.diary.service.response.*;
@@ -517,6 +518,52 @@ class DiaryServiceTest extends IntegrationTestSupport {
         ).isInstanceOf(IllegalArgumentException.class)
             .hasMessage("you can only manage your couple's diary");
 
+    }
+
+    @DisplayName("동시에 여러가지의 다이어리를 삭제할 수 있다.")
+    @Test
+    void deleteDiaries() {
+        // given
+        Location location = Location.create(10L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ZERO, Category.FOOD);
+        Diary diary1 = buildDiary(location, 2L);
+        Diary diary2 = buildDiary(location, 2L);
+        Diary diary3 = buildDiary(location, 2L);
+        diaryRepository.saveAll(List.of(diary1, diary2, diary3));
+
+        DiaryDeleteRequest diaryDeleteRequest = new DiaryDeleteRequest(List.of(diary1.getId(), diary2.getId(), diary3.getId()));
+
+        // when
+        diaryService.deleteDiaries(diaryDeleteRequest, 2L);
+
+        // then
+        List<Diary> diaries = diaryRepository.findAll();
+
+        assertThat(diaries).isEmpty();
+    }
+
+    @DisplayName("다이어리 삭제시 목록 중 하나라도 권한이 없다면 다이어리 모두 지워지지 않는다.")
+    @Test
+    void deleteDiaries_NoAuthority() {
+        // given
+        Location location = Location.create(10L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ZERO, Category.FOOD);
+        Diary diary1 = buildDiary(location, 2L);
+        Diary diary2 = buildDiary(location, 3L);
+        Diary diary3 = buildDiary(location, 2L);
+        diaryRepository.saveAll(List.of(diary1, diary2, diary3));
+
+        DiaryDeleteRequest diaryDeleteRequest = new DiaryDeleteRequest(List.of(diary1.getId(), diary2.getId(), diary3.getId()));
+
+        // when
+        assertThatThrownBy(
+            () -> diaryService.deleteDiaries(diaryDeleteRequest, 2L)
+        ).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("you can only manage your couple's diary");
+
+
+        // then
+        List<Diary> diaries = diaryRepository.findAll();
+
+        assertThat(diaries.size()).isEqualTo(3);
     }
 
     private static Diary buildDiary(Location location, long coupleId) {

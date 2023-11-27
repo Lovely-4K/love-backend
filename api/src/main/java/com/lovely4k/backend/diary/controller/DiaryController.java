@@ -3,6 +3,7 @@ package com.lovely4k.backend.diary.controller;
 import com.lovely4k.backend.common.ApiResponse;
 import com.lovely4k.backend.common.sessionuser.LoginUser;
 import com.lovely4k.backend.common.sessionuser.SessionUser;
+import com.lovely4k.backend.diary.controller.request.DiaryDeleteRequest;
 import com.lovely4k.backend.diary.controller.request.WebDiaryEditRequest;
 import com.lovely4k.backend.diary.controller.request.WebDiaryCreateRequest;
 import com.lovely4k.backend.diary.service.DiaryService;
@@ -11,7 +12,6 @@ import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListInGridResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
 import com.lovely4k.backend.location.Category;
-import com.lovely4k.backend.member.Sex;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -132,6 +132,15 @@ public class DiaryController {
     ) {
         diaryService.deleteDiary(id, sessionUser.coupleId());
 
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<Void> deleteDiaries(
+        @RequestBody DiaryDeleteRequest request,
+        @LoginUser SessionUser sessionUser
+    ) {
+        diaryService.deleteDiaries(request, sessionUser.coupleId());
         return ResponseEntity.noContent().build();
     }
 }

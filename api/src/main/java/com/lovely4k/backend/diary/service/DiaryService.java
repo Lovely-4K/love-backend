@@ -1,13 +1,13 @@
 package com.lovely4k.backend.diary.service;
 
 import com.lovely4k.backend.common.event.Events;
-import com.lovely4k.backend.common.imageuploader.ImageUploader;
 import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.couple.IncreaseTemperatureEvent;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepositoryAdapter;
 import com.lovely4k.backend.diary.Photos;
+import com.lovely4k.backend.diary.controller.request.DiaryDeleteRequest;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
 import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
 import com.lovely4k.backend.diary.service.response.*;
@@ -18,7 +18,6 @@ import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -151,5 +150,18 @@ public class DiaryService {
         Diary diary = validateDiaryId(diaryId);
         diary.checkAuthority(coupleId);
         diaryRepositoryAdapter.delete(diary);
+    }
+
+    @Transactional
+    public void deleteDiaries(DiaryDeleteRequest request, Long coupleId) {
+        List<Diary> diaries = request.diaryList().stream().map(
+            diaryId -> {
+                Diary diary = validateDiaryId(diaryId);
+                diary.checkAuthority(coupleId);
+                return diary;
+            }
+        ).toList();
+
+        diaryRepositoryAdapter.deleteAll(diaries);
     }
 }
