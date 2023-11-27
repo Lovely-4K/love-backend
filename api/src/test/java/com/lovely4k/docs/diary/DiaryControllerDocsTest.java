@@ -1,6 +1,7 @@
 package com.lovely4k.docs.diary;
 
 import com.lovely4k.backend.diary.controller.DiaryController;
+import com.lovely4k.backend.diary.controller.request.DiaryDeleteRequest;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.diary.service.response.*;
 import com.lovely4k.backend.location.Category;
@@ -27,11 +28,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.JsonFieldType.NUMBER;
-import static org.springframework.restdocs.payload.JsonFieldType.STRING;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -342,6 +341,27 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                 preprocessResponse(prettyPrint()),
                 pathParameters(
                     parameterWithName("id").description("diary ID")
+                )
+            ));
+    }
+
+    @DisplayName("다이어리를 다중 삭제하는 API")
+    @Test
+    void deleteDiaries() throws Exception {
+        DiaryDeleteRequest request = new DiaryDeleteRequest(List.of(1L, 3L, 1000L, 922L));
+
+        this.mockMvc.perform(
+                post("/v1/diaries/delete")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request))
+            )
+            .andDo(print())
+            .andExpect(status().isNoContent())
+            .andDo(document("diary-delete-list",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestFields(
+                    fieldWithPath("diaryList").type(ARRAY).description("다이어리 삭제 리스트")
                 )
             ));
     }

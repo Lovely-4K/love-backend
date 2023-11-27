@@ -48,6 +48,7 @@ include::api/diary/diary-getListByMarker.adoc[]
 include::api/diary/diary-getListInGrid.adoc[]
 include::api/diary/diary-edit.adoc[]
 include::api/diary/diary-delete.adoc[]
+include::api/diary/diary-delete-list.adoc[]
 
 
 [[Question]]
