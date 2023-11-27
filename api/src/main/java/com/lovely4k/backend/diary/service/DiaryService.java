@@ -53,6 +53,7 @@ public class DiaryService {
         Events.raise(new IncreaseTemperatureEvent(member.getCoupleId()));
         return savedDiary.getId();
     }
+
     private Member validateMemberId(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(
                 () -> new EntityNotFoundException("invalid member id")
