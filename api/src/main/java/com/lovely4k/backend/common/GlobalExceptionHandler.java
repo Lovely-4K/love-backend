@@ -43,6 +43,13 @@ public class GlobalExceptionHandler {
         return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, problemDetail);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<ProblemDetail>> handleValidation(IllegalArgumentException e, HttpServletRequest request) {
+        ProblemDetail problemDetail = ProblemDetailCreator.create(e, request, HttpStatus.BAD_REQUEST);
+
+        return ApiResponse.fail(HttpStatus.BAD_REQUEST, problemDetail);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<ProblemDetail>> handleAllException(Exception e, HttpServletRequest request) {
         ProblemDetail problemDetail = ProblemDetailCreator.create(e, request, HttpStatus.INTERNAL_SERVER_ERROR);

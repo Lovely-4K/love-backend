@@ -13,6 +13,10 @@ public record DiaryMarkerResponse(
 ) {
 
     public static DiaryMarkerResponse from(Diary diary) {
-        return new DiaryMarkerResponse(diary.getId(), diary.getPhotos().getFirstImage(), diary.getDatingDay());
+        if (diary.getPhotos() == null) {
+            return new DiaryMarkerResponse(diary.getId(), null, diary.getDatingDay());
+        } else {
+            return new DiaryMarkerResponse(diary.getId(), diary.getPhotos().getFirstImage(), diary.getDatingDay());
+        }
     }
 }

@@ -95,6 +95,9 @@ public class Diary extends BaseTimeEntity {
 
     public void update(Sex sex, Integer score, LocalDate datingDay, String category, String myText, String opponentText, List<String> uploadedImageUrls) {
         this.location.update(category);
+        if (this.photos == null) {
+            this.photos = new Photos();
+        }
         this.photos.update(uploadedImageUrls);
         this.score = score;
         this.datingDay = datingDay;
