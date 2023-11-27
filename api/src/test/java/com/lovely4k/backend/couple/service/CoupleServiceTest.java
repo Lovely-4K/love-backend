@@ -6,6 +6,7 @@ import com.lovely4k.backend.couple.CoupleStatus;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
+import com.lovely4k.backend.couple.service.response.CoupleTemperatureResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.Role;
@@ -115,7 +116,7 @@ class CoupleServiceTest extends IntegrationTestSupport {
         Member requestedMember = createMember(MALE, "ESFJ", "듬직이");
         Member receivedMember = createMember(FEMALE, "ESFJ", "듬직이");
 
-        Member savedRequestedMember = memberRepository.save(requestedMember);
+        memberRepository.save(requestedMember);
         Member savedReceivedMember = memberRepository.save(receivedMember);
 
 
@@ -374,6 +375,48 @@ class CoupleServiceTest extends IntegrationTestSupport {
             .hasMessage("상대방은 커플 재결합을 할 수 있는 상태가 아닙니다.");
 
     }
+
+    @DisplayName("커플의 온도를 조회할 수 있다.")
+    @Test
+    void findTemperature() {
+        // given
+        Couple couple = Couple.builder()
+            .boyId(1L)
+            .girlId(2L)
+            .temperature(36.5f)
+            .build();
+
+        Couple savedCouple = coupleRepository.save(couple);
+        Long coupleId = savedCouple.getId();
+
+        // when
+        CoupleTemperatureResponse coupleTemperatureResponse = coupleService.findTemperature(coupleId);
+
+        // then
+        assertThat(coupleTemperatureResponse.temperature()).isEqualTo(36.5f);
+    }
+
+    @DisplayName("존재하지 않는 커플의 경우 온도를 조회할 수 없다.")
+    @Test
+    void findTemperature_InvalidCoupleId() {
+        // given
+        Couple couple = Couple.builder()
+            .boyId(1L)
+            .girlId(2L)
+            .temperature(36.5f)
+            .build();
+
+        Couple savedCouple = coupleRepository.save(couple);
+        Long coupleId = savedCouple.getId();
+
+        // when && then
+        assertThatThrownBy(
+            () -> coupleService.findTemperature(coupleId + 1)
+        ).isInstanceOf(EntityNotFoundException.class)
+            .hasMessage("존재하지 않는 커플 id 입니다.");
+    }
+
+
 
     private Member createMember(Sex sex, String mbti, String nickname) {
         return Member.builder()

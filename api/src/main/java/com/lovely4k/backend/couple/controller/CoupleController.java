@@ -7,11 +7,11 @@ import com.lovely4k.backend.common.sessionuser.SessionUser;
 import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
+import com.lovely4k.backend.couple.service.response.CoupleTemperatureResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.hibernate.Session;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -92,6 +92,15 @@ public class CoupleController {
             linkTo(methodOn(CoupleController.class).reCouple(coupleId, sessionUser)).withSelfRel(),
             linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile"),
             linkTo(CoupleController.class.getMethod("editCoupleProfile", CoupleProfileEditRequest.class, SessionUser.class)).withRel("edit couple profile")
+        );
+    }
+
+    @GetMapping("/temperature")
+    public ResponseEntity<ApiResponse<CoupleTemperatureResponse>> getTemperature(
+        @LoginUser SessionUser sessionUser
+    ) {
+        return ApiResponse.ok(
+            coupleService.findTemperature(sessionUser.coupleId())
         );
     }
 

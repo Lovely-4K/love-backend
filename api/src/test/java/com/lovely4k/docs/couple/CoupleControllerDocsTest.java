@@ -5,6 +5,7 @@ import com.lovely4k.backend.couple.controller.CoupleController;
 import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
+import com.lovely4k.backend.couple.service.response.CoupleTemperatureResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import com.lovely4k.docs.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -254,6 +256,33 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                     fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디"),
                     fieldWithPath("links[0].rel").type(JsonFieldType.STRING).description("relation of url"),
                     fieldWithPath("links[0].href").type(JsonFieldType.STRING).description("url of relation")
+                )
+            ))
+        ;
+    }
+
+    @DisplayName("커플을 온도를 조회하는 API")
+    @Test
+    void getTemperature() throws Exception {
+        // stubbing
+        when(coupleService.findTemperature(any())).thenReturn(new CoupleTemperatureResponse(36.5f));
+
+        // when && then
+        this.mockMvc.perform(
+                get("/v1/couples/temperature")
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("couple-temperature",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER)
+                        .description("응답 코드"),
+                    fieldWithPath("body.temperature").type(JsonFieldType.NUMBER)
+                        .description("커플의 온도"),
+                    fieldWithPath("links").type(JsonFieldType.ARRAY)
+                        .description("관련된 링크")
                 )
             ))
         ;

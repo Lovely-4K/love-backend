@@ -6,6 +6,7 @@ import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.couple.repository.response.FindCoupleProfileResponse;
 import com.lovely4k.backend.couple.service.request.CoupleProfileEditServiceRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
+import com.lovely4k.backend.couple.service.response.CoupleTemperatureResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.Sex;
@@ -110,5 +111,11 @@ public class CoupleService {
         Member girl = findMember(couple.getGirlId());
         boy.registerCoupleId(couple.getId());
         girl.registerCoupleId(couple.getId());
+    }
+
+    public CoupleTemperatureResponse findTemperature(Long coupleId) {
+        Couple couple = findCouple(coupleId);
+
+        return new CoupleTemperatureResponse(couple.getTemperature());
     }
 }
