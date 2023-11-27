@@ -45,32 +45,36 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         optionalCouple.ifPresentOrElse(
             couple -> {
                 if (couple.isRecoupleReceiver(oAuth2Member.getMemberId())) {
-                    sendRecoupleCode(response, tokenDto.accessToken());
+
+                    log.debug("send code!!");
+                    sendRecoupleCode(response, coupleId, tokenDto);
                 } else {
-                    sendCode(response, tokenDto.accessToken());
+                    sendCode(response, tokenDto);
                 }
             }
-            , () -> sendCode(response, tokenDto.accessToken())
+            , () -> sendCode(response, tokenDto)
         );
 
     }
 
-    private void sendRecoupleCode(HttpServletResponse response, String accessToken) {
-        String recoupleUrl = redirectUrl + "recouple";
+
+    private void sendRecoupleCode(HttpServletResponse response, Long coupleId, TokenDto tokenDto) {
+        String recoupleUrl = redirectUrl + "recouple/" + coupleId;
+
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         response.setHeader("Location", redirectUrl);
         try {
-            response.sendRedirect(redirectUrl + "?token=" + accessToken + "&recouple-url=" + recoupleUrl);
+            response.sendRedirect(redirectUrl + "?token=" + tokenDto.accessToken() + "&recouple-url=" + recoupleUrl + "&refreshToken=" + tokenDto.refreshToken());
         } catch (IOException e) {
             throw new IllegalStateException("Something went wrong while generating response message", e);
         }
     }
 
-    private void sendCode(HttpServletResponse response, String accessToken) {
+    private void sendCode(HttpServletResponse response, TokenDto tokenDto) {
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         response.setHeader("Location", redirectUrl);
         try {
-            response.sendRedirect(redirectUrl +"?token=" + accessToken);
+            response.sendRedirect(redirectUrl + "?token=" + tokenDto.accessToken() + "&refreshToken=" + tokenDto.refreshToken());
         } catch (IOException e) {
             throw new IllegalStateException("Something went wrong while generating response message", e);
         }
