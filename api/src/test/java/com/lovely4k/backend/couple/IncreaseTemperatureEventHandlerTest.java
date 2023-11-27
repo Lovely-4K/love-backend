@@ -2,11 +2,11 @@ package com.lovely4k.backend.couple;
 
 import com.lovely4k.backend.IntegrationTestSupport;
 import com.lovely4k.backend.common.event.Events;
+import com.lovely4k.backend.common.imageuploader.AWSS3Uploader;
 import com.lovely4k.backend.couple.service.CoupleService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +30,9 @@ class IncreaseTemperatureEventHandlerTest extends IntegrationTestSupport {
 
     @Autowired
     private TransactionTemplate transactionTemplate;
+
+    @MockBean
+    protected AWSS3Uploader awss3Uploader;
 
     @Transactional
     @DisplayName("EventListener는 이벤트를 발행한 트랜잭션이 커밋된 후에 실행되어야 한다.")
