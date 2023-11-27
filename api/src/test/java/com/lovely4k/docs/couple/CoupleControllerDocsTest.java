@@ -220,16 +220,13 @@ class CoupleControllerDocsTest extends RestDocsSupport {
     void deleteCouple() throws Exception {
         // when && then
         this.mockMvc.perform(
-                delete("/v1/couples/{coupleId}", 1)
+                delete("/v1/couples")
             )
             .andDo(print())
             .andExpect(status().isNoContent())
             .andDo(document("couple-delete",
                 preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                pathParameters(
-                    parameterWithName("coupleId").description("id of couple")
-                )
+                preprocessResponse(prettyPrint())
             ))
         ;
     }
@@ -239,16 +236,13 @@ class CoupleControllerDocsTest extends RestDocsSupport {
     void restoreCouple() throws Exception {
         // when && then
         this.mockMvc.perform(
-                post("/v1/couples/recouple/{coupleId}", 1)
+                post("/v1/couples/recouple")
             )
             .andDo(print())
             .andExpect(status().isOk())
             .andDo(document("couple-recouple",
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
-                pathParameters(
-                    parameterWithName("coupleId").description("id of couple")
-                ),
                 responseFields(
                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
                     fieldWithPath("body").type(JsonFieldType.NULL).description("응답 바디"),
