@@ -44,7 +44,7 @@ public class CoupleService {
         Couple couple = validateInvitationCode(invitationCode);
         couple.registerPartnerId(receivedMemberId);
 
-        registerCoupleId(couple);
+        registerProfileInfo(couple);
     }
 
     public CoupleProfileGetResponse findCoupleProfile(Long memberId) {
@@ -105,10 +105,10 @@ public class CoupleService {
             .orElseThrow(() -> new EntityNotFoundException("유효하지 않은 초대코드 입니다."));
     }
 
-    private void registerCoupleId(Couple couple) {
+    private void registerProfileInfo(Couple couple) {
         Member boy = findMember(couple.getBoyId());
         Member girl = findMember(couple.getGirlId());
-        boy.registerCoupleId(couple.getId());
-        girl.registerCoupleId(couple.getId());
+        boy.registerProfileInfo(couple.getId());
+        girl.registerProfileInfo(couple.getId());
     }
 }
