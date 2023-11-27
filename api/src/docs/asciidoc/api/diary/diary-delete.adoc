@@ -5,6 +5,8 @@
 
 다른 커플의 다이어리는 삭제 할 수 없습니다.
 
+*_해당 API의 경우 Release 3.x버전에서는 Deprecated 될 예정입니다._*
+
 ==== HTTP Request
 include::{snippets}/diary-delete/http-request.adoc[]
 include::{snippets}/diary-delete/path-parameters.adoc[]
