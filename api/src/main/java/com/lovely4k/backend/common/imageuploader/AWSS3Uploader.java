@@ -28,7 +28,7 @@ public class AWSS3Uploader implements ImageUploader {
 
     @Override
     public List<String> upload(String directory, List<MultipartFile> multipartFiles) {
-        if (multipartFiles.isEmpty()) {
+        if (multipartFiles == null || multipartFiles.isEmpty()) {
             return List.of();
         }
 
