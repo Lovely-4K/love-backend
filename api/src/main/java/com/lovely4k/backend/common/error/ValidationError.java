@@ -1,4 +1,4 @@
-package com.lovely4k.backend.common;
+package com.lovely4k.backend.common.error;
 
 import lombok.Builder;
 import org.springframework.validation.FieldError;

@@ -1,4 +1,4 @@
-package com.lovely4k.backend.common;
+package com.lovely4k.backend.common.error;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;

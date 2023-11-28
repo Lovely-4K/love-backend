@@ -36,7 +36,6 @@ class MemberControllerTest extends ControllerTestSupport {
                     "white"
                 )
             );
-
         //when //then
         mockMvc.perform(get("/v1/members"))
             .andDo(print())
