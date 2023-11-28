@@ -103,12 +103,13 @@ public class JwtFilter extends OncePerRequestFilter {
     private void sendAccessToken(HttpServletResponse response, String refreshKey) throws IOException {
         RefreshToken refreshToken = tokenProvider.findRefreshTokenByKeyValue(refreshKey);
         String jwt = tokenProvider.generateAccessToken(refreshToken.getMember());
+        response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(HttpServletResponse.SC_CREATED);
         response.getWriter().println(
             objectMapper.writeValueAsString(
                 Map.of("accessToken", jwt)
             )
         );
-
         log.debug("업데이트 된 jwt: {}", jwt);
     }
 
