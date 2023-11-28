@@ -135,7 +135,7 @@ public abstract class ControllerTestSupport {
 
         when(authentication.getPrincipal()).thenReturn(myOAuth2Member);
         when(authentication.isAuthenticated()).thenReturn(true);
-
+        when(authentication.getName()).thenReturn(Role.USER.name());
         securityContext.setAuthentication(authentication);
 
         mockMvc = MockMvcBuilders
