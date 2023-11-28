@@ -2,6 +2,7 @@ package com.lovely4k.backend.common.sessionuser;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,8 +27,8 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return null;
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getName().equals("anonymousUser")) {
+            throw new AuthenticationCredentialsNotFoundException("로그인 하지 않은 사용자 입니다.");
         }
 
         MemberInfo memberInfo = (MemberInfo) authentication.getPrincipal();

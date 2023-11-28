@@ -34,7 +34,6 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        log.debug("CustomSuccessHandler 호출");
         MyOAuth2Member oAuth2Member = (MyOAuth2Member) authentication.getPrincipal();
         Member member = memberRepository.findById(oAuth2Member.getMemberId()).orElseThrow();
 
@@ -46,34 +45,36 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         optionalCouple.ifPresentOrElse(
             couple -> {
                 if (couple.isRecoupleReceiver(oAuth2Member.getMemberId())) {
+
                     log.debug("send code!!");
-                    sendRecoupleCode(response, coupleId, tokenDto.accessToken());
+                    sendRecoupleCode(response, coupleId, tokenDto);
                 } else {
-                    sendCode(response, tokenDto.accessToken());
+                    sendCode(response, tokenDto);
                 }
             }
-            , () -> sendCode(response, tokenDto.accessToken())
+            , () -> sendCode(response, tokenDto)
         );
 
     }
 
-    private void sendRecoupleCode(HttpServletResponse response, Long coupleId, String accessToken) {
+
+    private void sendRecoupleCode(HttpServletResponse response, Long coupleId, TokenDto tokenDto) {
         String recoupleUrl = redirectUrl + "recouple/" + coupleId;
+
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         response.setHeader("Location", redirectUrl);
-        response.setHeader("recouple-url", recoupleUrl);
         try {
-            response.sendRedirect(redirectUrl + "?token=" + accessToken + "&recouple-url=" + recoupleUrl);
+            response.sendRedirect(redirectUrl + "?accessToken=" + tokenDto.accessToken() +"&refreshToken=" + tokenDto.refreshToken() + "&recouple-url=" + recoupleUrl);
         } catch (IOException e) {
             throw new IllegalStateException("Something went wrong while generating response message", e);
         }
     }
 
-    private void sendCode(HttpServletResponse response, String accessToken) {
+    private void sendCode(HttpServletResponse response, TokenDto tokenDto) {
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         response.setHeader("Location", redirectUrl);
         try {
-            response.sendRedirect(redirectUrl +"?token=" + accessToken);
+            response.sendRedirect(redirectUrl + "?accessToken=" + tokenDto.accessToken() + "&refreshToken=" + tokenDto.refreshToken());
         } catch (IOException e) {
             throw new IllegalStateException("Something went wrong while generating response message", e);
         }

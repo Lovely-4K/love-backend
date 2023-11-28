@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.lovely4k.backend.common.ExceptionMessage.notFoundEntityMessage;
+import static com.lovely4k.backend.common.error.ExceptionMessage.notFoundEntityMessage;
 
 @Transactional
 @RequiredArgsConstructor

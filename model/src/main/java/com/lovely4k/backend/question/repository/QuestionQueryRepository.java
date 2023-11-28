@@ -118,8 +118,9 @@ public class QuestionQueryRepository {
 
         NumberExpression<Long> questionDayExpression = Expressions.numberTemplate(
             Long.class,
-            "TIMESTAMPDIFF(DAY, {0}, CURRENT_DATE)",
+            "DATEDIFF(CURRENT_DATE, {0})",
             couple.createdDate);
+
 
         return jpaQueryFactory
             .select(Projections.constructor(DailyQuestionResponse.class,

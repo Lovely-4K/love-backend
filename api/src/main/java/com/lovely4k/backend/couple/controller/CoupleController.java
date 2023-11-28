@@ -7,11 +7,11 @@ import com.lovely4k.backend.common.sessionuser.SessionUser;
 import com.lovely4k.backend.couple.controller.request.CoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
+import com.lovely4k.backend.couple.service.response.CoupleTemperatureResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.hibernate.Session;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -71,27 +71,34 @@ public class CoupleController {
         );
     }
 
-    @DeleteMapping("/{coupleId}")
+    @DeleteMapping
     public ResponseEntity<Void> deleteCouple(
-        @PathVariable Long coupleId,
         @LoginUser SessionUser sessionUser) {
-        coupleService.deleteCouple(coupleId, sessionUser.memberId());
+        coupleService.deleteCouple(sessionUser.coupleId(), sessionUser.memberId());
         return ResponseEntity.noContent().build();
     }
 
     @SneakyThrows
-    @PostMapping("/recouple/{coupleId}")
+    @PostMapping("/recouple")
     public ResponseEntity<ApiResponse<Void>> reCouple(
-        @PathVariable Long coupleId,
         @LoginUser SessionUser sessionUser
     ) {
         LocalDate requestedDate = LocalDate.now();
-        coupleService.reCouple(requestedDate, coupleId, sessionUser.memberId());
+        coupleService.reCouple(requestedDate, sessionUser.coupleId(), sessionUser.memberId());
 
         return ApiResponse.ok(
-            linkTo(methodOn(CoupleController.class).reCouple(coupleId, sessionUser)).withSelfRel(),
+            linkTo(methodOn(CoupleController.class).reCouple(sessionUser)).withSelfRel(),
             linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile"),
             linkTo(CoupleController.class.getMethod("editCoupleProfile", CoupleProfileEditRequest.class, SessionUser.class)).withRel("edit couple profile")
+        );
+    }
+
+    @GetMapping("/temperature")
+    public ResponseEntity<ApiResponse<CoupleTemperatureResponse>> getTemperature(
+        @LoginUser SessionUser sessionUser
+    ) {
+        return ApiResponse.ok(
+            coupleService.findTemperature(sessionUser.coupleId())
         );
     }
 

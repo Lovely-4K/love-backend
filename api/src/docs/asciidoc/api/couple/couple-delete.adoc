@@ -6,7 +6,6 @@
 ==== Http Request
 
 include::{snippets}/couple-delete/http-request.adoc[]
-include::{snippets}/couple-delete/path-parameters.adoc[]
 
 커플 프로필의 값 중 수정할 수 있는 값은 다음과 같습니다.
 

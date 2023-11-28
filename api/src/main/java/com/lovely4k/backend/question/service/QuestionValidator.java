@@ -24,8 +24,12 @@ public class QuestionValidator {
         if (questions.size() > 1) {
             throw new IllegalStateException("이미 오늘의 질문을 2번 생성 했습니다.");
         }
-        Question question = questions.get(0);
-        question.validateAnswer();
+
+        if (questions.isEmpty()) {
+            throw new IllegalStateException("서버에서 제공하는 질문을 먼저 생성해 주세요.");
+        }
+
+        questions.get(0).validateAnswer();
     }
 
     private List<Question> findQuestionWithLock(Long coupleId, Long questionDay) {
