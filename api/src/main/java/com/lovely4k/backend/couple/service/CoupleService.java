@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -45,7 +46,7 @@ public class CoupleService {
         Couple couple = validateInvitationCode(invitationCode);
         couple.registerPartnerId(receivedMemberId);
 
-        registerCoupleId(couple);
+        registerProfileInfo(couple);
     }
 
     public CoupleProfileGetResponse findCoupleProfile(Long memberId) {
@@ -106,11 +107,22 @@ public class CoupleService {
             .orElseThrow(() -> new EntityNotFoundException("유효하지 않은 초대코드 입니다."));
     }
 
-    private void registerCoupleId(Couple couple) {
-        Member boy = findMember(couple.getBoyId());
-        Member girl = findMember(couple.getGirlId());
-        boy.registerCoupleId(couple.getId());
-        girl.registerCoupleId(couple.getId());
+    private void registerProfileInfo(Couple couple) {
+        List<Member> coupleMembers = memberRepository.findCoupleMembersById(couple.getBoyId(),couple.getGirlId());
+
+        Member boy = findMember(couple.getBoyId(), coupleMembers);
+        Member girl = findMember(couple.getGirlId(), coupleMembers);
+
+        boy.registerProfileInfo(couple.getId());
+        girl.registerProfileInfo(couple.getId());
+    }
+
+    private Member findMember(Long memberId, List<Member> coupleMembers) {
+        return coupleMembers.stream()
+            .filter(member -> member.getId().equals(memberId))
+            .findFirst()
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원 id 입니다."));
+
     }
 
     public CoupleTemperatureResponse findTemperature(Long coupleId) {

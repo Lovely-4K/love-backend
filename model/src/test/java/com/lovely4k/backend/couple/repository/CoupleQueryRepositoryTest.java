@@ -48,7 +48,7 @@ class CoupleQueryRepositoryTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("커플이 등록된 경우 나와 상대방의 정보를 함께 조회할 수 있다.")
-    void findCoupleProfileTogether() throws Exception {
+    void findCoupleProfileTogether() {
         //given
         Member boyfriend = createMember(Sex.MALE, "ESFJ", "듬직이");
         Member girlfriend = createMember(Sex.FEMALE, "INFP", "깜찍이");
@@ -59,8 +59,8 @@ class CoupleQueryRepositoryTest extends IntegrationTestSupport {
         createdCouple.registerPartnerId(savedGirlFriend.getId());
         coupleRepository.save(createdCouple);
 
-        savedBoyFriend.registerCoupleId(createdCouple.getId());
-        savedGirlFriend.registerCoupleId(createdCouple.getId());
+        savedBoyFriend.registerProfileInfo(createdCouple.getId());
+        savedGirlFriend.registerProfileInfo(createdCouple.getId());
 
         //when
         FindCoupleProfileResponse response = coupleQueryRepository.findCoupleProfile(savedBoyFriend.getId());
