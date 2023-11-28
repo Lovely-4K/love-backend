@@ -71,25 +71,23 @@ public class CoupleController {
         );
     }
 
-    @DeleteMapping("/{coupleId}")
+    @DeleteMapping
     public ResponseEntity<Void> deleteCouple(
-        @PathVariable Long coupleId,
         @LoginUser SessionUser sessionUser) {
-        coupleService.deleteCouple(coupleId, sessionUser.memberId());
+        coupleService.deleteCouple(sessionUser.coupleId(), sessionUser.memberId());
         return ResponseEntity.noContent().build();
     }
 
     @SneakyThrows
-    @PostMapping("/recouple/{coupleId}")
+    @PostMapping("/recouple")
     public ResponseEntity<ApiResponse<Void>> reCouple(
-        @PathVariable Long coupleId,
         @LoginUser SessionUser sessionUser
     ) {
         LocalDate requestedDate = LocalDate.now();
-        coupleService.reCouple(requestedDate, coupleId, sessionUser.memberId());
+        coupleService.reCouple(requestedDate, sessionUser.coupleId(), sessionUser.memberId());
 
         return ApiResponse.ok(
-            linkTo(methodOn(CoupleController.class).reCouple(coupleId, sessionUser)).withSelfRel(),
+            linkTo(methodOn(CoupleController.class).reCouple(sessionUser)).withSelfRel(),
             linkTo(CoupleController.class.getMethod("getCoupleProfile", SessionUser.class)).withRel("get couple profile"),
             linkTo(CoupleController.class.getMethod("editCoupleProfile", CoupleProfileEditRequest.class, SessionUser.class)).withRel("edit couple profile")
         );

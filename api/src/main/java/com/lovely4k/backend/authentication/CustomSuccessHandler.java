@@ -34,7 +34,6 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        log.debug("CustomSuccessHandler 호출");
         MyOAuth2Member oAuth2Member = (MyOAuth2Member) authentication.getPrincipal();
         Member member = memberRepository.findById(oAuth2Member.getMemberId()).orElseThrow();
 
@@ -46,8 +45,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         optionalCouple.ifPresentOrElse(
             couple -> {
                 if (couple.isRecoupleReceiver(oAuth2Member.getMemberId())) {
-                    log.debug("send code!!");
-                    sendRecoupleCode(response, coupleId, tokenDto.accessToken());
+                    sendRecoupleCode(response, tokenDto.accessToken());
                 } else {
                     sendCode(response, tokenDto.accessToken());
                 }
@@ -57,11 +55,10 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
     }
 
-    private void sendRecoupleCode(HttpServletResponse response, Long coupleId, String accessToken) {
-        String recoupleUrl = redirectUrl + "recouple/" + coupleId;
+    private void sendRecoupleCode(HttpServletResponse response, String accessToken) {
+        String recoupleUrl = redirectUrl + "recouple";
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         response.setHeader("Location", redirectUrl);
-        response.setHeader("recouple-url", recoupleUrl);
         try {
             response.sendRedirect(redirectUrl + "?token=" + accessToken + "&recouple-url=" + recoupleUrl);
         } catch (IOException e) {
