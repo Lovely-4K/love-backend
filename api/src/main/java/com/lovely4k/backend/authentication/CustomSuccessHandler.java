@@ -64,7 +64,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         response.setHeader("Location", redirectUrl);
         try {
-            response.sendRedirect(redirectUrl + "?token=" + tokenDto.accessToken() + "&recouple-url=" + recoupleUrl + "&refreshToken=" + tokenDto.refreshToken());
+            response.sendRedirect(redirectUrl + "?accessToken=" + tokenDto.accessToken() +"&refreshToken=" + tokenDto.refreshToken() + "&recouple-url=" + recoupleUrl);
         } catch (IOException e) {
             throw new IllegalStateException("Something went wrong while generating response message", e);
         }
@@ -74,7 +74,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         response.setHeader("Location", redirectUrl);
         try {
-            response.sendRedirect(redirectUrl + "?token=" + tokenDto.accessToken() + "&refreshToken=" + tokenDto.refreshToken());
+            response.sendRedirect(redirectUrl + "?accessToken=" + tokenDto.accessToken() + "&refreshToken=" + tokenDto.refreshToken());
         } catch (IOException e) {
             throw new IllegalStateException("Something went wrong while generating response message", e);
         }

@@ -39,7 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
     public static String AUTHORIZATION_HEADER = "Authorization";    // NOSONAR
     public static String BEARER_PREFIX = "Bearer ";     // NOSONAR
     public static String AUTHORITIES_KEY = "auth";      // NOSONAR
-    private static final String REFRESH_HEADER = "Refresh";
+    private static final String REFRESH_HEADER = "Refresh-Token";
     private final TokenProvider tokenProvider;
     private final UserDetailsServiceImpl userDetailsService;
     private final ObjectMapper objectMapper;
