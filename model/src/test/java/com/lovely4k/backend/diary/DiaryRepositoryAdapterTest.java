@@ -67,40 +67,6 @@ class DiaryRepositoryAdapterTest extends IntegrationTestSupport {
     }
 
     @Test
-    void findDiaryList() {
-        // given
-        Location food = Location.create(1L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.FOOD);
-        Location accomodation = Location.create(1L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.ACCOMODATION);
-        Diary diary1 = Diary.builder()
-                .coupleId(1L)
-                .girlText("girl text")
-                .boyText("boy text")
-                .location(food)
-                .build();
-
-        Diary diary2 = Diary.builder()
-                .coupleId(1L)
-                .girlText("girl text")
-                .boyText("boy text")
-                .location(accomodation)
-                .build();
-
-        diaryRepository.saveAll(List.of(diary1, diary2));
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate"));
-        // when
-        Page<Diary> diaryPage = diaryRepositoryAdapter.findDiaryList(1L, Category.FOOD, pageRequest);
-
-        // then
-        System.out.println(diaryPage);
-        assertAll(
-                () -> assertThat(diaryPage.getNumberOfElements()).isEqualTo(1),
-                () -> assertThat(diaryPage.getTotalPages()).isEqualTo(1),
-                () -> assertThat(diaryPage.getPageable().isPaged()).isTrue()
-        );
-
-    }
-
-    @Test
     void delete() {
         // given
         Diary diary = Diary.builder()

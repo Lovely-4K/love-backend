@@ -3,17 +3,15 @@ package com.lovely4k.backend.diary.controller;
 import com.lovely4k.backend.common.ApiResponse;
 import com.lovely4k.backend.common.sessionuser.LoginUser;
 import com.lovely4k.backend.common.sessionuser.SessionUser;
-import com.lovely4k.backend.diary.DiaryQueryRepository;
 import com.lovely4k.backend.diary.controller.request.DiaryDeleteRequest;
-import com.lovely4k.backend.diary.controller.request.WebDiaryEditRequest;
 import com.lovely4k.backend.diary.controller.request.WebDiaryCreateRequest;
-import com.lovely4k.backend.diary.response.DiaryDetailResponse;
+import com.lovely4k.backend.diary.controller.request.WebDiaryEditRequest;
 import com.lovely4k.backend.diary.service.DiaryQueryService;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListInGridResponse;
-import com.lovely4k.backend.diary.service.response.DiaryListResponse;
 import com.lovely4k.backend.diary.service.response.WebDiaryDetailResponse;
+import com.lovely4k.backend.diary.service.response.WebDiaryListResponse;
 import com.lovely4k.backend.location.Category;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -80,12 +78,12 @@ public class DiaryController {
     }
     @SneakyThrows
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<DiaryListResponse>>> getDiaryList(
+    public ResponseEntity<ApiResponse<Page<WebDiaryListResponse>>> getDiaryList(
             @LoginUser SessionUser sessionUser,
             @RequestParam(required = false) Category category,
             @PageableDefault(size = 10, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return ApiResponse.ok(diaryService.findDiaryList(sessionUser.coupleId(), category, pageable),
+        return ApiResponse.ok(diaryQueryService.findDiaryList(sessionUser.coupleId(), category, pageable),
                 linkTo(DiaryController.class.getMethod("getDiaryDetail", Long.class, SessionUser.class)).withRel(DETAIL),
                 linkTo(DiaryController.class.getMethod("editDiary", Long.class, List.class, WebDiaryEditRequest.class, SessionUser.class)).withRel(EDIT),
                 linkTo(DiaryController.class.getMethod("deleteDiary", Long.class, SessionUser.class)).withRel(DELETE)

@@ -13,7 +13,7 @@ import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
 import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
 import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListInGridResponse;
-import com.lovely4k.backend.diary.service.response.DiaryListResponse;
+import com.lovely4k.backend.diary.service.response.WebDiaryListResponse;
 import com.lovely4k.backend.diary.service.response.DiaryMarkerResponse;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.location.Location;
@@ -266,40 +266,6 @@ class DiaryServiceTest extends IntegrationTestSupport {
         assertThat(optionalDiary).isEmpty();
     }
 
-    @DisplayName("findDiaryList 메서드를 통해 다이어리 목록을 조회해 올 수 있다. ")
-    @Test
-    void findDiaryList() {
-        // given
-        Diary food1 = buildDiary(Category.FOOD, 1L);
-        Diary food2 = buildDiary(Category.FOOD, 1L);
-        Diary accomodation1 = buildDiary(Category.ACCOMODATION, 1L);
-        Diary accomodation2 = buildDiary(Category.ACCOMODATION, 2L);
-        diaryRepository.saveAll(List.of(food1, food2, accomodation1, accomodation2));
-
-        // when
-        Page<DiaryListResponse> diaryList =
-            diaryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate")));
-
-        // then
-        assertAll(
-            () -> assertThat(diaryList.getNumberOfElements()).isEqualTo(1),
-            () -> assertThat(diaryList.getTotalPages()).isEqualTo(1)
-        );
-    }
-
-    @DisplayName("findDiaryList 메서드 실행 시 diary가 존재하지 않으면 빈 페이지를 반환한다.")
-    @Test
-    void findDiaryListNoDiary() {
-        // when
-        Page<DiaryListResponse> diaryList =
-            diaryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate")));
-
-        // then
-        assertAll(
-            () -> assertThat(diaryList.getNumberOfElements()).isZero(),
-            () -> assertThat(diaryList.getTotalPages()).isEqualTo(1)
-        );
-    }
 
     @DisplayName("findDiaryListByMarker를 통해서 특정 kakaoMap에 해당하는 다이어리들을 조회 할 수 있다.")
     @Test

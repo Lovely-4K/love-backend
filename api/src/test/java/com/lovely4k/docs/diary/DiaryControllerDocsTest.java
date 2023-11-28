@@ -148,19 +148,19 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     @Test
     void getDiaryList() throws Exception {
         // stubbing
-        List<DiaryListResponse> diaryListResponseList = List.of(
-            new DiaryListResponse(3L, 103L, "image-url", LocalDate.of(2023, 10, 20), "starbucks", "경기도 고양시", BigDecimal.valueOf(97.1235), BigDecimal.valueOf(123.5642)),
-            new DiaryListResponse(2L, 103532L, "image-url", LocalDate.of(2023, 11, 20), "cafebenne", "수원시 팔달구", BigDecimal.valueOf(98.1235), BigDecimal.valueOf(122.3300)),
-            new DiaryListResponse(1L, 123562L, "image-url", LocalDate.of(2023, 12, 20), "삼시세끼", "강원도 원주시", BigDecimal.valueOf(94.1235), BigDecimal.valueOf(124.4623))
+        List<WebDiaryListResponse> webDiaryListResponse = List.of(
+            new WebDiaryListResponse(3L, 103L, "image-url", LocalDate.of(2023, 10, 20), "starbucks", "경기도 고양시", BigDecimal.valueOf(97.1235), BigDecimal.valueOf(123.5642)),
+            new WebDiaryListResponse(2L, 103532L, "image-url", LocalDate.of(2023, 11, 20), "cafebenne", "수원시 팔달구", BigDecimal.valueOf(98.1235), BigDecimal.valueOf(122.3300)),
+            new WebDiaryListResponse(1L, 123562L, "image-url", LocalDate.of(2023, 12, 20), "삼시세끼", "강원도 원주시", BigDecimal.valueOf(94.1235), BigDecimal.valueOf(124.4623))
         );
 
-        PageImpl<DiaryListResponse> responsePage =
+        PageImpl<WebDiaryListResponse> responsePage =
             new PageImpl<>(
-                diaryListResponseList,
+                webDiaryListResponse,
                 PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")),
-                diaryListResponseList.size());
+                webDiaryListResponse.size());
 
-        when(diaryService.findDiaryList(any(), any(), any()))
+        when(diaryQueryService.findDiaryList(any(), any(), any()))
             .thenReturn(responsePage);
 
         this.mockMvc.perform(

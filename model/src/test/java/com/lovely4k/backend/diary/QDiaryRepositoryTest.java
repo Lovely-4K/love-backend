@@ -1,6 +1,7 @@
 package com.lovely4k.backend.diary;
 
 import com.lovely4k.backend.IntegrationTestSupport;
+import com.lovely4k.backend.diary.response.DiaryListResponse;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.location.Location;
 import org.junit.jupiter.api.AfterEach;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +47,7 @@ class QDiaryRepositoryTest extends IntegrationTestSupport {
 
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("createdDate").ascending());
         // when
-        Page<Diary> diaryPage = qDiaryRepository.findAll(1L, Category.FOOD, pageRequest);
+        Page<DiaryListResponse> diaryPage = qDiaryRepository.findDiaryList(1L, Category.FOOD, pageRequest);
 
         // then
         assertThat(diaryPage.getNumberOfElements()).isEqualTo(2);
@@ -63,7 +65,7 @@ class QDiaryRepositoryTest extends IntegrationTestSupport {
 
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("createdDate").ascending());
         // when
-        Page<Diary> diaryPage = qDiaryRepository.findAll(1L, null, pageRequest);
+        Page<DiaryListResponse> diaryPage = qDiaryRepository.findDiaryList(1L, null, pageRequest);
 
         // then
         assertThat(diaryPage.getNumberOfElements()).isEqualTo(4);
@@ -80,13 +82,33 @@ class QDiaryRepositoryTest extends IntegrationTestSupport {
         Diary accomodation2 = buildDiary(Category.ACCOMODATION, 1L);
         diaryRepository.saveAll(List.of(foodDiary1, foodDiary2, accomodation1, accomodation2));
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("localDateTime").ascending());
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("createdDate").ascending());
 
         // when && then
         assertThatThrownBy(
-                () -> qDiaryRepository.findAll(null, Category.FOOD, pageRequest)
+                () -> qDiaryRepository.findDiaryList(null, Category.FOOD, pageRequest)
         ).isInstanceOf(InvalidDataAccessApiUsageException.class)
                 .hasMessage("couple id must not be null");
+
+    }
+
+    @DisplayName("findAll method를 사용시 잘못된 Sort로 정렬할 경우 예외가 발생한다.")
+    @Test
+    void findAll_InvalidSort() {
+        // given
+        Diary foodDiary1 = buildDiary(Category.FOOD, 1L);
+        Diary foodDiary2 = buildDiary(Category.FOOD, 1L);
+        Diary accomodation1 = buildDiary(Category.ACCOMODATION, 1L);
+        Diary accomodation2 = buildDiary(Category.ACCOMODATION, 1L);
+        diaryRepository.saveAll(List.of(foodDiary1, foodDiary2, accomodation1, accomodation2));
+
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("haha").ascending());
+
+        // when && then
+        assertThatThrownBy(
+            () -> qDiaryRepository.findDiaryList(1L, Category.FOOD, pageRequest)
+        ).isInstanceOf(InvalidDataAccessApiUsageException.class)
+            .hasMessage("Unknown property: haha");
 
     }
 

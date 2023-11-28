@@ -1,10 +1,7 @@
 package com.lovely4k.backend.diary;
 
 import com.lovely4k.backend.diary.response.DiaryDetailResponse;
-import com.lovely4k.backend.location.Category;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -16,7 +13,6 @@ import java.util.Optional;
 public class DiaryRepositoryAdapter {
 
     private final DiaryRepository diaryRepository;
-    private final QDiaryRepository qDiaryRepository;
 
 
     public Diary save(Diary diary) {
@@ -27,9 +23,6 @@ public class DiaryRepositoryAdapter {
         return diaryRepository.findById(diaryId);
     }
 
-    public Page<Diary> findDiaryList(Long coupleId, Category category, Pageable pageable) {
-        return qDiaryRepository.findAll(coupleId, category, pageable);
-    }
 
     public List<Diary> findDiaryList(BigDecimal rLatitude, BigDecimal rLongitude, BigDecimal lLatitude, BigDecimal lLongitude, Long coupleId) {
         return diaryRepository.findInGrid(rLatitude, rLongitude, lLatitude, lLongitude, coupleId);

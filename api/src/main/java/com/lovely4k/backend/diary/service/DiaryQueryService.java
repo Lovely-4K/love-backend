@@ -2,8 +2,13 @@ package com.lovely4k.backend.diary.service;
 
 import com.lovely4k.backend.diary.DiaryQueryRepository;
 import com.lovely4k.backend.diary.response.DiaryDetailResponse;
+import com.lovely4k.backend.diary.response.DiaryListResponse;
+import com.lovely4k.backend.diary.service.response.WebDiaryListResponse;
 import com.lovely4k.backend.diary.service.response.WebDiaryDetailResponse;
+import com.lovely4k.backend.location.Category;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,5 +26,15 @@ public class DiaryQueryService {
             return null;
         }
         return WebDiaryDetailResponse.from(diaryDetailResponse);
+    }
+
+    public Page<WebDiaryListResponse> findDiaryList(Long coupleId, Category category, Pageable pageable) {
+        Page<DiaryListResponse> pageDiary = repository.findDiaryList(coupleId, category, pageable);
+
+        if (pageDiary.getContent().isEmpty()) {
+            return Page.empty();
+        }
+
+        return pageDiary.map(WebDiaryListResponse::from);
     }
 }

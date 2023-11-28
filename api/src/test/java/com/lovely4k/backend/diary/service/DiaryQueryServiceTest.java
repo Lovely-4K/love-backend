@@ -6,6 +6,7 @@ import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.service.response.WebDiaryDetailResponse;
+import com.lovely4k.backend.diary.service.response.WebDiaryListResponse;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.location.Location;
 import com.lovely4k.backend.member.Member;
@@ -14,6 +15,9 @@ import com.lovely4k.backend.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -134,6 +138,41 @@ class DiaryQueryServiceTest extends IntegrationTestSupport {
 
         // then
         assertThat(diaryDetail).isNull();
+    }
+
+    @DisplayName("findDiaryList 메서드를 통해 다이어리 목록을 조회해 올 수 있다. ")
+    @Test
+    void findDiaryList() {
+        // given
+        Diary food1 = buildDiary(Category.FOOD, 1L);
+        Diary food2 = buildDiary(Category.FOOD, 1L);
+        Diary accomodation1 = buildDiary(Category.ACCOMODATION, 1L);
+        Diary accomodation2 = buildDiary(Category.ACCOMODATION, 2L);
+        diaryRepository.saveAll(List.of(food1, food2, accomodation1, accomodation2));
+
+        // when
+        Page<WebDiaryListResponse> diaryList =
+            diaryQueryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate")));
+
+        // then
+        assertAll(
+            () -> assertThat(diaryList.getNumberOfElements()).isEqualTo(1),
+            () -> assertThat(diaryList.getTotalPages()).isEqualTo(1)
+        );
+    }
+
+    @DisplayName("findDiaryList 메서드 실행 시 diary가 존재하지 않으면 빈 페이지를 반환한다.")
+    @Test
+    void findDiaryListNoDiary() {
+        // when
+        Page<WebDiaryListResponse> diaryList =
+            diaryQueryService.findDiaryList(1L, Category.ACCOMODATION, PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdDate")));
+
+        // then
+        assertAll(
+            () -> assertThat(diaryList.getNumberOfElements()).isZero(),
+            () -> assertThat(diaryList.getTotalPages()).isEqualTo(1)
+        );
     }
 
     private static Diary buildDiary(Location location, long coupleId) {
