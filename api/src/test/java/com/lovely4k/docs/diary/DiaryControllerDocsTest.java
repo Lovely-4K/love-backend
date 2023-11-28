@@ -2,6 +2,7 @@ package com.lovely4k.docs.diary;
 
 import com.lovely4k.backend.diary.controller.DiaryController;
 import com.lovely4k.backend.diary.controller.request.DiaryDeleteRequest;
+import com.lovely4k.backend.diary.service.DiaryQueryService;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.diary.service.response.*;
 import com.lovely4k.backend.location.Category;
@@ -39,10 +40,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class DiaryControllerDocsTest extends RestDocsSupport {
 
     private final DiaryService diaryService = mock(DiaryService.class);
+    private final DiaryQueryService diaryQueryService = mock(DiaryQueryService.class);
 
     @Override
     protected Object initController() {
-        return new DiaryController(diaryService);
+        return new DiaryController(diaryService, diaryQueryService);
     }
 
     @DisplayName("다이어리를 작성하는 API")
@@ -97,9 +99,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     @Test
     void getDiaryDetail() throws Exception {
         // stubbing
-        when(diaryService.findDiaryDetail(any(), any(), any()))
+        when(diaryQueryService.findDiaryDetail(any(), any(), any()))
             .thenReturn(
-                new DiaryDetailResponse(102L,
+                new WebDiaryDetailResponse(102L,
                     LocalDate.of(2021, 10, 20), 5, Category.FOOD,
                     "여기 음식 최고", "포브스 선정 맛집 답다.",
                     PhotoListResponse.builder().firstImage("image-url1").secondImage("image-url2").build()

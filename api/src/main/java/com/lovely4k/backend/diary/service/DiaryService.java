@@ -66,16 +66,6 @@ public class DiaryService {
         }
     }
 
-
-
-    public DiaryDetailResponse findDiaryDetail(Long diaryId, Long coupleId, Long memberId) {
-        Diary diary = validateDiaryId(diaryId);
-        diary.checkAuthority(coupleId);
-        Couple couple = validateCoupleId(coupleId);
-        Sex sex = getCoupleRole(memberId, couple);
-        return DiaryDetailResponse.of(diary, sex);
-    }
-
     private Diary validateDiaryId(Long diaryId) {
         return diaryRepositoryAdapter.findById(diaryId).orElseThrow(
                 () -> new EntityNotFoundException("invalid diary id")

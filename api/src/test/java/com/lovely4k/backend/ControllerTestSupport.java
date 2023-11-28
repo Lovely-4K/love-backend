@@ -1,10 +1,12 @@
 package com.lovely4k.backend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lovely4k.backend.authentication.*;
+import com.lovely4k.backend.authentication.CustomSuccessHandler;
+import com.lovely4k.backend.authentication.MyOAuth2Member;
+import com.lovely4k.backend.authentication.OAuth2UserService;
+import com.lovely4k.backend.authentication.OAuthAttributes;
 import com.lovely4k.backend.authentication.exception.AccessDeniedHandlerException;
 import com.lovely4k.backend.authentication.exception.AuthenticationEntryPointException;
-import com.lovely4k.backend.authentication.CustomSuccessHandler;
 import com.lovely4k.backend.authentication.token.SecurityConfig;
 import com.lovely4k.backend.authentication.token.TokenProvider;
 import com.lovely4k.backend.authentication.token.UserDetailsServiceImpl;
@@ -15,6 +17,7 @@ import com.lovely4k.backend.couple.controller.CoupleController;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.couple.service.CoupleService;
 import com.lovely4k.backend.diary.controller.DiaryController;
+import com.lovely4k.backend.diary.service.DiaryQueryService;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.Role;
@@ -69,6 +72,9 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected DiaryService diaryService;
+
+    @MockBean
+    protected DiaryQueryService diaryQueryService;
 
     @MockBean
     protected MemberService memberService;

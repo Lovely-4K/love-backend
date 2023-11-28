@@ -1,5 +1,6 @@
 package com.lovely4k.backend.diary;
 
+import com.lovely4k.backend.diary.response.DiaryDetailResponse;
 import com.lovely4k.backend.location.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -44,5 +45,9 @@ public class DiaryRepositoryAdapter {
 
     public void deleteAll(List<Diary> diaries) {
         diaryRepository.deleteAll(diaries);
+    }
+
+    public DiaryDetailResponse findDiaryDetail(Long diaryId, Long coupleId, Long memberId) {
+        return diaryRepository.findDiaryDetail(diaryId, coupleId, memberId);
     }
 }

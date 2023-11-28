@@ -5,14 +5,16 @@ import com.lovely4k.backend.common.imageuploader.ImageUploader;
 import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
 import com.lovely4k.backend.couple.service.CoupleService;
-import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
 import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryRepository;
 import com.lovely4k.backend.diary.Photos;
 import com.lovely4k.backend.diary.controller.request.DiaryDeleteRequest;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
 import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
-import com.lovely4k.backend.diary.service.response.*;
+import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
+import com.lovely4k.backend.diary.service.response.DiaryListInGridResponse;
+import com.lovely4k.backend.diary.service.response.DiaryListResponse;
+import com.lovely4k.backend.diary.service.response.DiaryMarkerResponse;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.location.Location;
 import com.lovely4k.backend.location.LocationRepository;
@@ -38,7 +40,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.lovely4k.backend.member.Sex.FEMALE;
 import static com.lovely4k.backend.member.Sex.MALE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -196,102 +197,6 @@ class DiaryServiceTest extends IntegrationTestSupport {
         return List.of(firstImage, secondImage, thirdImage, fourthImage, fifthImage, sixthImage);
     }
 
-    @DisplayName("getDiaryDetail을 통해 다이어리 상세 정보를 조회할 수 있다.")
-    @Test
-    void getDiaryDetail() {
-        // given
-
-        Location location = Location.create(10L, "경기도 고양시", "starbucks",BigDecimal.ZERO, BigDecimal.ZERO, Category.FOOD);
-
-        Member member1 = Member.builder()
-            .sex(MALE)
-            .nickname("Tommy")
-            .role(Role.USER)
-            .build();
-
-        Member member2 = Member.builder()
-            .sex(FEMALE)
-            .nickname("LIA")
-            .role(Role.USER)
-            .build();
-        memberRepository.saveAll(List.of(member1, member2));
-
-        InvitationCodeCreateResponse invitationCode = coupleService.createInvitationCode(member1.getId(), "MALE");
-        coupleService.registerCouple(invitationCode.invitationCode(), member2.getId());
-
-
-        Diary diary = Diary.builder()
-            .coupleId(invitationCode.coupleId())
-            .location(location)
-            .boyText("hello")
-            .girlText("hi")
-            .score(4)
-            .datingDay(LocalDate.of(2023, 10, 20))
-            .build();
-
-        diaryRepository.save(diary);
-
-        Member boy = memberRepository.findById(member1.getId()).orElseThrow();
-
-        // when
-        DiaryDetailResponse diaryDetailResponse =
-            diaryService.findDiaryDetail(diary.getId(), boy.getCoupleId(), boy.getId());
-
-        // then
-        assertAll(
-            () -> assertThat(diaryDetailResponse.kakaoMapId()).isEqualTo(10L),
-            () -> assertThat(diaryDetailResponse.myText()).isEqualTo("hello"),
-            () -> assertThat(diaryDetailResponse.opponentText()).isEqualTo("hi"),
-            () -> assertThat(diaryDetailResponse.score()).isEqualTo(4)
-        );
-    }
-
-    @DisplayName("다이어리 상세 정보 조회 시 잘못된 diary id인 경우 EntityNotFoundException이 발생한다. ")
-    @Test
-    void getDiaryDetailInvalidDiaryId() {
-        // given
-
-        Location location = Location.create(10L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ZERO, Category.FOOD);
-        Diary diary = buildDiary(location, 1L);
-        diaryRepository.save(diary);
-
-        Member member = buildMember();
-        memberRepository.save(member);
-
-        Long invalidDiaryId = diary.getId() + 1;
-        Long coupleId = member.getCoupleId();
-        Long memberId = member.getId();
-
-        // when && then
-        assertThatThrownBy(
-            () -> diaryService.findDiaryDetail(invalidDiaryId, coupleId, memberId)
-        ).isInstanceOf(EntityNotFoundException.class)
-            .hasMessage("invalid diary id");
-
-    }
-
-    @DisplayName("다이어리 상세 정보 조회 시 다른 커플이 작성한 다이어리는 조회할 수 없다. ")
-    @Test
-    void getDiaryDetailNoAuthority() {
-        // given
-
-        Location location = Location.create(10L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ZERO, Category.FOOD);
-        Diary diary = buildDiary(location, 2L);
-        diaryRepository.save(diary);
-
-        Member member = buildMember();
-        memberRepository.save(member);
-
-        Long diaryId = diary.getId();
-        Long coupleId = member.getCoupleId();
-        Long memberId = member.getId();
-
-        // when && then
-        assertThatThrownBy(
-            () -> diaryService.findDiaryDetail(diaryId, coupleId, memberId)
-        ).isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("you can only manage your couple's diary");
-    }
 
     @Transactional
     @DisplayName("editDiary 메서드를 통해 다이어리를 수정할 수 있다.")
@@ -563,7 +468,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         // then
         List<Diary> diaries = diaryRepository.findAll();
 
-        assertThat(diaries.size()).isEqualTo(3);
+        assertThat(diaries).hasSize(3);
     }
 
     private static Diary buildDiary(Location location, long coupleId) {

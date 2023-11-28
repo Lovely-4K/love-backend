@@ -3,14 +3,17 @@ package com.lovely4k.backend.diary.controller;
 import com.lovely4k.backend.common.ApiResponse;
 import com.lovely4k.backend.common.sessionuser.LoginUser;
 import com.lovely4k.backend.common.sessionuser.SessionUser;
+import com.lovely4k.backend.diary.DiaryQueryRepository;
 import com.lovely4k.backend.diary.controller.request.DiaryDeleteRequest;
 import com.lovely4k.backend.diary.controller.request.WebDiaryEditRequest;
 import com.lovely4k.backend.diary.controller.request.WebDiaryCreateRequest;
+import com.lovely4k.backend.diary.response.DiaryDetailResponse;
+import com.lovely4k.backend.diary.service.DiaryQueryService;
 import com.lovely4k.backend.diary.service.DiaryService;
-import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListInGridResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListResponse;
+import com.lovely4k.backend.diary.service.response.WebDiaryDetailResponse;
 import com.lovely4k.backend.location.Category;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +40,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 public class DiaryController {
 
     private final DiaryService diaryService;
+    private final DiaryQueryService diaryQueryService;
 
     private static final String DETAIL = "get detail information of diary";
     private static final String EDIT = "edit diary";
@@ -63,12 +67,12 @@ public class DiaryController {
 
     @SneakyThrows
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<DiaryDetailResponse>> getDiaryDetail(
+    public ResponseEntity<ApiResponse<WebDiaryDetailResponse>> getDiaryDetail(
             @PathVariable Long id,
             @LoginUser SessionUser sessionUser
     ) {
 
-        return ApiResponse.ok(diaryService.findDiaryDetail(id, sessionUser.coupleId(), sessionUser.memberId()),
+        return ApiResponse.ok(diaryQueryService.findDiaryDetail(id, sessionUser.coupleId(), sessionUser.memberId()),
                 linkTo(methodOn(DiaryController.class).getDiaryDetail(id, sessionUser)).withSelfRel(),
                 linkTo(DiaryController.class.getMethod("editDiary", Long.class, List.class, WebDiaryEditRequest.class, SessionUser.class)).withRel(EDIT),
                 linkTo(DiaryController.class).slash(id).withRel(DELETE)
