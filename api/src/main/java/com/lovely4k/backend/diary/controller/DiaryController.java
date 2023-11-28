@@ -124,7 +124,7 @@ public class DiaryController {
         @LoginUser SessionUser sessionUser
     ) {
 
-        return ApiResponse.ok(diaryService.findDiaryListInGrid(rLatitude, rLongitude, lLatitude, lLongitude, sessionUser.coupleId()));
+        return ApiResponse.ok(diaryQueryService.findDiaryListInGrid(rLatitude, rLongitude, lLatitude, lLongitude, sessionUser.coupleId()));
     }
 
     @DeleteMapping("/{id}")

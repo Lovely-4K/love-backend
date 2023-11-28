@@ -4,10 +4,7 @@ import com.lovely4k.backend.diary.Diary;
 import com.lovely4k.backend.diary.DiaryQueryRepository;
 import com.lovely4k.backend.diary.response.DiaryDetailResponse;
 import com.lovely4k.backend.diary.response.DiaryListResponse;
-import com.lovely4k.backend.diary.service.response.WebDiaryDetailResponse;
-import com.lovely4k.backend.diary.service.response.WebDiaryListByMarkerResponse;
-import com.lovely4k.backend.diary.service.response.WebDiaryListResponse;
-import com.lovely4k.backend.diary.service.response.WebDiaryMarkerResponse;
+import com.lovely4k.backend.diary.service.response.*;
 import com.lovely4k.backend.location.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -55,5 +53,13 @@ public class DiaryQueryService {
                     WebDiaryMarkerResponse::from
                 ).toList());
         }
+    }
+
+    public DiaryListInGridResponse findDiaryListInGrid(BigDecimal rLatitude, BigDecimal rLongitude, BigDecimal lLatitude, BigDecimal lLongitude, Long coupleId) {
+        List<Diary> diaryList = repository.findDiaryListInGrid(rLatitude, rLongitude, lLatitude, lLongitude, coupleId);
+
+        return new DiaryListInGridResponse(diaryList.stream().map(
+            DiaryGridResponse::from
+        ).toList());
     }
 }

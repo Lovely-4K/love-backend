@@ -297,7 +297,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
             new DiaryGridResponse(1L, BigDecimal.valueOf(37.5563), BigDecimal.valueOf(126.9723), "서울역", 1L)
         );
 
-        when(diaryService.findDiaryListInGrid(any(), any(), any(), any(), any()))
+        when(diaryQueryService.findDiaryListInGrid(any(), any(), any(), any(), any()))
             .thenReturn(new DiaryListInGridResponse(diaryGridResponses));
 
         this.mockMvc.perform(

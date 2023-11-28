@@ -15,6 +15,7 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     @Query("select d from Diary d where d.location.kakaoMapId = :kakaoMapId and d.coupleId = :coupleId")
     List<Diary> findByMarker(Long kakaoMapId, Long coupleId);
 
+    @EntityGraph(attributePaths = {"location"})
     @Query("""
     select d from Diary d where
      d.coupleId = :coupleId and
