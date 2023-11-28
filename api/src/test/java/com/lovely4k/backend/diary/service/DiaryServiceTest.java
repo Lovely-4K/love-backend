@@ -11,10 +11,7 @@ import com.lovely4k.backend.diary.Photos;
 import com.lovely4k.backend.diary.controller.request.DiaryDeleteRequest;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
 import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
-import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListInGridResponse;
-import com.lovely4k.backend.diary.service.response.WebDiaryListResponse;
-import com.lovely4k.backend.diary.service.response.DiaryMarkerResponse;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.location.Location;
 import com.lovely4k.backend.location.LocationRepository;
@@ -27,9 +24,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -266,38 +260,6 @@ class DiaryServiceTest extends IntegrationTestSupport {
         assertThat(optionalDiary).isEmpty();
     }
 
-
-    @DisplayName("findDiaryListByMarker를 통해서 특정 kakaoMap에 해당하는 다이어리들을 조회 할 수 있다.")
-    @Test
-    void findDiaryListByMarker() {
-        // given
-        Diary food1 = buildDiaryWithLocationId(Category.FOOD, 1L, 1L);
-        Diary food2 = buildDiaryWithLocationId(Category.FOOD, 1L, 1L);
-        Diary accomodation1 = buildDiaryWithLocationId(Category.ACCOMODATION, 1L, 2L);
-        Diary accomodation2 = buildDiaryWithLocationId(Category.ACCOMODATION, 2L, 2L);
-        diaryRepository.saveAll(List.of(food1, food2, accomodation1, accomodation2));
-
-        DiaryMarkerResponse diaryMarkerResponse1 = new DiaryMarkerResponse(food1.getId(), food1.getPhotos().getFirstImage(), food1.getDatingDay());
-        DiaryMarkerResponse diaryMarkerResponse2 = new DiaryMarkerResponse(food2.getId(), food2.getPhotos().getFirstImage(), food2.getDatingDay());
-
-        // when
-        DiaryListByMarkerResponse diaryListByMarkerResponse = diaryService.findDiaryListByMarker(1L, 1L);
-
-        // then
-        assertThat(diaryListByMarkerResponse.diaries()).containsAll(List.of(diaryMarkerResponse1, diaryMarkerResponse2));
-
-    }
-
-    @DisplayName("diary가 존재하지 않을 경우 findDiaryListByMarker의 diaries는 empty 이다.")
-    @Test
-    void findDiaryListByMarkerEmpty() {
-        // when
-        DiaryListByMarkerResponse diaryListByMarkerResponse = diaryService.findDiaryListByMarker(1L, 1L);
-
-        // then
-        assertThat(diaryListByMarkerResponse.diaries()).isNull();
-    }
-
     @DisplayName("findDiaryListInGrid를 통해 위치 기반 다이어리 목록을 조회할 수 있다.")
     @Test
     void findDiaryListInGrid() {
@@ -444,29 +406,6 @@ class DiaryServiceTest extends IntegrationTestSupport {
             .boyText("hello")
             .girlText("hi")
             .score(4)
-            .datingDay(LocalDate.of(2023, 10, 20))
-            .build();
-    }
-
-    private static Diary buildDiary(Category category, long coupleId) {
-        return Diary.builder()
-            .coupleId(coupleId)
-            .location(Location.create(1L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ZERO, category))
-            .boyText("hello")
-            .girlText("hi")
-            .score(4)
-            .datingDay(LocalDate.of(2023, 10, 20))
-            .build();
-    }
-
-    private static Diary buildDiaryWithLocationId(Category category, long coupleId, long kakaoMapId) {
-        return Diary.builder()
-            .coupleId(coupleId)
-            .location(Location.create(kakaoMapId, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ZERO, category))
-            .boyText("hello")
-            .girlText("hi")
-            .score(4)
-            .photos(Photos.builder().firstImage("test-image1").build())
             .datingDay(LocalDate.of(2023, 10, 20))
             .build();
     }

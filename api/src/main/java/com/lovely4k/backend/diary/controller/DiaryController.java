@@ -8,7 +8,7 @@ import com.lovely4k.backend.diary.controller.request.WebDiaryCreateRequest;
 import com.lovely4k.backend.diary.controller.request.WebDiaryEditRequest;
 import com.lovely4k.backend.diary.service.DiaryQueryService;
 import com.lovely4k.backend.diary.service.DiaryService;
-import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
+import com.lovely4k.backend.diary.service.response.WebDiaryListByMarkerResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListInGridResponse;
 import com.lovely4k.backend.diary.service.response.WebDiaryDetailResponse;
 import com.lovely4k.backend.diary.service.response.WebDiaryListResponse;
@@ -92,11 +92,11 @@ public class DiaryController {
 
     @SneakyThrows
     @GetMapping("/marker/{kakaoMapId}")
-    public ResponseEntity<ApiResponse<DiaryListByMarkerResponse>> getDiaryListByMarker(
+    public ResponseEntity<ApiResponse<WebDiaryListByMarkerResponse>> getDiaryListByMarker(
         @PathVariable Long kakaoMapId,
         @LoginUser SessionUser sessionUser
     ) {
-        return ApiResponse.ok(diaryService.findDiaryListByMarker(kakaoMapId, sessionUser.coupleId()),
+        return ApiResponse.ok(diaryQueryService.findDiaryListByMarker(kakaoMapId, sessionUser.coupleId()),
             linkTo(DiaryController.class.getMethod("getDiaryDetail", Long.class, SessionUser.class)).withRel(DETAIL)    // NOSONAR
         );
     }

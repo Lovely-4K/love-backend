@@ -1,6 +1,7 @@
 package com.lovely4k.backend.diary;
 
 import com.lovely4k.backend.diary.response.DiaryDetailResponse;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,8 +11,9 @@ import java.util.List;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
+    @EntityGraph(attributePaths = {"location"})
     @Query("select d from Diary d where d.location.kakaoMapId = :kakaoMapId and d.coupleId = :coupleId")
-    List<Diary> findByMarker(@Param("kakaoMapId") Long kakaoMapId, @Param("coupleId") Long coupleId);
+    List<Diary> findByMarker(Long kakaoMapId, Long coupleId);
 
     @Query("""
     select d from Diary d where
@@ -36,4 +38,6 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     DiaryDetailResponse findDiaryDetail(@Param("diaryId") Long diaryId,
                                         @Param("coupleId") Long coupleId,
                                         @Param("memberId") Long memberId);
+
+
 }

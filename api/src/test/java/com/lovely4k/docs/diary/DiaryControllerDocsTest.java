@@ -204,14 +204,14 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     @Test
     void getDiaryListByMarker() throws Exception {
         // stubbing
-        List<DiaryMarkerResponse> diaryMarkerResponses = List.of(
-            new DiaryMarkerResponse(1L, "image-url1", LocalDate.of(2020, 10, 20)),
-            new DiaryMarkerResponse(2L, "image-url2", LocalDate.of(2021, 10, 20)),
-            new DiaryMarkerResponse(3L, "image-url3", LocalDate.of(2022, 10, 20))
+        List<WebDiaryMarkerResponse> webDiaryMarkerResponses = List.of(
+            new WebDiaryMarkerResponse(1L, "image-url1", LocalDate.of(2020, 10, 20)),
+            new WebDiaryMarkerResponse(2L, "image-url2", LocalDate.of(2021, 10, 20)),
+            new WebDiaryMarkerResponse(3L, "image-url3", LocalDate.of(2022, 10, 20))
         );
 
-        when(diaryService.findDiaryListByMarker(any(), any()))
-            .thenReturn(new DiaryListByMarkerResponse(BigDecimal.valueOf(98.1234), BigDecimal.valueOf(123.1231), "starbucks", diaryMarkerResponses));
+        when(diaryQueryService.findDiaryListByMarker(any(), any()))
+            .thenReturn(new WebDiaryListByMarkerResponse(BigDecimal.valueOf(98.1234), BigDecimal.valueOf(123.1231), "starbucks", webDiaryMarkerResponses));
 
         this.mockMvc.perform(
                 get("/v1/diaries/marker/{kakaoMapId}", 1L)

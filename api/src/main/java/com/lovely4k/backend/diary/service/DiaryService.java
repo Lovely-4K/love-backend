@@ -11,15 +11,12 @@ import com.lovely4k.backend.diary.controller.request.DiaryDeleteRequest;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
 import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
 import com.lovely4k.backend.diary.service.response.*;
-import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,19 +67,6 @@ public class DiaryService {
         return diaryRepositoryAdapter.findById(diaryId).orElseThrow(
                 () -> new EntityNotFoundException("invalid diary id")
         );
-    }
-
-    public DiaryListByMarkerResponse findDiaryListByMarker(Long kakaoMapId, Long coupleId) {
-        List<Diary> diaries = diaryRepositoryAdapter.findByMarker(kakaoMapId, coupleId);
-        if (diaries.isEmpty()) {
-            return DiaryListByMarkerResponse.emptyValue();
-        } else {
-            return DiaryListByMarkerResponse.from(
-                diaries.get(0),
-                diaries.stream().map(
-                DiaryMarkerResponse::from
-            ).toList());
-        }
     }
 
     public DiaryListInGridResponse findDiaryListInGrid(BigDecimal rLatitude, BigDecimal rLongitude, BigDecimal lLatitude, BigDecimal lLongitude, Long coupleId) {

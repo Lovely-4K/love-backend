@@ -32,10 +32,6 @@ public class DiaryRepositoryAdapter {
         diaryRepository.delete(diary);
     }
 
-    public List<Diary> findByMarker(Long kakaoMapId, Long coupleId) {
-        return diaryRepository.findByMarker(kakaoMapId, coupleId);
-    }
-
     public void deleteAll(List<Diary> diaries) {
         diaryRepository.deleteAll(diaries);
     }
