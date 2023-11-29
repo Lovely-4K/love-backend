@@ -12,8 +12,17 @@ public record WebDiaryListByMarkerResponse(
     List<WebDiaryMarkerResponse> diaries
 ) {
 
-    public static WebDiaryListByMarkerResponse from(Diary diary, List<WebDiaryMarkerResponse> webDiaryMarkerResponses) {
-        return new WebDiaryListByMarkerResponse(diary.getLocation().getLatitude(), diary.getLocation().getLongitude(), diary.getLocation().getPlaceName(), webDiaryMarkerResponses);
+    public static WebDiaryListByMarkerResponse from(List<Diary> diaries) {
+        if (diaries.isEmpty()) {
+            return null;
+        }
+
+        Diary diary = diaries.get(0);
+        return new WebDiaryListByMarkerResponse(
+            diary.getLocation().getLatitude(),
+            diary.getLocation().getLongitude(),
+            diary.getLocation().getPlaceName(),
+            diaries.stream().map(WebDiaryMarkerResponse::from).toList());
     }
 
 }

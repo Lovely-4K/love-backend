@@ -8,7 +8,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -20,14 +20,11 @@ import java.util.function.Supplier;
 import static com.lovely4k.backend.diary.QDiary.diary;
 import static com.lovely4k.backend.location.QLocation.location;
 
+@RequiredArgsConstructor
 @Repository
 public class QDiaryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
-
-    public QDiaryRepository(EntityManager entityManager) {
-        this.jpaQueryFactory = new JPAQueryFactory(entityManager);
-    }
 
     public Page<DiaryListResponse> findDiaryList(Long coupleId, Category category, Pageable pageable) {
         List<DiaryListResponse> content = jpaQueryFactory.select(

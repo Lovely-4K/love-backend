@@ -2,6 +2,7 @@ package com.lovely4k.backend.diary.service.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lovely4k.backend.diary.response.DiaryListResponse;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,8 +19,11 @@ public record WebDiaryListResponse(
     BigDecimal longitude
 ) {
 
-    public static WebDiaryListResponse from(DiaryListResponse diaryListResponse) {
-        return new WebDiaryListResponse(
+    public static Page<WebDiaryListResponse> from(Page<DiaryListResponse> pageDiary) {
+        if (pageDiary.getContent().isEmpty()) {
+            return Page.empty();
+        }
+        return pageDiary.map(diaryListResponse -> new WebDiaryListResponse(
             diaryListResponse.diaryId(),
             diaryListResponse.kakaoMapId(),
             diaryListResponse.imageUrl(),
@@ -27,6 +31,6 @@ public record WebDiaryListResponse(
             diaryListResponse.placeName(),
             diaryListResponse.address(),
             diaryListResponse.latitude(),
-            diaryListResponse.longitude());
+            diaryListResponse.longitude()));
     }
 }

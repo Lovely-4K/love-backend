@@ -22,6 +22,10 @@ public record WebDiaryDetailResponse(
 
 ) {
     public static WebDiaryDetailResponse from(DiaryDetailResponse diaryDetailResponse) {
+        if (diaryDetailResponse == null) {
+            return null;
+        }
+
         return new WebDiaryDetailResponse(diaryDetailResponse.kakaoMapId(), diaryDetailResponse.datingDay(),
             diaryDetailResponse.score(), diaryDetailResponse.category(), diaryDetailResponse.myText(), diaryDetailResponse.opponentText(),
             buildPhotoListResponse(diaryDetailResponse),
