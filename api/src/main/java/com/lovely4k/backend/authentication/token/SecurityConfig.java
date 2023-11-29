@@ -5,7 +5,6 @@ import com.lovely4k.backend.authentication.OAuth2UserService;
 import com.lovely4k.backend.authentication.exception.AccessDeniedHandlerException;
 import com.lovely4k.backend.authentication.exception.AuthenticationEntryPointException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,20 +22,17 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
-
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
 
-    @Value("${jwt.secret}")
-    private String SECRET_KEY;
     private final OAuth2UserService oAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final TokenProvider tokenProvider;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationEntryPointException authenticationEntryPointException;
     private final AccessDeniedHandlerException accessDeniedHandlerException;
+    private final JwtFilter jwtFilter;
 
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
@@ -53,17 +49,16 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(
                 authorize -> authorize
-                    .requestMatchers(
-                        antMatcher("/h2-console"),
-                        antMatcher("/v1/**")
-                    ).permitAll()
-
-//                    .requestMatchers(
-//                        antMatcher("/v1/**")
-//                    ).hasRole(Role.USER.name())
-
                     .anyRequest().permitAll()
             );
+        //권한 추가되면 사용
+//        .authorizeHttpRequests(
+//            authorize -> authorize
+//                .requestMatchers(
+//                    antMatcher("/v1/**")
+//                ).hasRole(Role.USER.name())
+//                .anyRequest().permitAll()
+//        );
 
         // 로그아웃 설정
         http
@@ -101,7 +96,7 @@ public class SecurityConfig {
         ;
 
         http
-            .addFilterBefore(new JwtFilter(SECRET_KEY, tokenProvider, userDetailsService), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         ;
 
         // Session 설정
@@ -118,7 +113,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://wooisac.netlify.app"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L); // 필요에 따라 조정

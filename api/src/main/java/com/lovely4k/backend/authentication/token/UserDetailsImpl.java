@@ -6,17 +6,15 @@ import com.lovely4k.backend.member.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Component
 public class UserDetailsImpl implements UserDetails, MemberInfo {
 
     private Member member;
 
-    public UserDetailsImpl() {
+    private UserDetailsImpl() {
     }
 
     public UserDetailsImpl(Member member) {

@@ -80,7 +80,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         Couple couple = Couple.create(savedMember.getId(), MALE, "test-code");
         Couple savedCouple = coupleRepository.save(couple);
 
-        savedMember.registerCoupleId(savedCouple.getId());
+        savedMember.registerProfileInfo(savedCouple.getId());
         memberRepository.save(savedMember);
 
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
@@ -137,7 +137,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
             .hasMessage("invalid member id");
     }
 
-    @DisplayName("이미지가 없는 경우 이미지업로드가 되지 않고, 서비스에서 제공하는 이미지로 채워진다.")
+    @DisplayName("이미지가 없는 경우 이미지가 없는 채로 다이어리가 생성된다.")
     @Test
     void createDiaryNoImage() throws InterruptedException {
         // given
@@ -154,7 +154,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
         // then
         Diary findDiary = diaryRepository.findById(savedDiaryId).orElseThrow();
-        assertThat(findDiary.getPhotos()).isNotNull();
+        assertThat(findDiary.getPhotos()).isNull();
     }
 
     @DisplayName("5개 이상의 이미지를 업로드 하려고 하는 경우 IllegalArgumentException이 발생한다.")
@@ -216,7 +216,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
 
-        DiaryEditRequest diaryEditRequest = new DiaryEditRequest(4, LocalDate.of(2023, 11, 1), "food", "boy-text", "girl-text");
+        DiaryEditRequest diaryEditRequest = new DiaryEditRequest(4, LocalDate.of(2023, 11, 1), "food", "boy-text", "girl-text", List.of());
 
         // stubbing
         given(imageUploader.upload(any(String.class), any())
@@ -235,6 +235,95 @@ class DiaryServiceTest extends IntegrationTestSupport {
             () -> assertThat(findDiary.getGirlText()).isEqualTo(diaryEditRequest.opponentText()),
             () -> assertThat(findDiary.getPhotos().countOfImages()).isEqualTo(2)
         );
+    }
+
+    @Transactional
+    @DisplayName("다이어리 수정 시 images 에 값이 존재하는 이미지의 경우 이미지가 유지된다.")
+    @Test
+    void editDiary_images() {
+        // given
+
+        Couple couple = Couple.builder()
+            .boyId(1L)
+            .girlId(2L)
+            .build();
+        coupleRepository.save(couple);
+        Diary diary = Diary.builder()
+            .location(Location.create(1L, "경기도 수원시 팔달구 팔달문로", "웨딩컨벤션", BigDecimal.valueOf(127.1255), BigDecimal.valueOf(90.6543), Category.ETC))
+            .coupleId(couple.getId())
+            .boyText("우리도 곧 결혼하자")
+            .girlText("식장 이뿌더랑")
+            .score(5)
+            .datingDay(LocalDate.of(2023, 10, 23))
+            .photos(Photos.builder().firstImage("test-image").build())
+            .build();
+        Diary savedDiary = diaryRepository.save(diary);
+
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
+
+        DiaryEditRequest diaryEditRequest = new DiaryEditRequest(4, LocalDate.of(2023, 11, 1), "food", "boy-text", "girl-text", List.of("test-image"));
+
+        // stubbing
+        given(imageUploader.upload(any(String.class), any())
+        ).willReturn(List.of("first-image-url", "second-image-url"));
+
+        // when
+        diaryService.editDiary(savedDiary.getId(), List.of(firstImage, secondImage), diaryEditRequest, couple.getId(), 1L);
+
+        // then
+        Diary findDiary = diaryRepository.findById(savedDiary.getId()).orElseThrow();
+        assertAll(
+            () -> assertThat(findDiary.getScore()).isEqualTo(diaryEditRequest.score()),
+            () -> assertThat(findDiary.getDatingDay()).isEqualTo(diaryEditRequest.datingDay()),
+            () -> assertThat(findDiary.getLocation().getCategory()).isEqualTo(Category.FOOD),
+            () -> assertThat(findDiary.getBoyText()).isEqualTo(diaryEditRequest.myText()),
+            () -> assertThat(findDiary.getGirlText()).isEqualTo(diaryEditRequest.opponentText()),
+            () -> assertThat(findDiary.getPhotos().countOfImages()).isEqualTo(3)
+        );
+    }
+
+    @Transactional
+    @DisplayName("다이어리 수정 시 기존에 존재하는 이미지와 업로드하는 이미지를 합한 수가 5개를 넘을 경우 IllegalArgumentException이 발생한다.")
+    @Test
+    void editDiary_over5() {
+        // given
+        Couple couple = Couple.builder()
+            .boyId(1L)
+            .girlId(2L)
+            .build();
+        coupleRepository.save(couple);
+        Diary diary = Diary.builder()
+            .location(Location.create(1L, "경기도 수원시 팔달구 팔달문로", "웨딩컨벤션", BigDecimal.valueOf(127.1255), BigDecimal.valueOf(90.6543), Category.ETC))
+            .coupleId(couple.getId())
+            .boyText("우리도 곧 결혼하자")
+            .girlText("식장 이뿌더랑")
+            .score(5)
+            .datingDay(LocalDate.of(2023, 10, 23))
+            .photos(Photos.builder().firstImage("test-image").secondImage("test-image2").thirdImage("test-image3").fourthImage("test-image4").build())
+            .build();
+        Diary savedDiary = diaryRepository.save(diary);
+
+        MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
+        MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
+
+        DiaryEditRequest diaryEditRequest = new DiaryEditRequest(4, LocalDate.of(2023, 11, 1), "food", "boy-text", "girl-text", List.of("test-image", "test-image2", "test-image3", "test-image4"));
+
+        // stubbing
+        given(imageUploader.upload(any(String.class), any())
+        ).willReturn(List.of("first-image-url", "second-image-url"));
+
+        Long diaryId = savedDiary.getId();
+        List<MultipartFile> imageList = List.of(firstImage, secondImage);
+        Long coupleId = couple.getId();
+
+        // when && then
+        assertThatThrownBy(
+            () ->diaryService.editDiary(diaryId, imageList, diaryEditRequest, coupleId, 1L)
+        ).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("이미지는 최대 5개를 넘길 수 없습니다.")
+        ;
+
     }
 
     @DisplayName("deleteDiary 메서드를 통해 다이어리를 삭제할 수 있다. ")

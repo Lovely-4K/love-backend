@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record WebDiaryEditRequest(
 
@@ -26,9 +27,10 @@ public record WebDiaryEditRequest(
     @NotBlank(message = "text of diary must not be null and empty")
     String myText,
     @NotBlank(message = "text of diary must not be null and empty")
-    String opponentText
+    String opponentText,
+    List<String> images
 ) {
     public DiaryEditRequest toServiceRequest() {
-        return new DiaryEditRequest(score, datingDay, category, myText, opponentText);
+        return new DiaryEditRequest(score, datingDay, category, myText, opponentText, images);
     }
 }

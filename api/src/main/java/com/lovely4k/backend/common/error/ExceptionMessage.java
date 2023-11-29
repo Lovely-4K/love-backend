@@ -1,4 +1,4 @@
-package com.lovely4k.backend.common;
+package com.lovely4k.backend.common.error;
 
 public final class ExceptionMessage {
 

@@ -33,6 +33,7 @@ include::api/member/member-profile-edit.adoc[]
 
 include::api/couple/couple-invitationCode-get.adoc[]
 include::api/couple/couple-register.adoc[]
+include::api/couple/couple-temperature.adoc[]
 include::api/couple/couple-profile-get.adoc[]
 include::api/couple/couple-profile-edit.adoc[]
 include::api/couple/couple-delete.adoc[]

@@ -1,6 +1,7 @@
 package com.lovely4k.backend.member;
 
 import com.lovely4k.backend.common.jpa.BaseTimeEntity;
+import com.lovely4k.backend.member.util.RandomUtils;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -73,8 +74,12 @@ public class Member extends BaseTimeEntity {
         this.calendarColor = calendarColor;
     }
 
-    public void registerCoupleId(Long id) {
+    public void registerProfileInfo(Long id) {
         this.coupleId = id;
+        this.birthday = (birthday != null) ? birthday : LocalDate.now();
+        this.mbti = (mbti != null) ? mbti : RandomUtils.getRandomMBTI();
+        this.calendarColor = (calendarColor != null) ? calendarColor : RandomUtils.getRandomColor();
+        this.role = Role.USER;
     }
 
     public Member update(String ageRange) {

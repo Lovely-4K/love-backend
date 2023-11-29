@@ -24,7 +24,7 @@
 
 |                                                         Backend                                                          |                                                        DevOps                                                        | 
 |:------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------:|
- | <img src="https://github.com/BeomSeogKim/portfolio/assets/110332047/56345b6c-2c44-4dca-89cb-649954bc5ecb" width=400px /> | <img src="https://github.com/BeomSeogKim/test/assets/110332047/73022585-af58-4427-99ee-6496b976d2cf" width="500px"/> |
+ | <img src="https://github.com/BeomSeogKim/portfolio/assets/110332047/56345b6c-2c44-4dca-89cb-649954bc5ecb" width=400px /> | <img src="https://github.com/Lovely-4K/love-backend/assets/110332047/d5585971-d3ed-4dbb-904e-b8fa5d2b82be" width="500px"/> |
 
 # Infra 
 ![image](https://github.com/prgrms-be-devcourse/BE-04-DevTable/assets/79970349/a5ce9b0f-fc76-4441-8727-c1e8eadd7210)

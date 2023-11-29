@@ -7,7 +7,7 @@ public class Pointcuts {
     @Pointcut("execution(* com.lovely4k.backend..controller..*.*(..))")
     public void allController() { }
 
-    @Pointcut("within(com.lovely4k.backend.common.GlobalExceptionHandler)")
+    @Pointcut("within(com.lovely4k.backend.common.error.GlobalExceptionHandler)")
     public void globalExceptionHandler() { }
 
 }

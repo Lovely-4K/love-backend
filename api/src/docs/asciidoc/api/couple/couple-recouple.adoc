@@ -22,7 +22,6 @@
 ==== Http Request
 
 include::{snippets}/couple-recouple/http-request.adoc[]
-include::{snippets}/couple-recouple/path-parameters.adoc[]
 
 ==== Http Response
 

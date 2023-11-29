@@ -2,7 +2,6 @@ package com.lovely4k.backend.question.service;
 
 import com.lovely4k.backend.common.event.Events;
 import com.lovely4k.backend.couple.IncreaseTemperatureEvent;
-import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.QuestionFormType;
@@ -22,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 
-import static com.lovely4k.backend.common.ExceptionMessage.notFoundEntityMessage;
+import static com.lovely4k.backend.common.error.ExceptionMessage.notFoundEntityMessage;
 
 @Slf4j
 @Transactional(readOnly = true)

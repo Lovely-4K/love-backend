@@ -7,7 +7,6 @@ import com.lovely4k.backend.authentication.OAuth2UserService;
 import com.lovely4k.backend.authentication.OAuthAttributes;
 import com.lovely4k.backend.authentication.exception.AccessDeniedHandlerException;
 import com.lovely4k.backend.authentication.exception.AuthenticationEntryPointException;
-import com.lovely4k.backend.authentication.token.SecurityConfig;
 import com.lovely4k.backend.authentication.token.TokenProvider;
 import com.lovely4k.backend.authentication.token.UserDetailsServiceImpl;
 import com.lovely4k.backend.calendar.controller.CalendarController;
@@ -31,12 +30,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -51,7 +56,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @ActiveProfiles("test")
-@Import(SecurityConfig.class)
+@Import(ControllerTestSupport.SecurityConfig.class)
 @WebMvcTest(controllers = {
     DiaryController.class,
     MemberController.class,
@@ -115,6 +120,34 @@ public abstract class ControllerTestSupport {
     @Mock
     protected Authentication authentication;
 
+    @MockBean
+    protected CalendarCommandService calendarCommandService;
+
+    @MockBean
+    protected CalendarQueryService calendarQueryService;
+
+    @TestConfiguration
+    static class SecurityConfig {
+
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+            http
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+            ;
+
+            // Authorize of url
+            http
+                .authorizeHttpRequests(
+                    authorize -> authorize.anyRequest().permitAll()
+                );
+
+            return http.build();
+        }
+    }
+
     @BeforeEach
     void setUp() {
         when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -127,7 +160,7 @@ public abstract class ControllerTestSupport {
         given(member.getNickname()).willReturn("깜찍이");
         given(member.getRole()).willReturn(Role.USER);
         given(member.getImageUrl()).willReturn("imageUrl");
-
+        given(authentication.getName()).willReturn(Role.USER.name());
         OAuthAttributes oAuthAttributes = new OAuthAttributes(
             Collections.emptyMap(),
             "test",
@@ -141,7 +174,7 @@ public abstract class ControllerTestSupport {
 
         when(authentication.getPrincipal()).thenReturn(myOAuth2Member);
         when(authentication.isAuthenticated()).thenReturn(true);
-
+        when(authentication.getName()).thenReturn(Role.USER.name());
         securityContext.setAuthentication(authentication);
 
         mockMvc = MockMvcBuilders
@@ -150,10 +183,4 @@ public abstract class ControllerTestSupport {
             .apply(springSecurity())
             .build();
     }
-
-    @MockBean
-    protected CalendarCommandService calendarCommandService;
-
-    @MockBean
-    protected CalendarQueryService calendarQueryService;
 }
