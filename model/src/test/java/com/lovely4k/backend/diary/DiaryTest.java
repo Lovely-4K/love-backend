@@ -203,20 +203,18 @@ class DiaryTest {
         Integer score = 4;
         LocalDate datingDay = LocalDate.of(2023, 11, 1);
         String category = "ACCOMODATION";
-        String boyText = "여기가 더 좋았어!";
-        String girlText = "여기 꿈의 공간이야..!";
+        String myText = "여기가 더 좋았어!";
         List<String> uploadedImageUrls = List.of("new-image1", "new-image2", "new-image3");
 
         // when
-        diary.update(MALE, score, datingDay, category, boyText, girlText, uploadedImageUrls);
+        diary.update(MALE, score, datingDay, category, myText, uploadedImageUrls);
 
         // then
         assertAll(
             () -> assertThat(diary.getScore()).isEqualTo(score),
             () -> assertThat(diary.getDatingDay()).isEqualTo(datingDay),
             () -> assertThat(diary.getLocation().getCategory()).isEqualTo(Category.valueOf(category)),
-            () -> assertThat(diary.getBoyText()).isEqualTo(boyText),
-            () -> assertThat(diary.getGirlText()).isEqualTo(girlText)
+            () -> assertThat(diary.getBoyText()).isEqualTo(myText)
             );
     }
 
@@ -238,18 +236,16 @@ class DiaryTest {
         LocalDate datingDay = LocalDate.of(2023, 11, 1);
         String category = "ACCOMODATION";
         String myText = "여기가 더 좋았어!";
-        String opponentText = "여기 꿈의 공간이야..!";
         List<String> uploadedImageUrls = List.of("new-image1", "new-image2", "new-image3");
 
         // when
-        diary.update(FEMALE, score, datingDay, category, myText, opponentText, uploadedImageUrls);
+        diary.update(FEMALE, score, datingDay, category, myText, uploadedImageUrls);
 
         // then
         assertAll(
             () -> assertThat(diary.getScore()).isEqualTo(score),
             () -> assertThat(diary.getDatingDay()).isEqualTo(datingDay),
             () -> assertThat(diary.getLocation().getCategory()).isEqualTo(Category.valueOf(category)),
-            () -> assertThat(diary.getBoyText()).isEqualTo(opponentText),
             () -> assertThat(diary.getGirlText()).isEqualTo(myText)
         );
     }

@@ -7,8 +7,7 @@ public record DiaryEditRequest(
     Integer score,
     LocalDate datingDay,
     String category,
-    String myText,
-    String opponentText,
+    String text,
     List<String> images
 ) {
 }

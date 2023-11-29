@@ -125,7 +125,7 @@ public class DiaryService {
         deleteImageFromS3(request, diary);
         Sex sex = getCoupleRole(memberId, validateCoupleId(coupleId));
 
-        diary.update(sex, request.score(), request.datingDay(), request.category(), request.myText(), request.opponentText(), editedImageUrls);
+        diary.update(sex, request.score(), request.datingDay(), request.category(), request.text(), editedImageUrls);
     }
 
     private void addRemainImages(DiaryEditRequest request, List<String> editedImageUrls) {
@@ -139,6 +139,9 @@ public class DiaryService {
     }
 
     private  void checkImages(List<String> editedImageUrls, List<MultipartFile> multipartFiles) {
+        if (multipartFiles == null) {
+            return;
+        }
         if (editedImageUrls.size() + multipartFiles.size() > 5) {
             throw new IllegalArgumentException("이미지는 최대 5개를 넘길 수 없습니다.");
         }
