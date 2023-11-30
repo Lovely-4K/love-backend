@@ -38,7 +38,6 @@ class CalendarTest {
     @DisplayName("유효하지 않은 인자들이 주어졌을 때 create가 호출되면 적절한 예외가 발생해야 한다")
     void givenInvalidArguments_whenCreate_thenAppropriateExceptionShouldBeThrown(
             LocalDate startDate, LocalDate endDate, long ownerId, String scheduleType, String scheduleDetails, long coupleId, Class<? extends Throwable> expectedException, String expectedMessage) {
-
         assertThatThrownBy(() -> Calendar.create(startDate, endDate, ownerId, scheduleType, scheduleDetails, coupleId))
                 .isInstanceOf(expectedException)
                 .hasMessageContaining(expectedMessage);
@@ -50,7 +49,8 @@ class CalendarTest {
     void givenInvalidArguments_whenUpdate_thenAppropriateExceptionShouldBeThrown(
             LocalDate startDate, LocalDate endDate, String scheduleType, String scheduleDetails, Class<? extends Throwable> expectedException, String expectedMessage) {
         Calendar calendar = Calendar.create(LocalDate.now(), LocalDate.now(), 1L, "DATE", "details", 1L);
-        assertThatThrownBy(() -> calendar.update(startDate, endDate, scheduleType, scheduleDetails))
+        Long loginUserId = 1L;
+        assertThatThrownBy(() -> calendar.update(startDate, endDate, scheduleType, scheduleDetails, loginUserId))
                 .isInstanceOf(expectedException)
                 .hasMessageContaining(expectedMessage);
     }

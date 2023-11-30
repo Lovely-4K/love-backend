@@ -44,7 +44,7 @@ public class CalendarController {
                 calendarQueryService.findCalendarsWithDate(request.toRepositoryDto(), sessionUser.coupleId(), sessionUser.memberId()),
                 linkTo(methodOn(getClass()).findAllSchedulesWithDate(request, sessionUser)).withSelfRel(),
                 linkTo(getClass().getMethod(CREATE_SCHEDULE, SessionUser.class, CreateCalendarRequest.class)).withRel(CREATE_SCHEDULE),
-                linkTo(getClass().getMethod(EDIT_SCHEDULE_BY_ID, Long.class, UpdateCalendarRequest.class)).withRel(EDIT_SCHEDULE_BY_ID),
+                linkTo(getClass().getMethod(EDIT_SCHEDULE_BY_ID, Long.class, UpdateCalendarRequest.class, SessionUser.class)).withRel(EDIT_SCHEDULE_BY_ID),
                 linkTo(getClass().getMethod(DELETE_SCHEDULE_BY_ID, Long.class)).withRel(DELETE_SCHEDULE_BY_ID)
         );
     }
@@ -57,7 +57,7 @@ public class CalendarController {
         return ApiResponse.ok(
                 calendarQueryService.findRecentCalendars(sessionUser.coupleId(), limit, sessionUser.memberId()),
                 linkTo(methodOn(getClass()).findRecentSchedules(sessionUser, limit)).withSelfRel(),
-                linkTo(getClass().getMethod(EDIT_SCHEDULE_BY_ID, Long.class, UpdateCalendarRequest.class)).withRel(EDIT_SCHEDULE_BY_ID)
+                linkTo(getClass().getMethod(EDIT_SCHEDULE_BY_ID, Long.class, UpdateCalendarRequest.class, SessionUser.class)).withRel(EDIT_SCHEDULE_BY_ID)
         );
     }
 
@@ -78,11 +78,11 @@ public class CalendarController {
 
     @SneakyThrows
     @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse<UpdateCalendarResponse>> editScheduleById(@PathVariable("id") Long id, @RequestBody @Valid UpdateCalendarRequest request) {
-        UpdateCalendarResponse response = calendarCommandService.updateCalendarById(id, request.toServiceDto());
+    public ResponseEntity<ApiResponse<UpdateCalendarResponse>> editScheduleById(@PathVariable("id") Long id, @RequestBody @Valid UpdateCalendarRequest request, @LoginUser SessionUser sessionUser) {
+        UpdateCalendarResponse response = calendarCommandService.updateCalendarById(id, request.toServiceDto(), sessionUser.memberId());
         return ApiResponse.ok(
             response,
-            linkTo(methodOn(getClass()).editScheduleById(id, request)).withSelfRel(),
+            linkTo(methodOn(getClass()).editScheduleById(id, request, sessionUser)).withSelfRel(),
             linkTo(getClass().getMethod(FIND_ALL_SCHEDULE_WITH_DATE, FindCalendarsWithDateRequest.class, SessionUser.class)).withRel(FIND_ALL_SCHEDULE_WITH_DATE)
         );
     }
