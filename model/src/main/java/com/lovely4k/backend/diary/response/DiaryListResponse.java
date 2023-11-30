@@ -1,6 +1,5 @@
-package com.lovely4k.backend.diary.service.response;
+package com.lovely4k.backend.diary.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lovely4k.backend.diary.Diary;
 
 import java.math.BigDecimal;
@@ -10,7 +9,6 @@ public record DiaryListResponse(
     Long diaryId,
     Long kakaoMapId,
     String imageUrl,
-    @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate datingDay,
     String placeName,
     String address,

@@ -2,6 +2,7 @@ package com.lovely4k.docs.diary;
 
 import com.lovely4k.backend.diary.controller.DiaryController;
 import com.lovely4k.backend.diary.controller.request.DiaryDeleteRequest;
+import com.lovely4k.backend.diary.service.DiaryQueryService;
 import com.lovely4k.backend.diary.service.DiaryService;
 import com.lovely4k.backend.diary.service.response.*;
 import com.lovely4k.backend.location.Category;
@@ -39,10 +40,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class DiaryControllerDocsTest extends RestDocsSupport {
 
     private final DiaryService diaryService = mock(DiaryService.class);
+    private final DiaryQueryService diaryQueryService = mock(DiaryQueryService.class);
 
     @Override
     protected Object initController() {
-        return new DiaryController(diaryService);
+        return new DiaryController(diaryService, diaryQueryService);
     }
 
     @DisplayName("다이어리를 작성하는 API")
@@ -97,9 +99,9 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     @Test
     void getDiaryDetail() throws Exception {
         // stubbing
-        when(diaryService.findDiaryDetail(any(), any(), any()))
+        when(diaryQueryService.findDiaryDetail(any(), any(), any()))
             .thenReturn(
-                new DiaryDetailResponse(102L,
+                new WebDiaryDetailResponse(102L,
                     LocalDate.of(2021, 10, 20), 5, Category.FOOD,
                     "여기 음식 최고", "포브스 선정 맛집 답다.",
                     PhotoListResponse.builder().firstImage("image-url1").secondImage("image-url2").build()
@@ -146,19 +148,19 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     @Test
     void getDiaryList() throws Exception {
         // stubbing
-        List<DiaryListResponse> diaryListResponseList = List.of(
-            new DiaryListResponse(3L, 103L, "image-url", LocalDate.of(2023, 10, 20), "starbucks", "경기도 고양시", BigDecimal.valueOf(97.1235), BigDecimal.valueOf(123.5642)),
-            new DiaryListResponse(2L, 103532L, "image-url", LocalDate.of(2023, 11, 20), "cafebenne", "수원시 팔달구", BigDecimal.valueOf(98.1235), BigDecimal.valueOf(122.3300)),
-            new DiaryListResponse(1L, 123562L, "image-url", LocalDate.of(2023, 12, 20), "삼시세끼", "강원도 원주시", BigDecimal.valueOf(94.1235), BigDecimal.valueOf(124.4623))
+        List<WebDiaryListResponse> webDiaryListResponse = List.of(
+            new WebDiaryListResponse(3L, 103L, "image-url", LocalDate.of(2023, 10, 20), "starbucks", "경기도 고양시", BigDecimal.valueOf(97.1235), BigDecimal.valueOf(123.5642)),
+            new WebDiaryListResponse(2L, 103532L, "image-url", LocalDate.of(2023, 11, 20), "cafebenne", "수원시 팔달구", BigDecimal.valueOf(98.1235), BigDecimal.valueOf(122.3300)),
+            new WebDiaryListResponse(1L, 123562L, "image-url", LocalDate.of(2023, 12, 20), "삼시세끼", "강원도 원주시", BigDecimal.valueOf(94.1235), BigDecimal.valueOf(124.4623))
         );
 
-        PageImpl<DiaryListResponse> responsePage =
+        PageImpl<WebDiaryListResponse> responsePage =
             new PageImpl<>(
-                diaryListResponseList,
+                webDiaryListResponse,
                 PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "localDateTime")),
-                diaryListResponseList.size());
+                webDiaryListResponse.size());
 
-        when(diaryService.findDiaryList(any(), any(), any()))
+        when(diaryQueryService.findDiaryList(any(), any(), any()))
             .thenReturn(responsePage);
 
         this.mockMvc.perform(
@@ -202,14 +204,14 @@ class DiaryControllerDocsTest extends RestDocsSupport {
     @Test
     void getDiaryListByMarker() throws Exception {
         // stubbing
-        List<DiaryMarkerResponse> diaryMarkerResponses = List.of(
-            new DiaryMarkerResponse(1L, "image-url1", LocalDate.of(2020, 10, 20)),
-            new DiaryMarkerResponse(2L, "image-url2", LocalDate.of(2021, 10, 20)),
-            new DiaryMarkerResponse(3L, "image-url3", LocalDate.of(2022, 10, 20))
+        List<WebDiaryMarkerResponse> webDiaryMarkerResponses = List.of(
+            new WebDiaryMarkerResponse(1L, "image-url1", LocalDate.of(2020, 10, 20)),
+            new WebDiaryMarkerResponse(2L, "image-url2", LocalDate.of(2021, 10, 20)),
+            new WebDiaryMarkerResponse(3L, "image-url3", LocalDate.of(2022, 10, 20))
         );
 
-        when(diaryService.findDiaryListByMarker(any(), any()))
-            .thenReturn(new DiaryListByMarkerResponse(BigDecimal.valueOf(98.1234), BigDecimal.valueOf(123.1231), "starbucks", diaryMarkerResponses));
+        when(diaryQueryService.findDiaryListByMarker(any(), any()))
+            .thenReturn(new WebDiaryListByMarkerResponse(BigDecimal.valueOf(98.1234), BigDecimal.valueOf(123.1231), "starbucks", webDiaryMarkerResponses));
 
         this.mockMvc.perform(
                 get("/v1/diaries/marker/{kakaoMapId}", 1L)
@@ -294,7 +296,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
             new DiaryGridResponse(1L, BigDecimal.valueOf(37.5563), BigDecimal.valueOf(126.9723), "서울역", 1L)
         );
 
-        when(diaryService.findDiaryListInGrid(any(), any(), any(), any(), any()))
+        when(diaryQueryService.findDiaryListInGrid(any(), any(), any(), any(), any()))
             .thenReturn(new DiaryListInGridResponse(diaryGridResponses));
 
         this.mockMvc.perform(
