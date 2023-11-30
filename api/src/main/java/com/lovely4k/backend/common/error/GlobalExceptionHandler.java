@@ -3,6 +3,7 @@ package com.lovely4k.backend.common.error;
 
 import com.amazonaws.AmazonClientException;
 import com.lovely4k.backend.common.ApiResponse;
+import com.lovely4k.backend.question.exception.QuestionCreateCountExceedException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -60,5 +61,12 @@ public class GlobalExceptionHandler {
         ProblemDetail problemDetail = ProblemDetailCreator.create(e, request, HttpStatus.INTERNAL_SERVER_ERROR);
 
         return ApiResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, problemDetail);
+    }
+
+    @ExceptionHandler(QuestionCreateCountExceedException.class)
+    public ResponseEntity<ApiResponse<ProblemDetail>> handleQuestionCreateCountExceedException(QuestionCreateCountExceedException e, HttpServletRequest request) {
+        ProblemDetail problemDetail = ProblemDetailCreator.create(e, request, HttpStatus.OK);
+
+        return ApiResponse.fail(HttpStatus.OK, problemDetail);
     }
 }
