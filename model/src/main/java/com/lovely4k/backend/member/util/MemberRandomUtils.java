@@ -3,7 +3,7 @@ package com.lovely4k.backend.member.util;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-public class RandomUtils {
+public class MemberRandomUtils {
 
     private static final SecureRandom random;
 
@@ -21,16 +21,12 @@ public class RandomUtils {
     }
 
     private enum ColorCode {
-        COLOR1("#378F09"),
-        COLOR2("#F32BC9"),
-        COLOR3("#EDB029"),
-        COLOR4("#D47E2A"),
-        COLOR5("#1498CA"),
-        COLOR6("#BE15BD"),
-        COLOR7("#78F0BE"),
-        COLOR8("#360926"),
-        COLOR9("#8C3BC0"),
-        COLOR10("#B5A762");
+        BLUE("#3AB2C2"),
+        ORANGE("#FF9029"),
+        GREEN("#7EB934"),
+        PINK("#EB366C"),
+        PURPLE("#7E50DF"),
+        INDIGO("#265073");
 
         private final String hexCode;
 
