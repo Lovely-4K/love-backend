@@ -2,11 +2,14 @@
 === 다이어리 수정
 
 다이어리 수정에 사용되는 값들은 다음과 같습니다.
+
+다이어리 텍스트 수정은 본인의 텍스트만 수정할 수 있습니다.
+
 include::{snippets}/diary-edit/request-part-texts-fields.adoc[]
 
 
 ==== HTTP Request
-include::{snippets}/diary-create/http-request.adoc[]
+include::{snippets}/diary-edit/http-request.adoc[]
 include::{snippets}/diary-edit/path-parameters.adoc[]
 
 ==== HTTP Response

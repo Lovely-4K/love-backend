@@ -245,7 +245,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "image-file".getBytes());
 
         MockDiaryEditRequest mockDiaryEditRequest =
-            new MockDiaryEditRequest(5, "2023-11-01", "ACCOMODATION", "여기 좋더라 다음에 또 올까~?", "다음달에도 꼭 오자 우리");
+            new MockDiaryEditRequest(5, "2023-11-01", "ACCOMODATION", "여기 좋더라 다음에 또 올까~?");
         MockMultipartFile mockMultipartFile = new MockMultipartFile("texts", "texts", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsString(mockDiaryEditRequest).getBytes(StandardCharsets.UTF_8));
 
         MockHttpServletRequestBuilder builder = RestDocumentationRequestBuilders.multipart("/v1/diaries/{id}", 1L)
@@ -272,8 +272,7 @@ class DiaryControllerDocsTest extends RestDocsSupport {
                     fieldWithPath("score").type(NUMBER).description("장소에 대한 평점"),
                     fieldWithPath("datingDay").type(STRING).description("데이트 한 날짜"),
                     fieldWithPath("category").type(STRING).description("장소 카테고리"),
-                    fieldWithPath("myText").type(STRING).description("나의 일기"),
-                    fieldWithPath("opponentText").type(STRING).description("연인의 일기")
+                    fieldWithPath("text").type(STRING).description("나의 일기")
                 ),
                 requestParts(
                     partWithName("texts").ignored(),

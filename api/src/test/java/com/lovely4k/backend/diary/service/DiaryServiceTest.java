@@ -216,7 +216,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
 
-        DiaryEditRequest diaryEditRequest = new DiaryEditRequest(4, LocalDate.of(2023, 11, 1), "food", "boy-text", "girl-text", List.of());
+        DiaryEditRequest diaryEditRequest = new DiaryEditRequest(4, LocalDate.of(2023, 11, 1), "food", "boy-text",  List.of());
 
         // stubbing
         given(imageUploader.upload(any(String.class), any())
@@ -231,8 +231,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
             () -> assertThat(findDiary.getScore()).isEqualTo(diaryEditRequest.score()),
             () -> assertThat(findDiary.getDatingDay()).isEqualTo(diaryEditRequest.datingDay()),
             () -> assertThat(findDiary.getLocation().getCategory()).isEqualTo(Category.FOOD),
-            () -> assertThat(findDiary.getBoyText()).isEqualTo(diaryEditRequest.myText()),
-            () -> assertThat(findDiary.getGirlText()).isEqualTo(diaryEditRequest.opponentText()),
+            () -> assertThat(findDiary.getBoyText()).isEqualTo(diaryEditRequest.text()),
             () -> assertThat(findDiary.getPhotos().countOfImages()).isEqualTo(2)
         );
     }
@@ -262,7 +261,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
 
-        DiaryEditRequest diaryEditRequest = new DiaryEditRequest(4, LocalDate.of(2023, 11, 1), "food", "boy-text", "girl-text", List.of("test-image"));
+        DiaryEditRequest diaryEditRequest = new DiaryEditRequest(4, LocalDate.of(2023, 11, 1), "food", "boy-text",  List.of("test-image"));
 
         // stubbing
         given(imageUploader.upload(any(String.class), any())
@@ -277,8 +276,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
             () -> assertThat(findDiary.getScore()).isEqualTo(diaryEditRequest.score()),
             () -> assertThat(findDiary.getDatingDay()).isEqualTo(diaryEditRequest.datingDay()),
             () -> assertThat(findDiary.getLocation().getCategory()).isEqualTo(Category.FOOD),
-            () -> assertThat(findDiary.getBoyText()).isEqualTo(diaryEditRequest.myText()),
-            () -> assertThat(findDiary.getGirlText()).isEqualTo(diaryEditRequest.opponentText()),
+            () -> assertThat(findDiary.getBoyText()).isEqualTo(diaryEditRequest.text()),
             () -> assertThat(findDiary.getPhotos().countOfImages()).isEqualTo(3)
         );
     }
@@ -307,7 +305,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
 
-        DiaryEditRequest diaryEditRequest = new DiaryEditRequest(4, LocalDate.of(2023, 11, 1), "food", "boy-text", "girl-text", List.of("test-image", "test-image2", "test-image3", "test-image4"));
+        DiaryEditRequest diaryEditRequest = new DiaryEditRequest(4, LocalDate.of(2023, 11, 1), "food", "boy-text",  List.of("test-image", "test-image2", "test-image3", "test-image4"));
 
         // stubbing
         given(imageUploader.upload(any(String.class), any())

@@ -25,12 +25,10 @@ public record WebDiaryEditRequest(
     @EnumValue(enumClass = Category.class, message = "invalid category", ignoreCase = true)
     String category,
     @NotBlank(message = "text of diary must not be null and empty")
-    String myText,
-    @NotBlank(message = "text of diary must not be null and empty")
-    String opponentText,
+    String text,
     List<String> images
 ) {
     public DiaryEditRequest toServiceRequest() {
-        return new DiaryEditRequest(score, datingDay, category, myText, opponentText, images);
+        return new DiaryEditRequest(score, datingDay, category, text, images);
     }
 }
