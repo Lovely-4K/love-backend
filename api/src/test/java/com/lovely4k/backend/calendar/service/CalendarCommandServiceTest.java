@@ -71,6 +71,7 @@ class CalendarCommandServiceTest {
     void givenValidCalendarId_whenUpdateCalendarById_thenReturnUpdatedCalendarResponse() {
         // Given
         Long calendarId = 1L;
+        Long loginUserId = 1L;
         UpdateCalendarServiceRequest request = new UpdateCalendarServiceRequest(
                 LocalDate.of(2023, 11, 3),
                 LocalDate.of(2023, 11, 10),
@@ -82,7 +83,7 @@ class CalendarCommandServiceTest {
         given(calendarCommandRepository.findById(calendarId)).willReturn(Optional.of(calendar));
 
         // When
-        UpdateCalendarResponse response = calendarCommandService.updateCalendarById(calendarId, request);
+        UpdateCalendarResponse response = calendarCommandService.updateCalendarById(calendarId, request, loginUserId);
 
         // Then
         assertThat(response).isNotNull()
