@@ -62,12 +62,12 @@ public class Calendar extends BaseTimeEntity {
         this.scheduleType = Validate.notNull(scheduleType, "scheduleType must not be null");
     }
 
-    public void update(LocalDate startDate, LocalDate endDate, String scheduleType, String scheduleDetails) {
+    public void update(LocalDate startDate, LocalDate endDate, String scheduleType, String scheduleDetails, Long ownerId) {
         validateDates(startDate, endDate);
         ScheduleType type = ScheduleType.valueOf(scheduleType.toUpperCase());
-
+        this.ownerId = ownerId;
         if (type != ScheduleType.PERSONAL) {
-            ownerId = 0L;
+            this.ownerId = 0L;
         }
         this.scheduleType = type;
         this.scheduleDetails = validateScheduleDetails(scheduleDetails);

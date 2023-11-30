@@ -25,9 +25,9 @@ public class CalendarCommandService {
         return CreateCalendarResponse.from(savedCalendar);
     }
 
-    public UpdateCalendarResponse updateCalendarById(Long id, UpdateCalendarServiceRequest request) {
+    public UpdateCalendarResponse updateCalendarById(Long id, UpdateCalendarServiceRequest request, Long loginUserId) {
         Calendar calendar = calendarCommandRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("calendar", id)));
-        calendar.update(request.startDate(), request.endDate(), request.scheduleType(), request.scheduleDetails());
+        calendar.update(request.startDate(), request.endDate(), request.scheduleType(), request.scheduleDetails(), loginUserId);
 
         return UpdateCalendarResponse.from(calendar);
     }
