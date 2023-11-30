@@ -22,6 +22,9 @@ include::api/common/http-status-code.adoc[]
 == Login
 include::api/login/login.adoc[]
 
+== Token
+include::api/login/token.adoc[]
+
 [[Member]]
 == Member
 
