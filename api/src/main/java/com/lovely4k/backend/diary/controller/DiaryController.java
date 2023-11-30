@@ -4,13 +4,14 @@ import com.lovely4k.backend.common.ApiResponse;
 import com.lovely4k.backend.common.sessionuser.LoginUser;
 import com.lovely4k.backend.common.sessionuser.SessionUser;
 import com.lovely4k.backend.diary.controller.request.DiaryDeleteRequest;
-import com.lovely4k.backend.diary.controller.request.WebDiaryEditRequest;
 import com.lovely4k.backend.diary.controller.request.WebDiaryCreateRequest;
+import com.lovely4k.backend.diary.controller.request.WebDiaryEditRequest;
+import com.lovely4k.backend.diary.service.DiaryQueryService;
 import com.lovely4k.backend.diary.service.DiaryService;
-import com.lovely4k.backend.diary.service.response.DiaryDetailResponse;
-import com.lovely4k.backend.diary.service.response.DiaryListByMarkerResponse;
+import com.lovely4k.backend.diary.service.response.WebDiaryListByMarkerResponse;
 import com.lovely4k.backend.diary.service.response.DiaryListInGridResponse;
-import com.lovely4k.backend.diary.service.response.DiaryListResponse;
+import com.lovely4k.backend.diary.service.response.WebDiaryDetailResponse;
+import com.lovely4k.backend.diary.service.response.WebDiaryListResponse;
 import com.lovely4k.backend.location.Category;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 public class DiaryController {
 
     private final DiaryService diaryService;
+    private final DiaryQueryService diaryQueryService;
 
     private static final String DETAIL = "get detail information of diary";
     private static final String EDIT = "edit diary";
@@ -63,12 +65,12 @@ public class DiaryController {
 
     @SneakyThrows
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<DiaryDetailResponse>> getDiaryDetail(
+    public ResponseEntity<ApiResponse<WebDiaryDetailResponse>> getDiaryDetail(
             @PathVariable Long id,
             @LoginUser SessionUser sessionUser
     ) {
 
-        return ApiResponse.ok(diaryService.findDiaryDetail(id, sessionUser.coupleId(), sessionUser.memberId()),
+        return ApiResponse.ok(diaryQueryService.findDiaryDetail(id, sessionUser.coupleId(), sessionUser.memberId()),
                 linkTo(methodOn(DiaryController.class).getDiaryDetail(id, sessionUser)).withSelfRel(),
                 linkTo(DiaryController.class.getMethod("editDiary", Long.class, List.class, WebDiaryEditRequest.class, SessionUser.class)).withRel(EDIT),
                 linkTo(DiaryController.class).slash(id).withRel(DELETE)
@@ -76,12 +78,12 @@ public class DiaryController {
     }
     @SneakyThrows
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<DiaryListResponse>>> getDiaryList(
+    public ResponseEntity<ApiResponse<Page<WebDiaryListResponse>>> getDiaryList(
             @LoginUser SessionUser sessionUser,
             @RequestParam(required = false) Category category,
             @PageableDefault(size = 10, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return ApiResponse.ok(diaryService.findDiaryList(sessionUser.coupleId(), category, pageable),
+        return ApiResponse.ok(diaryQueryService.findDiaryList(sessionUser.coupleId(), category, pageable),
                 linkTo(DiaryController.class.getMethod("getDiaryDetail", Long.class, SessionUser.class)).withRel(DETAIL),
                 linkTo(DiaryController.class.getMethod("editDiary", Long.class, List.class, WebDiaryEditRequest.class, SessionUser.class)).withRel(EDIT),
                 linkTo(DiaryController.class.getMethod("deleteDiary", Long.class, SessionUser.class)).withRel(DELETE)
@@ -90,11 +92,11 @@ public class DiaryController {
 
     @SneakyThrows
     @GetMapping("/marker/{kakaoMapId}")
-    public ResponseEntity<ApiResponse<DiaryListByMarkerResponse>> getDiaryListByMarker(
+    public ResponseEntity<ApiResponse<WebDiaryListByMarkerResponse>> getDiaryListByMarker(
         @PathVariable Long kakaoMapId,
         @LoginUser SessionUser sessionUser
     ) {
-        return ApiResponse.ok(diaryService.findDiaryListByMarker(kakaoMapId, sessionUser.coupleId()),
+        return ApiResponse.ok(diaryQueryService.findDiaryListByMarker(kakaoMapId, sessionUser.coupleId()),
             linkTo(DiaryController.class.getMethod("getDiaryDetail", Long.class, SessionUser.class)).withRel(DETAIL)    // NOSONAR
         );
     }
@@ -122,7 +124,7 @@ public class DiaryController {
         @LoginUser SessionUser sessionUser
     ) {
 
-        return ApiResponse.ok(diaryService.findDiaryListInGrid(rLatitude, rLongitude, lLatitude, lLongitude, sessionUser.coupleId()));
+        return ApiResponse.ok(diaryQueryService.findDiaryListInGrid(rLatitude, rLongitude, lLatitude, lLongitude, sessionUser.coupleId()));
     }
 
     @DeleteMapping("/{id}")

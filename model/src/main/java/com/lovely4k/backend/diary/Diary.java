@@ -93,7 +93,7 @@ public class Diary extends BaseTimeEntity {
         }
     }
 
-    public void update(Sex sex, Integer score, LocalDate datingDay, String category, String myText, String opponentText, List<String> uploadedImageUrls) {
+    public void update(Sex sex, Integer score, LocalDate datingDay, String category, String text, List<String> uploadedImageUrls) {
         this.location.update(category);
         if (this.photos == null) {
             this.photos = new Photos();
@@ -102,11 +102,9 @@ public class Diary extends BaseTimeEntity {
         this.score = score;
         this.datingDay = datingDay;
         if (sex == Sex.MALE) {
-            this.boyText = myText;
-            this.girlText = opponentText;
+            this.boyText = text;
         } else {
-            this.girlText = myText;
-            this.boyText = opponentText;
+            this.girlText = text;
         }
 
     }

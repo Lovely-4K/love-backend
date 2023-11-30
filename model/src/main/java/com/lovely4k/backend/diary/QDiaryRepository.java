@@ -1,13 +1,14 @@
 package com.lovely4k.backend.diary;
 
+import com.lovely4k.backend.diary.response.DiaryListResponse;
 import com.lovely4k.backend.location.Category;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -17,30 +18,35 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static com.lovely4k.backend.diary.QDiary.diary;
+import static com.lovely4k.backend.location.QLocation.location;
 
+@RequiredArgsConstructor
 @Repository
 public class QDiaryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public QDiaryRepository(EntityManager entityManager) {
-        this.jpaQueryFactory = new JPAQueryFactory(entityManager);
-    }
+    public Page<DiaryListResponse> findDiaryList(Long coupleId, Category category, Pageable pageable) {
+        List<DiaryListResponse> content = jpaQueryFactory.select(
+            Projections.constructor(DiaryListResponse.class,
+                diary.id, location.kakaoMapId, diary.photos.firstImage,
+                diary.datingDay, location.placeName, location.address, location.latitude, location.longitude
+                )
+            )
+            .from(diary)
+            .leftJoin(diary.location, location)
+            .where(coupleIdEq(coupleId).and(categoryEq(category)))
+            .orderBy(getOrderSpecifiers(pageable, diary))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
 
-    public Page<Diary> findAll(Long coupleId, Category category, Pageable pageable) {
-        List<Diary> diaries = jpaQueryFactory.selectFrom(diary)
-                .where(coupleIdEq(coupleId).and(categoryEq(category)))
-                .orderBy(getOrderSpecifiers(pageable))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        long total = jpaQueryFactory.select(diary.count())
+        Long total = jpaQueryFactory.select(diary.count())
                 .from(diary)
                 .where(coupleIdEq(coupleId).and(categoryEq(category)))
                 .fetchOne();
 
-        return new PageImpl<>(diaries, pageable, total);
+        return new PageImpl<>(content, pageable, total);
     }
 
     private static BooleanBuilder nullSafeBuilder(Supplier<BooleanExpression> f) {
@@ -62,13 +68,17 @@ public class QDiaryRepository {
         return nullSafeBuilder(() -> diary.location.category.eq(category));
     }
 
-    private OrderSpecifier[] getOrderSpecifiers(Pageable pageable) {
+    private OrderSpecifier<?>[] getOrderSpecifiers(Pageable pageable, QDiary diary) {
         return pageable.getSort().stream()
-                .map(order -> new OrderSpecifier<>(
-                        order.isAscending() ? Order.ASC : Order.DESC,
-                        Expressions.stringPath(order.getProperty())
-                ))
-                .toArray(OrderSpecifier[]::new);
+                .map(order -> {
+                    Order orderDirection = order.isAscending() ? Order.ASC : Order.DESC;
+                    return switch (order.getProperty()) {
+                        case "createdDate" -> new OrderSpecifier<>(orderDirection, diary.createdDate);
+                        case "score" -> new OrderSpecifier<>(orderDirection, diary.score);
+                        default -> throw new IllegalArgumentException("Unknown property: " + order.getProperty());
+                    };
+                })
+                .toArray(OrderSpecifier<?>[]::new);
     }
 
 }
