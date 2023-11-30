@@ -75,6 +75,7 @@ public class QDiaryRepository {
                     return switch (order.getProperty()) {
                         case "createdDate" -> new OrderSpecifier<>(orderDirection, diary.createdDate);
                         case "score" -> new OrderSpecifier<>(orderDirection, diary.score);
+                        case "datingDay" -> new OrderSpecifier<>(orderDirection, diary.datingDay);
                         default -> throw new IllegalArgumentException("Unknown property: " + order.getProperty());
                     };
                 })
