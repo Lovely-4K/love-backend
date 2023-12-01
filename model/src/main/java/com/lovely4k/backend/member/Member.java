@@ -93,20 +93,4 @@ public class Member extends BaseTimeEntity {
         }
     }
 
-//    @Override
-//    public String toString() {
-//        return "Member{" +
-//            "id=" + id +
-//            ", coupleId=" + coupleId +
-//            ", sex=" + sex +
-//            ", nickname='" + nickname + '\'' +
-//            ", birthday=" + birthday +
-//            ", mbti='" + mbti + '\'' +
-//            ", calendarColor='" + calendarColor + '\'' +
-//            ", imageUrl='" + imageUrl + '\'' +
-//            ", ageRange='" + ageRange + '\'' +
-//            ", email='" + email + '\'' +
-//            ", role=" + role +
-//            '}';
-//    }
 }
