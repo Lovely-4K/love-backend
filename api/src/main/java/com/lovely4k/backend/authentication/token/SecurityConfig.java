@@ -56,6 +56,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(
                 authorize -> authorize
                     .requestMatchers(
+                        antMatcher("/docs/**"),
                         antMatcher("/h2-console/**"),
                         antMatcher("/profile"),
                         antMatcher("/oauth2/**"),
