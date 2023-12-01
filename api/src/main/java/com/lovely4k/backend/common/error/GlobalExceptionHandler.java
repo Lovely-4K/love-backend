@@ -3,7 +3,7 @@ package com.lovely4k.backend.common.error;
 
 import com.amazonaws.AmazonClientException;
 import com.lovely4k.backend.common.ApiResponse;
-import com.lovely4k.backend.question.exception.QuestionCreateCountExceedException;
+import com.lovely4k.backend.common.error.exception.QuestionCreateCountExceedException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

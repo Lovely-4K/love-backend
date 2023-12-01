@@ -1,6 +1,7 @@
 package com.lovely4k.backend.question.service;
 
 import com.lovely4k.TestData;
+import com.lovely4k.backend.common.error.exception.QuestionCreateCountExceedException;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.repository.QuestionRepository;
@@ -58,7 +59,7 @@ class QuestionValidatorTest {
 
         // When & Then
         Assertions.assertThatThrownBy(() -> questionValidator.validateCreateQuestionForm(coupleId, questionDay))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(QuestionCreateCountExceedException.class);
     }
 
     @DisplayName("질문 생성 유효성 검사 - 답변이 완료되지 않았을 때")

@@ -1,7 +1,7 @@
 package com.lovely4k.backend.question.service;
 
 import com.lovely4k.backend.question.Question;
-import com.lovely4k.backend.question.exception.QuestionCreateCountExceedException;
+import com.lovely4k.backend.common.error.exception.QuestionCreateCountExceedException;
 import com.lovely4k.backend.question.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.lovely4k.backend.question.exception;
+package com.lovely4k.backend.common.error.exception;
 
 public class QuestionCreateCountExceedException extends RuntimeException{
     public QuestionCreateCountExceedException() {
