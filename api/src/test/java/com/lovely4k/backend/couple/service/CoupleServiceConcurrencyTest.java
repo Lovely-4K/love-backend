@@ -11,6 +11,7 @@ import com.lovely4k.backend.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import java.time.LocalDate;
@@ -34,6 +35,9 @@ class CoupleServiceConcurrencyTest extends IntegrationTestSupport {
 
     @Autowired
     CoupleRepository coupleRepository;
+
+    @Autowired
+    TaskExecutor taskExecutor;
 
     @DisplayName("동시에 increaseTemperature 메서드 호출이 실행되더라도 정상적으로 해결이 되어야 한다.")
     @Test

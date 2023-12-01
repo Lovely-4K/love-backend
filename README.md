@@ -22,15 +22,14 @@
 
 # Skills
 
-|                                                         Backend                                                          |                                                        DevOps                                                        | 
-|:------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------:|
- | <img src="https://github.com/BeomSeogKim/portfolio/assets/110332047/56345b6c-2c44-4dca-89cb-649954bc5ecb" width=400px /> | <img src="https://github.com/Lovely-4K/love-backend/assets/110332047/d5585971-d3ed-4dbb-904e-b8fa5d2b82be" width="500px"/> |
+<img src="https://github.com/Lovely-4K/love-backend/assets/110332047/b923957a-6b91-43c8-a9f3-ac280d6a05aa" width=1000px />
+
 
 # Infra 
-![image](https://github.com/prgrms-be-devcourse/BE-04-DevTable/assets/79970349/a5ce9b0f-fc76-4441-8727-c1e8eadd7210)
+![image](https://github.com/Lovely-4K/love-backend/assets/110332047/cf61aaed-5b45-433b-bc0d-bcaf0a8c80ab)
 
 # CI/CD
-![image](https://github.com/prgrms-be-devcourse/BE-04-DevTable/assets/79970349/767c32e2-2fda-483a-9deb-7f8aba822312)
+![image](https://github.com/Lovely-4K/love-backend/assets/110332047/14e62846-d571-4a63-b162-97f1d18de477)
 # ERD
 <img src="https://github.com/Lovely-4K/love-backend/assets/78838534/4ee83da1-8e94-48ea-9116-44031cd8e1a8" width=1400px />
 
