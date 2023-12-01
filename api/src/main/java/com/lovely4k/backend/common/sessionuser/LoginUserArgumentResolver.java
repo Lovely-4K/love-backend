@@ -31,6 +31,8 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
             throw new AuthenticationCredentialsNotFoundException("로그인 하지 않은 사용자 입니다.");
         }
 
+        System.out.println("!!!!!11권한!!!"+authentication.getAuthorities());
+
         MemberInfo memberInfo = (MemberInfo) authentication.getPrincipal();
         return SessionUser.from(memberInfo);
     }

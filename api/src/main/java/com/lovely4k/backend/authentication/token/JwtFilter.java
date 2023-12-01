@@ -17,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -27,8 +25,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 
 @Slf4j
@@ -38,7 +34,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     public static String AUTHORIZATION_HEADER = "Authorization";    // NOSONAR
     public static String BEARER_PREFIX = "Bearer ";     // NOSONAR
-    public static String AUTHORITIES_KEY = "auth";      // NOSONAR
     private static final String REFRESH_HEADER = "Refresh-Token";
     private final TokenProvider tokenProvider;
     private final UserDetailsServiceImpl userDetailsService;
@@ -76,14 +71,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private void updateSecurityContext(Claims claims, String jwt) {
         String subject = claims.getSubject();
-        Collection<? extends GrantedAuthority> authorities =
-            Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                .map(SimpleGrantedAuthority::new)
-                .toList();
+
         log.debug("subject = " + subject);
         UserDetails principal = userDetailsService.loadUserByUsername(subject);
         log.debug("principal = " + principal);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt, authorities);
+        log.debug("authority =  " + principal.getAuthorities());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt, principal.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 

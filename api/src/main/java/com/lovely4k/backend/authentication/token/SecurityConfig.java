@@ -35,11 +35,9 @@ public class SecurityConfig {
 
     private final OAuth2UserService oAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
-    private final TokenProvider tokenProvider;
-    private final UserDetailsServiceImpl userDetailsService;
-    private final AuthenticationEntryPointException authenticationEntryPointException;
-    private final AccessDeniedHandlerException accessDeniedHandlerException;
     private final JwtFilter jwtFilter;
+    private final AccessDeniedHandlerException accessDeniedHandlerException;
+    private final AuthenticationEntryPointException authenticationEntryPointException;
 
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
@@ -69,7 +67,8 @@ public class SecurityConfig {
                     ).permitAll()
                     .requestMatchers(
                         antMatcher("/v1/**")
-                    ).hasAnyRole(Role.USER.name(), Role.ADMIN.name())
+                    )
+                    .hasAnyRole(Role.USER.name(), Role.ADMIN.name())
                     .anyRequest().authenticated()
             );
 

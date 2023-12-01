@@ -2,7 +2,6 @@ package com.lovely4k.backend.authentication.token;
 
 import com.lovely4k.backend.common.sessionuser.MemberInfo;
 import com.lovely4k.backend.member.Member;
-import com.lovely4k.backend.member.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +22,7 @@ public class UserDetailsImpl implements UserDetails, MemberInfo {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(Role.USER.getKey());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(member.getRole().getKey());
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(authority);
         return authorities;
