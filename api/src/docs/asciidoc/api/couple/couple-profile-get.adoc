@@ -17,4 +17,13 @@ include::{snippets}/couple-profile-get/http-response.adoc[]
 
 다음은 커플 프로필 조회 시 응답 값에 대한 설명입니다.
 
+**coupleStatus**
+
+- SOLO : 커플이 맺어지기 전 상태
+- BREAKUP : 커플이 헤어진 상태
+- RELATIONSHIP : 커플인 상태
+- RECOUPLE : 커플이 재결합 신청한 상태
+
+
 include::{snippets}/couple-profile-get/response-fields.adoc[]
+

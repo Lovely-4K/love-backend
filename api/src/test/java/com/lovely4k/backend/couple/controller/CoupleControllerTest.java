@@ -1,6 +1,7 @@
 package com.lovely4k.backend.couple.controller;
 
 import com.lovely4k.backend.ControllerTestSupport;
+import com.lovely4k.backend.couple.CoupleStatus;
 import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.response.CoupleProfileGetResponse;
 import com.lovely4k.backend.couple.service.response.InvitationCodeCreateResponse;
@@ -76,7 +77,8 @@ class CoupleControllerTest extends ControllerTestSupport {
                 2L, // opponentId
                 LocalDate.of(1995, 10, 21),
                 "#C70039",
-                LocalDate.of(2020, 7, 23)
+                LocalDate.of(2020, 7, 23),
+                CoupleStatus.RELATIONSHIP
             )
         );
 
