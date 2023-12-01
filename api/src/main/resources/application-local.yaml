@@ -25,3 +25,6 @@ logging:
   level:
     com.lovely4k.backend.authentication: debug
     com.lovely4k.backend.common.config: debug
+
+love:
+  met: se

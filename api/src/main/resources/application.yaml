@@ -12,4 +12,3 @@ spring:
 love:
   system:
     max-affordable-time: 3
-  met: se
