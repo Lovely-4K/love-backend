@@ -6,6 +6,7 @@ import com.lovely4k.backend.authentication.exception.AccessDeniedHandlerExceptio
 import com.lovely4k.backend.authentication.exception.AuthenticationEntryPointException;
 import com.lovely4k.backend.member.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +40,9 @@ public class SecurityConfig {
     private final AccessDeniedHandlerException accessDeniedHandlerException;
     private final AuthenticationEntryPointException authenticationEntryPointException;
 
+    @Value("${love.met}")
+    private String love;
+
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -56,6 +60,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(
                 authorize -> authorize
                     .requestMatchers(
+                        antMatcher(love),
                         antMatcher("/docs/**"),
                         antMatcher("/h2-console/**"),
                         antMatcher("/profile"),
