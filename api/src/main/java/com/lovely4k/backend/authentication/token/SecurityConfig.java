@@ -4,11 +4,14 @@ import com.lovely4k.backend.authentication.CustomSuccessHandler;
 import com.lovely4k.backend.authentication.OAuth2UserService;
 import com.lovely4k.backend.authentication.exception.AccessDeniedHandlerException;
 import com.lovely4k.backend.authentication.exception.AuthenticationEntryPointException;
+import com.lovely4k.backend.member.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
@@ -21,6 +24,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @RequiredArgsConstructor
 @Configuration
@@ -47,18 +54,24 @@ public class SecurityConfig {
 
         // Authorize of url
         http
+            //권한 추가되면 사용
             .authorizeHttpRequests(
                 authorize -> authorize
-                    .anyRequest().permitAll()
+                    .requestMatchers(
+                        antMatcher("/h2-console/**"),
+                        antMatcher("/profile"),
+                        antMatcher("/oauth2/**"),
+                        antMatcher("/v1/members/**"),
+                        antMatcher(POST,"/v1/couples/invitation-code"),
+                        antMatcher(POST, "/v1/couples"),
+                        antMatcher(GET, "/v1/couples"),
+                        antMatcher(POST, "/v1/couples/recouple")
+                    ).permitAll()
+                    .requestMatchers(
+                        antMatcher("/v1/**")
+                    ).hasAnyRole(Role.USER.name(), Role.ADMIN.name())
+                    .anyRequest().authenticated()
             );
-        //권한 추가되면 사용
-//        .authorizeHttpRequests(
-//            authorize -> authorize
-//                .requestMatchers(
-//                    antMatcher("/v1/**")
-//                ).hasRole(Role.USER.name())
-//                .anyRequest().permitAll()
-//        );
 
         // 로그아웃 설정
         http
@@ -122,5 +135,12 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
+    }
+
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER > ROLE_GUEST");
+        return roleHierarchy;
     }
 }

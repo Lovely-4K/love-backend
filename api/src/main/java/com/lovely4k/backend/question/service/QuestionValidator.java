@@ -1,6 +1,7 @@
 package com.lovely4k.backend.question.service;
 
 import com.lovely4k.backend.question.Question;
+import com.lovely4k.backend.common.error.exception.QuestionCreateCountExceedException;
 import com.lovely4k.backend.question.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class QuestionValidator {
 
     private void validateDailyQuestionLimitAndAnswerCompletion(List<Question> questions) {
         if (questions.size() > 1) {
-            throw new IllegalStateException("이미 오늘의 질문을 2번 생성 했습니다.");
+            throw new QuestionCreateCountExceedException();
         }
 
         if (questions.isEmpty()) {

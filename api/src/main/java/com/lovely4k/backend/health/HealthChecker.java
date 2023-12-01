@@ -28,6 +28,6 @@ public class HealthChecker {
 
     @GetMapping("/")
     public String index() {
-        return "Welcome To My Service";
+        return "Welcome To 우이삭 API SERVER";
     }
 }
