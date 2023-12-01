@@ -18,9 +18,9 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     @EntityGraph(attributePaths = {"location"})
     @Query("""
     select d from Diary d where
-     d.coupleId = :coupleId and
-     :lLatitude <= d.location.latitude and d.location.latitude <= :rLatitude and
-     :lLongitude <= d.location.longitude and d.location.longitude <= :rLongitude
+     d.coupleId = :coupleId 
+     and d.location.latitude between :lLatitude and :rLatitude
+     and d.location.longitude between :lLongitude and :rLongitude
     """)
     List<Diary> findInGrid(BigDecimal rLatitude, BigDecimal rLongitude, BigDecimal lLatitude, BigDecimal lLongitude, Long coupleId);
 
