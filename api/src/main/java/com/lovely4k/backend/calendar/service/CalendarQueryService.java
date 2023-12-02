@@ -28,7 +28,7 @@ public class CalendarQueryService {
 
     @Cacheable(value = "recentCalendar", key = "#coupleId + '_' + #loginUserId")
     public FindRecentCalendarsServiceResponse findRecentCalendars(Long coupleId, Integer limit, Long loginUserId) {
-        System.out.println("캐시 안탐");
+
         List<FindRecentCalendarsResponse> result = calendarQueryRepository.findRecentCalendarsWithColors(coupleId, limit, loginUserId);
         return FindRecentCalendarsServiceResponse.from(result);
     }
