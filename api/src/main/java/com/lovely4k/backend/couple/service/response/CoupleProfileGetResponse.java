@@ -1,6 +1,7 @@
 package com.lovely4k.backend.couple.service.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.lovely4k.backend.couple.CoupleStatus;
 import com.lovely4k.backend.couple.repository.response.FindCoupleProfileResponse;
 
 import java.time.LocalDate;
@@ -20,7 +21,9 @@ public record CoupleProfileGetResponse(
     @JsonFormat(pattern = "yyyy-MM-dd") LocalDate opponentBirthday,
     String opponentCalendarColor,
 
-    @JsonFormat(pattern = "yyyy-MM-dd") LocalDate meetDay
+    @JsonFormat(pattern = "yyyy-MM-dd") LocalDate meetDay,
+
+    CoupleStatus coupleStatus
 ) {
     public static CoupleProfileGetResponse from(FindCoupleProfileResponse response) {
         return new CoupleProfileGetResponse(
@@ -36,7 +39,8 @@ public record CoupleProfileGetResponse(
             response.opponentId(),
             response.opponentBirthday(),
             response.opponentCalendarColor(),
-            response.meetDay()
+            response.meetDay(),
+            response.coupleStatus()
         );
     }
 }

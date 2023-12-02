@@ -1,5 +1,7 @@
 package com.lovely4k.backend.couple.repository.response;
 
+import com.lovely4k.backend.couple.CoupleStatus;
+
 import java.time.LocalDate;
 
 public record FindCoupleProfileResponse(
@@ -15,6 +17,7 @@ public record FindCoupleProfileResponse(
     Long opponentId,
     LocalDate opponentBirthday,
     String opponentCalendarColor,
-    LocalDate meetDay
+    LocalDate meetDay,
+    CoupleStatus coupleStatus
 ) {
 }
