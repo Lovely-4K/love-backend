@@ -1,6 +1,7 @@
 package com.lovely4k.docs.couple;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.lovely4k.backend.couple.CoupleStatus;
 import com.lovely4k.backend.couple.controller.CoupleController;
 import com.lovely4k.backend.couple.controller.request.TestCoupleProfileEditRequest;
 import com.lovely4k.backend.couple.service.CoupleService;
@@ -25,7 +26,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -124,7 +124,8 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                 2L, // opponentId
                 LocalDate.of(1995, 10, 21),
                 "#C70039",
-                LocalDate.of(2020, 7, 23)
+                LocalDate.of(2020, 7, 23),
+                CoupleStatus.RELATIONSHIP
             )
         );
 
@@ -151,7 +152,6 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                             .description("나의 달력 색깔"),
                         fieldWithPath("body.myBirthday").type(JsonFieldType.STRING)
                             .description("나의 생일"),
-
                         fieldWithPath("body.opponentNickname").type(JsonFieldType.STRING)
                             .description("상대방 별명"),
                         fieldWithPath("body.opponentMbti").type(JsonFieldType.STRING)
@@ -166,6 +166,8 @@ class CoupleControllerDocsTest extends RestDocsSupport {
                             .description("상대방 달력 색깔"),
                         fieldWithPath("body.opponentBirthday").type(JsonFieldType.STRING)
                             .description("상대방 생일"),
+                        fieldWithPath("body.coupleStatus").type(JsonFieldType.STRING)
+                            .description("커플 상태"),
                         fieldWithPath("links[0].rel").type(JsonFieldType.STRING)
                             .description("relation of url"),
                         fieldWithPath("links[0].href").type(JsonFieldType.STRING)

@@ -35,7 +35,8 @@ public class CoupleQueryRepository {
                 opponent.id,
                 opponent.birthday,
                 opponent.calendarColor,
-                couple.meetDay
+                couple.meetDay,
+                couple.coupleStatus
             ))
             .from(my)
             .leftJoin(couple).on(my.coupleId.eq(couple.id))
