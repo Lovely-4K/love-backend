@@ -7,6 +7,8 @@ import com.lovely4k.backend.member.service.request.MemberProfileEditServiceReque
 import com.lovely4k.backend.member.service.response.MemberProfileGetResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,14 +24,15 @@ public class MemberService {
     private final ImageUploader imageUploader;
 
 
+    @Cacheable(value = "memberProfile", key = "#memberId")
     public MemberProfileGetResponse findMemberProfile(Long memberId) {
-
         Member findMember = validateMemberId(memberId);
 
         return MemberProfileGetResponse.of(findMember);
     }
 
     @Transactional
+    @CachePut(value = "memberProfile",key = "#memberId")
     public void updateMemberProfile(List<MultipartFile> profileImages, MemberProfileEditServiceRequest serviceRequest, Long memberId) {
         Member findMember = validateMemberId(memberId);
         String oldProfileImageUrl = findMember.getImageUrl();
