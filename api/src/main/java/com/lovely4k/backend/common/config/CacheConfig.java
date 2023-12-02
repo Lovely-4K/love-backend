@@ -34,23 +34,4 @@ public class CacheConfig {
         return cacheManager;
     }
 
-    @Bean("customKeyGenerator")
-    public KeyGenerator keyGenerator() {
-        return new CustomKeyGenerator();
-    }
-
-    /**
-     * custom key generator
-     * 캐시 적용하는 메서드에 다음과 같이 사용하면 됩니다.
-     * @Cacheable(value = "사용하고자 하는 value", keyGenerator = "customKeyGenerator")
-     */
-    private class CustomKeyGenerator implements KeyGenerator {
-        @Override
-        public Object generate(Object target, Method method, Object... params) {
-            return target.getClass().getSimpleName() + "_"
-                + method.getName() + "_"
-                + StringUtils.arrayToDelimitedString(params, "_");
-        }
-    }
-
 }
