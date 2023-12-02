@@ -9,12 +9,14 @@ import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@Profile("!test")
 @EnableCaching
 @Slf4j
 public class CacheConfig {
