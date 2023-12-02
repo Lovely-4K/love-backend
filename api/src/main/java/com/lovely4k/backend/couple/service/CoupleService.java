@@ -13,6 +13,8 @@ import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -49,6 +51,7 @@ public class CoupleService {
         registerProfileInfo(couple);
     }
 
+    @Cacheable(value = "coupleProfile",key = "#memberId")
     public CoupleProfileGetResponse findCoupleProfile(Long memberId) {
 
         FindCoupleProfileResponse response = coupleQueryRepository.findCoupleProfile(memberId);
@@ -56,6 +59,7 @@ public class CoupleService {
     }
 
     @Transactional
+    @CachePut(value = "coupleProfile", key = "#memberId")
     public void updateCoupleProfile(CoupleProfileEditServiceRequest request, Long memberId) {
         Long coupleId = findMember(memberId).getCoupleId();
         Couple couple = findCouple(coupleId);
