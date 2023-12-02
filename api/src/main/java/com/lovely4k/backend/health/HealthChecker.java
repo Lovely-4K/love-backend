@@ -25,9 +25,4 @@ public class HealthChecker {
             .findAny()
             .orElse(defaultProfile);
     }
-
-    @GetMapping("/")
-    public String index() {
-        return "Welcome To 우이삭 API SERVER";
-    }
 }

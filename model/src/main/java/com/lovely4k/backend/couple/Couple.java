@@ -84,7 +84,7 @@ public class Couple extends BaseTimeEntity {
             .meetDay(null)
             .invitationCode(invitationCode)
             .temperature(0.0f)
-            .coupleStatus(CoupleStatus.RELATIONSHIP)
+            .coupleStatus(CoupleStatus.SOLO)
             .build();
     }
 
@@ -95,16 +95,8 @@ public class Couple extends BaseTimeEntity {
             .meetDay(null)
             .invitationCode(invitationCode)
             .temperature(0.0f)
-            .coupleStatus(CoupleStatus.RELATIONSHIP)
+            .coupleStatus(CoupleStatus.SOLO)
             .build();
-    }
-
-    public void registerGirlId(Long receivedMemberId) {
-        this.girlId = receivedMemberId;
-    }
-
-    public void registerBoyId(Long receivedMemberId) {
-        this.boyId = receivedMemberId;
     }
 
     public void update(LocalDate meetDay) {
@@ -134,6 +126,7 @@ public class Couple extends BaseTimeEntity {
         } else {
             this.girlId = receivedMemberId;
         }
+        this.coupleStatus = CoupleStatus.RELATIONSHIP;
     }
   
     public boolean isExpired(LocalDate requestedDate) {
