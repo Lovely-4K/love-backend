@@ -27,8 +27,10 @@ class CoupleTest {
         couple.registerPartnerId(2L);
 
         //then
-        assertThat(couple.getGirlId())
-            .isEqualTo(2L);
+        assertAll(
+            () -> assertThat(couple.getGirlId()).isEqualTo(2L),
+            () -> assertThat(couple.getMeetDay()).isEqualTo(LocalDate.now())
+        );
     }
 
     @Test
@@ -44,8 +46,10 @@ class CoupleTest {
         couple.registerPartnerId(2L);
 
         //then
-        assertThat(couple.getBoyId())
-            .isEqualTo(2L);
+        assertAll(
+            () -> assertThat(couple.getBoyId()).isEqualTo(2L),
+            () -> assertThat(couple.getMeetDay()).isEqualTo(LocalDate.now())
+        );
     }
 
     @Test
