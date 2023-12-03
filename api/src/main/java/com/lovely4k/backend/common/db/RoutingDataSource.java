@@ -9,7 +9,6 @@ public class RoutingDataSource extends AbstractRoutingDataSource {
 
     @Override
     protected Object determineCurrentLookupKey() {
-        log.info("isCurrentTransactionReadOnly={}", TransactionSynchronizationManager.isCurrentTransactionReadOnly());
         if (TransactionSynchronizationManager.isCurrentTransactionReadOnly()) {
             return LoadBalancer.weightRoundRobin();
         }

@@ -1,5 +1,6 @@
 package com.lovely4k.backend.question.service;
 
+import com.lovely4k.backend.common.cache.CacheConstants;
 import com.lovely4k.backend.common.event.Events;
 import com.lovely4k.backend.couple.IncreaseTemperatureEvent;
 import com.lovely4k.backend.question.Question;
@@ -36,7 +37,7 @@ public class QuestionService {
     private final QuestionServiceSupporter questionServiceSupporter;
     private static final int LOCK_TIME_OUT = 3;
 
-    @CacheEvict(value = "dailyQuestions", key = "#coupleId")
+    @CacheEvict(value = CacheConstants.DAILY_QUESTIONS, key = "#coupleId")
     @Transactional(timeout = LOCK_TIME_OUT)
     public CreateQuestionFormResponse createQuestionForm(CreateQuestionFormServiceRequest request, Long coupleId, Long userId) {
         long questionDay = questionServiceSupporter.getQuestionDay(coupleId);
@@ -48,13 +49,13 @@ public class QuestionService {
         return CreateQuestionFormResponse.from(savedQuestion);
     }
 
-    @CacheEvict(value = "dailyQuestions", key = "#coupleId")
     @Transactional(timeout = LOCK_TIME_OUT)
+    @CacheEvict(value = CacheConstants.DAILY_QUESTIONS, key = "#coupleId")
     public CreateQuestionResponse createQuestion(Long coupleId) {
         long questionDay = questionServiceSupporter.getQuestionDay(coupleId);
         questionValidator.validateCreateQuestion(coupleId, questionDay);
 
-        QuestionForm questionForm = questionFormRepository.findByQuestionDay(questionDay)
+        QuestionForm questionForm = questionFormRepository.findByQuestionDayAndQuestionFormType(questionDay, QuestionFormType.SERVER)
             .orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("questionForm", questionDay)));
 
         Question question = Question.create(coupleId, questionForm, questionDay);
@@ -63,7 +64,7 @@ public class QuestionService {
         return CreateQuestionResponse.from(savedQuestion);
     }
 
-    @CacheEvict(value = "answeredQuestions", key = "#id")
+    @CacheEvict(value = {CacheConstants.ANSWERED_QUESTIONS, CacheConstants.QUESTION_DETAILS}, allEntries = true)
     @Retryable(retryFor = ObjectOptimisticLockingFailureException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     @Transactional
     public void updateQuestionAnswer(Long id, Long coupleId, Long loginUserId, int answer) {
@@ -74,7 +75,7 @@ public class QuestionService {
         Events.raise(new IncreaseTemperatureEvent(question.getCoupleId()));
     }
 
-    @CacheEvict(value = {"questionDetails", "dailyQuestion", "answeredQuestions"}, allEntries = true)
+    @CacheEvict(value = {CacheConstants.QUESTION_DETAILS, CacheConstants.DAILY_QUESTIONS, CacheConstants.ANSWERED_QUESTIONS}, allEntries = true)
     @Transactional
     public void deleteQuestion() {
         questionRepository.deleteAll();

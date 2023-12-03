@@ -1,7 +1,7 @@
 package com.lovely4k.backend.diary.service;
 
+import com.lovely4k.backend.common.cache.CacheConstants;
 import com.lovely4k.backend.common.cache.CacheEvictedEvent;
-import com.lovely4k.backend.common.cache.CustomCacheManager;
 import com.lovely4k.backend.common.event.Events;
 import com.lovely4k.backend.common.imageuploader.ImageUploader;
 import com.lovely4k.backend.couple.Couple;
@@ -47,7 +47,7 @@ public class DiaryService {
         Diary savedDiary = diaryRepository.save(diary);
 
         Events.raise(new IncreaseTemperatureEvent(member.getCoupleId()));
-        Events.raise(new CacheEvictedEvent(member.getCoupleId().toString(), List.of("diaryList", "diaryMarker","diaryGrid")));
+        Events.raise(new CacheEvictedEvent(member.getCoupleId().toString(), List.of(CacheConstants.DIARY_LIST, CacheConstants.DIARY_MARKER, CacheConstants.DIARY_GRID)));
         return savedDiary.getId();
     }
 
@@ -145,7 +145,7 @@ public class DiaryService {
         diary.checkAuthority(coupleId);
         diaryRepository.delete(diary);
 
-        Events.raise(new CacheEvictedEvent(coupleId.toString(), List.of("diaryDetail", "diaryList", "diaryMarker", "diaryGrid")));
+        Events.raise(new CacheEvictedEvent(coupleId.toString(), List.of(CacheConstants.DIARY_DETAILS, CacheConstants.DIARY_LIST, CacheConstants.DIARY_MARKER, CacheConstants.DIARY_GRID)));
     }
 
     @Transactional
@@ -160,7 +160,7 @@ public class DiaryService {
 
         diaryRepository.deleteAll(diaries);
 
-        Events.raise(new CacheEvictedEvent(coupleId.toString(), List.of("diaryDetail", "diaryList", "diaryMarker", "diaryGrid")));
+        Events.raise(new CacheEvictedEvent(coupleId.toString(), List.of(CacheConstants.DIARY_DETAILS, CacheConstants.DIARY_LIST, CacheConstants.DIARY_MARKER, CacheConstants.DIARY_GRID)));
     }
 
     private List<String> uploadImages(List<MultipartFile> multipartFileList) {

@@ -1,8 +1,8 @@
 package com.lovely4k.backend.common.db;
 
 public enum DatabaseType {
-    MASTER(1),
-    SLAVE(10);
+    MASTER(2),
+    SLAVE(3);
 
     private final int weight;
 

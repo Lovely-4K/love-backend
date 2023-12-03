@@ -1,10 +1,12 @@
 package com.lovely4k.backend.question.service;
 
+import com.lovely4k.backend.common.cache.CacheConstants;
 import com.lovely4k.backend.common.utils.DateConverter;
 import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ public class QuestionServiceSupporter {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = CacheConstants.BOY_ID, key = "#coupleId")
     public long getBoyId(Long coupleId) {
         Couple couple = coupleRepository.findById(coupleId)
             .orElseThrow(() -> new EntityNotFoundException(notFoundEntityMessage("couple", coupleId)));
