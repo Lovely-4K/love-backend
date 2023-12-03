@@ -19,7 +19,7 @@ public class QuestionQueryService {
 
     private final QuestionQueryRepository questionQueryRepository;
 
-    @Cacheable(value = CacheConstants.QUESTION_DETAILS, key = "#questionId")
+    @Cacheable(value = CacheConstants.QUESTION_DETAILS, key = "#questionId + '_' + #memberId")
     public QuestionDetailsResponse findQuestionDetails(Long questionId, Long memberId, String picture) {
         return questionQueryRepository.findQuestionDetails(questionId, memberId, picture);
     }

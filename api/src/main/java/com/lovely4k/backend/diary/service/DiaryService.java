@@ -71,7 +71,7 @@ public class DiaryService {
         Sex sex = getCouple(coupleId).getCoupleRole(memberId);
 
         diary.update(sex, request.score(), request.datingDay(), request.category(), request.text(), editedImageUrls);
-        Events.raise(new CacheEvictedEvent(coupleId.toString(), List.of("diaryDetail", "diaryList", "diaryMarker", "diaryGrid")));
+        Events.raise(new CacheEvictedEvent(coupleId.toString(), List.of(CacheConstants.DIARY_DETAILS, CacheConstants.DIARY_LIST, CacheConstants.DIARY_MARKER, CacheConstants.DIARY_GRID)));
     }
 
     private Diary getDiary(Long diaryId) {
