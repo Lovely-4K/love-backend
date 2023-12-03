@@ -13,9 +13,7 @@ import com.lovely4k.backend.diary.Photos;
 import com.lovely4k.backend.diary.controller.request.DiaryDeleteRequest;
 import com.lovely4k.backend.diary.service.request.DiaryCreateRequest;
 import com.lovely4k.backend.diary.service.request.DiaryEditRequest;
-import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.Sex;
-import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,29 +30,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DiaryService {
 
-    private final MemberRepository memberRepository;
     private final DiaryRepository diaryRepository;
     private final CoupleRepository coupleRepository;
     private final ImageUploader imageUploader;
 
     @Transactional
-    public Long createDiary(List<MultipartFile> multipartFileList, DiaryCreateRequest diaryCreateRequest, Long memberId) {
-        Member member = validateMemberId(memberId);
+    public Long createDiary(List<MultipartFile> multipartFileList, DiaryCreateRequest diaryCreateRequest, Long memberId, Long coupleId) {
+        Couple couple = getCouple(coupleId);
+        Sex sex = couple.getCoupleRole(memberId);
         checkCountOfImage(multipartFileList);
         List<String> uploadedImageUrls = uploadImages(multipartFileList);
-        Diary diary = diaryCreateRequest.toEntity(member);
+        Diary diary = diaryCreateRequest.toEntity(coupleId, sex);
         diary.addPhoto(Photos.create(uploadedImageUrls));
         Diary savedDiary = diaryRepository.save(diary);
 
-        Events.raise(new IncreaseTemperatureEvent(member.getCoupleId()));
-        Events.raise(new CacheEvictedEvent(member.getCoupleId().toString(), List.of(CacheConstants.DIARY_LIST, CacheConstants.DIARY_MARKER, CacheConstants.DIARY_GRID)));
+        Events.raise(new IncreaseTemperatureEvent(coupleId));
+        Events.raise(new CacheEvictedEvent(coupleId.toString(), List.of(CacheConstants.DIARY_LIST, CacheConstants.DIARY_MARKER, CacheConstants.DIARY_GRID)));
         return savedDiary.getId();
-    }
-
-    private Member validateMemberId(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(
-            () -> new EntityNotFoundException("invalid member id")
-        );
     }
 
     private void checkCountOfImage(List<MultipartFile> multipartFileList) {
@@ -66,26 +58,26 @@ public class DiaryService {
         }
     }
 
-    private Diary validateDiaryId(Long diaryId) {
-        return diaryRepository.findById(diaryId).orElseThrow(
-            () -> new EntityNotFoundException("invalid diary id")
-        );
-    }
-
     @Transactional
     public void editDiary(Long diaryId, List<MultipartFile> multipartFileList, DiaryEditRequest request, Long coupleId, Long memberId) {
-        Diary diary = validateDiaryId(diaryId);
+        Diary diary = getDiary(diaryId);
         diary.checkAuthority(coupleId);
         List<String> editedImageUrls = new ArrayList<>();
 
         addRemainImages(request, editedImageUrls);
-        checkImages(editedImageUrls, multipartFileList);
+        checkNumberOfImages(editedImageUrls, multipartFileList);
         addUploadedImages(multipartFileList, editedImageUrls);
         deleteImageFromS3(request, diary);
-        Sex sex = getCoupleRole(memberId, validateCoupleId(coupleId));
+        Sex sex = getCouple(coupleId).getCoupleRole(memberId);
 
         diary.update(sex, request.score(), request.datingDay(), request.category(), request.text(), editedImageUrls);
         Events.raise(new CacheEvictedEvent(coupleId.toString(), List.of("diaryDetail", "diaryList", "diaryMarker", "diaryGrid")));
+    }
+
+    private Diary getDiary(Long diaryId) {
+        return diaryRepository.findById(diaryId).orElseThrow(
+            () -> new EntityNotFoundException("invalid diary id")
+        );
     }
 
     private void addRemainImages(DiaryEditRequest request, List<String> editedImageUrls) {
@@ -98,7 +90,7 @@ public class DiaryService {
         editedImageUrls.addAll(uploadImages(multipartFileList));
     }
 
-    private void checkImages(List<String> editedImageUrls, List<MultipartFile> multipartFiles) {
+    private void checkNumberOfImages(List<String> editedImageUrls, List<MultipartFile> multipartFiles) {
         if (multipartFiles == null) {
             return;
         }
@@ -125,23 +117,15 @@ public class DiaryService {
     }
 
 
-    private Couple validateCoupleId(Long coupleId) {
+    private Couple getCouple(Long coupleId) {
         return coupleRepository.findById(coupleId).orElseThrow(
-            () -> new EntityNotFoundException("존재하는 couple이 없습니다.")
+            () -> new EntityNotFoundException("invalid couple id")
         );
-    }
-
-    private Sex getCoupleRole(Long memberId, Couple couple) {
-        if (couple.getBoyId().equals(memberId)) {
-            return Sex.MALE;
-        } else {
-            return Sex.FEMALE;
-        }
     }
 
     @Transactional
     public void deleteDiary(Long diaryId, Long coupleId) {
-        Diary diary = validateDiaryId(diaryId);
+        Diary diary = getDiary(diaryId);
         diary.checkAuthority(coupleId);
         diaryRepository.delete(diary);
 
@@ -152,7 +136,7 @@ public class DiaryService {
     public void deleteDiaries(DiaryDeleteRequest request, Long coupleId) {
         List<Diary> diaries = request.diaryList().stream().map(
             diaryId -> {
-                Diary diary = validateDiaryId(diaryId);
+                Diary diary = getDiary(diaryId);
                 diary.checkAuthority(coupleId);
                 return diary;
             }

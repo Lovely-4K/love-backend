@@ -187,4 +187,12 @@ public class Couple extends BaseTimeEntity {
             return this.boyId;
         }
     }
+
+    public Sex getCoupleRole(Long memberId) {
+        if (this.boyId.equals(memberId)) {
+            return Sex.MALE;
+        } else {
+            return Sex.FEMALE;
+        }
+    }
 }

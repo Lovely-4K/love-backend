@@ -52,7 +52,7 @@ public class DiaryController {
         @RequestPart(value = "texts") @Valid WebDiaryCreateRequest request,
         @LoginUser SessionUser sessionUser
     ) {
-        Long diaryId = diaryService.createDiary(multipartFileList, request.toServiceRequest(), sessionUser.memberId());
+        Long diaryId = diaryService.createDiary(multipartFileList, request.toServiceRequest(), sessionUser.memberId(), sessionUser.coupleId());
 
         return ApiResponse.created(diaryId,
             linkTo(methodOn(DiaryController.class).createDiary(multipartFileList, request, sessionUser)).withSelfRel(),

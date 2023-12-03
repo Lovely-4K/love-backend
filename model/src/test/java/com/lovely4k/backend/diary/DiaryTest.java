@@ -3,6 +3,7 @@ package com.lovely4k.backend.diary;
 import com.lovely4k.backend.location.Category;
 import com.lovely4k.backend.location.Location;
 import com.lovely4k.backend.member.Member;
+import com.lovely4k.backend.member.Sex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class DiaryTest {
 
-    @DisplayName("다이어리의 create 메서드를 통해 다이어리를 생성할 수 있다. 회원의 성별을 통해 text는 자동 생성된다.")
+    @DisplayName("다이어리의 create 메서드를 통해 다이어리를 생성할 수 있다. 성별을 통해 text는 자동 생성된다.")
     @Test
     void createBoy() {
         // given
@@ -33,7 +34,7 @@ class DiaryTest {
 
         Location location = Location.create(2L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.FOOD);
         // when
-        Diary diary = Diary.create(score, localDate, text, member, location);
+        Diary diary = Diary.create(score, localDate, text, member.getCoupleId(), MALE, location);
 
         // then
         assertAll(
@@ -45,7 +46,7 @@ class DiaryTest {
         );
     }
 
-    @DisplayName("다이어리의 create 메서드를 통해 다이어리를 생성할 수 있다. 회원의 성별을 통해 text는 자동 생성된다.")
+    @DisplayName("다이어리의 create 메서드를 통해 다이어리를 생성할 수 있다. 성별을 통해 text는 자동 생성된다.")
     @Test
     void createGirl() {
         // given
@@ -61,7 +62,7 @@ class DiaryTest {
         Location location = Location.create(2L, "경기도 고양시", "starbucks", BigDecimal.ZERO, BigDecimal.ONE, Category.FOOD);
 
         // when
-        Diary diary = Diary.create(score, localDate, text, member, location);
+        Diary diary = Diary.create(score, localDate, text, member.getCoupleId(), FEMALE, location);
 
         // then
         assertAll(
@@ -89,7 +90,7 @@ class DiaryTest {
 
         // when && then
         assertThatThrownBy(
-                () -> Diary.create(score, localDate, text, member, location)
+                () -> Diary.create(score, localDate, text, 1L, MALE, location)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("score out of range.");
 
@@ -111,7 +112,7 @@ class DiaryTest {
 
         // when && then
         assertThatThrownBy(
-                () -> Diary.create(score, localDate, text, member, location)
+                () -> Diary.create(score, localDate, text, 1L, MALE, location)
         ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("score out of range.");
 
