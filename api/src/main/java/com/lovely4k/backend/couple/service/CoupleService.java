@@ -1,5 +1,6 @@
 package com.lovely4k.backend.couple.service;
 
+import com.lovely4k.backend.common.cache.CacheConstants;
 import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.couple.repository.CoupleQueryRepository;
 import com.lovely4k.backend.couple.repository.CoupleRepository;
@@ -13,7 +14,7 @@ import com.lovely4k.backend.member.Sex;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
@@ -44,14 +45,14 @@ public class CoupleService {
     }
 
     @Transactional
+    @CacheEvict(value = {CacheConstants.USER_DETAILS, CacheConstants.COUPLE_PROFILE}, allEntries = true)
     public void registerCouple(String invitationCode, Long receivedMemberId) {
         Couple couple = validateInvitationCode(invitationCode);
         couple.registerPartnerId(receivedMemberId);
-
         registerProfileInfo(couple);
     }
 
-    @Cacheable(value = "coupleProfile",key = "#memberId")
+    @Cacheable(value = CacheConstants.COUPLE_PROFILE, key = "#memberId")
     public CoupleProfileGetResponse findCoupleProfile(Long memberId) {
 
         FindCoupleProfileResponse response = coupleQueryRepository.findCoupleProfile(memberId);
@@ -59,7 +60,7 @@ public class CoupleService {
     }
 
     @Transactional
-    @CachePut(value = "coupleProfile", key = "#memberId")
+    @CacheEvict(value = CacheConstants.COUPLE_PROFILE, key = "#memberId")
     public void updateCoupleProfile(CoupleProfileEditServiceRequest request, Long memberId) {
         Long coupleId = findMember(memberId).getCoupleId();
         Couple couple = findCouple(coupleId);
@@ -129,6 +130,7 @@ public class CoupleService {
 
     }
 
+    @Cacheable(value = CacheConstants.LOVE_TEMPERATURE, key = "#coupleId")
     public CoupleTemperatureResponse findTemperature(Long coupleId) {
         Couple couple = findCouple(coupleId);
 

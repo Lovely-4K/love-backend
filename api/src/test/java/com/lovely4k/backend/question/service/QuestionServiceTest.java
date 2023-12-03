@@ -4,6 +4,7 @@ import com.lovely4k.TestData;
 
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
+import com.lovely4k.backend.question.QuestionFormType;
 import com.lovely4k.backend.question.repository.QuestionFormRepository;
 import com.lovely4k.backend.question.repository.QuestionRepository;
 import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
@@ -79,9 +80,9 @@ class QuestionServiceTest  {
         long questionDay = 1L;
         Question mockQuestion = mock(Question.class);
         QuestionForm questionForm = TestData.questionForm(1L);
-
+        QuestionFormType type = QuestionFormType.SERVER;
         given(questionServiceSupporter.getQuestionDay(coupleId)).willReturn(questionDay);
-        given(questionFormRepository.findByQuestionDay(questionDay)).willReturn(Optional.of(questionForm));
+        given(questionFormRepository.findByQuestionDayAndQuestionFormType(questionDay, type)).willReturn(Optional.of(questionForm));
         given(questionRepository.save(any(Question.class))).willReturn(mockQuestion);
         given(mockQuestion.getQuestionForm()).willReturn(questionForm);
         given(mockQuestion.getId()).willReturn(1L);

@@ -1,5 +1,6 @@
 package com.lovely4k.backend.question.service;
 
+import com.lovely4k.backend.common.cache.CacheConstants;
 import com.lovely4k.backend.question.repository.QuestionQueryRepository;
 import com.lovely4k.backend.question.repository.response.AnsweredQuestionResponse;
 import com.lovely4k.backend.question.repository.response.DailyQuestionResponse;
@@ -18,17 +19,17 @@ public class QuestionQueryService {
 
     private final QuestionQueryRepository questionQueryRepository;
 
-    @Cacheable(value = "questionDetails", key = "#questionId")
+    @Cacheable(value = CacheConstants.QUESTION_DETAILS, key = "#questionId")
     public QuestionDetailsResponse findQuestionDetails(Long questionId, Long memberId, String picture) {
         return questionQueryRepository.findQuestionDetails(questionId, memberId, picture);
     }
 
-    @Cacheable(value = "answeredQuestions", key = "#id")
+    @Cacheable(value = CacheConstants.ANSWERED_QUESTIONS, key = "#id == null ? ('noId' + '_' + #coupleId) : (#id + '_' + #coupleId)")
     public AnsweredQuestionResponse findAllAnsweredQuestionByCoupleId(Long id, Long coupleId, Integer limit) {
         return questionQueryRepository.findAnsweredQuestions(id, coupleId, limit);
     }
 
-    @Cacheable(value = "dailyQuestions", key = "#coupleId")
+    @Cacheable(value = CacheConstants.DAILY_QUESTIONS, key = "#coupleId")
     public DailyQuestionResponse findDailyQuestion(Long coupleId) {
         return questionQueryRepository.findDailyQuestion(coupleId);
     }

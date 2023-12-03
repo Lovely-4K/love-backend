@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface QuestionFormRepository extends JpaRepository<QuestionForm, Long> {
-    Optional<QuestionForm> findByQuestionDay(Long questionDay);
+    Optional<QuestionForm> findByQuestionDayAndQuestionFormType(Long questionDay, QuestionFormType questionFormType);
 
     void deleteAllByQuestionFormType(QuestionFormType questionFormType);
 }
