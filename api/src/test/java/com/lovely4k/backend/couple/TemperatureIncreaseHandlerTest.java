@@ -4,6 +4,7 @@ import com.lovely4k.backend.IntegrationTestSupport;
 import com.lovely4k.backend.common.event.Events;
 import com.lovely4k.backend.common.imageuploader.AWSS3Uploader;
 import com.lovely4k.backend.couple.service.CoupleService;
+import com.lovely4k.backend.common.event.question.QuestionUpdatedEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ import java.util.concurrent.Executor;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@Import(IncreaseTemperatureEventHandlerTest.TestConfig.class)
-class IncreaseTemperatureEventHandlerTest extends IntegrationTestSupport {
+@Import(TemperatureIncreaseHandlerTest.TestConfig.class)
+class TemperatureIncreaseHandlerTest extends IntegrationTestSupport {
 
     @MockBean
     private CoupleService coupleService;
@@ -41,11 +42,11 @@ class IncreaseTemperatureEventHandlerTest extends IntegrationTestSupport {
         // given
 
         Long coupleId = 1L;
-        IncreaseTemperatureEvent increaseTemperatureEvent = new IncreaseTemperatureEvent(coupleId);
+        QuestionUpdatedEvent questionUpdatedEvent = new QuestionUpdatedEvent(coupleId);
 
         // when
         transactionTemplate.executeWithoutResult(transactionStatus -> {
-            Events.raise(increaseTemperatureEvent);
+            Events.raise(questionUpdatedEvent);
         });
 
         // commit

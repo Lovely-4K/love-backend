@@ -127,6 +127,7 @@ public class Couple extends BaseTimeEntity {
             this.girlId = receivedMemberId;
         }
         this.coupleStatus = CoupleStatus.RELATIONSHIP;
+        this.meetDay = LocalDate.now();
     }
   
     public boolean isExpired(LocalDate requestedDate) {
@@ -184,6 +185,14 @@ public class Couple extends BaseTimeEntity {
             return this.girlId;
         } else {
             return this.boyId;
+        }
+    }
+
+    public Sex getCoupleRole(Long memberId) {
+        if (this.boyId.equals(memberId)) {
+            return Sex.MALE;
+        } else {
+            return Sex.FEMALE;
         }
     }
 }

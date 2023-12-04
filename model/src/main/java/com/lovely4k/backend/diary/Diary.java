@@ -1,6 +1,7 @@
 package com.lovely4k.backend.diary;
 
 import com.lovely4k.backend.common.jpa.BaseTimeEntity;
+import com.lovely4k.backend.couple.Couple;
 import com.lovely4k.backend.location.Location;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.Sex;
@@ -67,15 +68,15 @@ public class Diary extends BaseTimeEntity {
         }
     }
 
-    public static Diary create(Integer score, LocalDate localDate, String text, Member member, Location location) {
+    public static Diary create(Integer score, LocalDate localDate, String text, Long coupleId, Sex sex, Location location) {
         validateScore(score);
         DiaryBuilder diaryBuilder = Diary.builder()
             .location(location)
-            .coupleId(member.getCoupleId())
+            .coupleId(coupleId)
             .score(score)
             .datingDay(localDate);
 
-        fillOutText(text, member, diaryBuilder);
+        fillOutText(text, sex, diaryBuilder);
         return diaryBuilder.build();
     }
 
@@ -85,8 +86,8 @@ public class Diary extends BaseTimeEntity {
         }
     }
 
-    private static void fillOutText(String text, Member member, DiaryBuilder diaryBuilder) {
-        switch (member.getSex()) {
+    private static void fillOutText(String text, Sex sex, DiaryBuilder diaryBuilder) {
+        switch (sex) {
             case MALE -> diaryBuilder.boyText(text);
             case FEMALE -> diaryBuilder.girlText(text);
             default -> throw new IllegalArgumentException("invalid input of sex");

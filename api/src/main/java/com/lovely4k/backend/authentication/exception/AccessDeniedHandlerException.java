@@ -20,7 +20,7 @@ public class AccessDeniedHandlerException implements AccessDeniedHandler {  // N
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        ResponseEntity<ApiResponse<String>> responseEntity = ApiResponse.fail(HttpStatus.UNAUTHORIZED, "ACCESS DENIED, 접근거부: 로그인이 필요합니다!");
+        ResponseEntity<ApiResponse<String>> responseEntity = ApiResponse.fail(HttpStatus.FORBIDDEN, "ACCESS DENIED, 접근거부: 권한이 없습니다.");
         response.getWriter().write(new ObjectMapper().writeValueAsString(responseEntity));
     }
 }

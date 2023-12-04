@@ -1,12 +1,17 @@
 package com.lovely4k.backend.member.service;
 
+import com.lovely4k.backend.common.cache.CacheConstants;
+import com.lovely4k.backend.common.event.Events;
 import com.lovely4k.backend.common.imageuploader.ImageUploader;
 import com.lovely4k.backend.member.Member;
+import com.lovely4k.backend.member.event.MemberUpdatedEvent;
 import com.lovely4k.backend.member.repository.MemberRepository;
 import com.lovely4k.backend.member.service.request.MemberProfileEditServiceRequest;
 import com.lovely4k.backend.member.service.response.MemberProfileGetResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,14 +27,15 @@ public class MemberService {
     private final ImageUploader imageUploader;
 
 
+    @Cacheable(value = CacheConstants.MEMBER_PROFILE, key = "#memberId")
     public MemberProfileGetResponse findMemberProfile(Long memberId) {
-
         Member findMember = validateMemberId(memberId);
 
         return MemberProfileGetResponse.of(findMember);
     }
 
     @Transactional
+    @CacheEvict(value = {CacheConstants.MEMBER_PROFILE, CacheConstants.COUPLE_PROFILE}, key = "#memberId")
     public void updateMemberProfile(List<MultipartFile> profileImages, MemberProfileEditServiceRequest serviceRequest, Long memberId) {
         Member findMember = validateMemberId(memberId);
         String oldProfileImageUrl = findMember.getImageUrl();
@@ -37,6 +43,7 @@ public class MemberService {
         String profileImageUrl = updateProfileImage(profileImages, oldProfileImageUrl);
 
         updateMemberProfile(profileImageUrl, serviceRequest, findMember);
+        Events.raise(new MemberUpdatedEvent(findMember));
     }
 
     private String updateProfileImage(List<MultipartFile> profileImages, String oldProfileImageUrl) {

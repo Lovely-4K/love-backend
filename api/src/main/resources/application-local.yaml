@@ -1,4 +1,6 @@
 spring:
+  flyway:
+    enabled: false
   servlet:
     multipart:
       max-file-size: 10MB
@@ -9,6 +11,7 @@ spring:
       username: sa
       password:
       driver-class-name: org.h2.Driver
+
   h2:
     console:
       enabled: true
@@ -23,3 +26,6 @@ logging:
   level:
     com.lovely4k.backend.authentication: debug
     com.lovely4k.backend.common.config: debug
+
+love:
+  met: se

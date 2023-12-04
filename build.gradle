@@ -26,7 +26,7 @@ sonar {
         property "sonar.projectKey", "Lovely-4K_love-backend"
         property "sonar.organization", "lovely-4k"
         property "sonar.host.url", "https://sonarcloud.io"
-        property 'sonar.coverage.exclusions', '**/*Request.java, **/*Response.java, **/docs, **/utils, **/*Config*.java, **/resources/**, **/*Exception*.java, **/com/lovely4k/backend/authentication/**, **/com/lovely4k/backend/common/sessionuser/**, **/*pointcut*.java, **/com/lovely4k/backend/common/error/**'
+        property 'sonar.coverage.exclusions', '**/*Request.java, **/*Response.java, **/docs, **/utils, **/*Config*.java, **/resources/**, **/*Exception*.java, **/com/lovely4k/backend/authentication/**, **/com/lovely4k/backend/common/sessionuser/**, **/*pointcut*.java, **/com/lovely4k/backend/common/error/**, **/*Event.java'
         property 'sonar.exclusions', '**/*Application*.java, **/com/lovely4k/backend/common/imageuploader/**'
     }
 }

@@ -6,6 +6,7 @@ import com.lovely4k.backend.authentication.exception.AccessDeniedHandlerExceptio
 import com.lovely4k.backend.authentication.exception.AuthenticationEntryPointException;
 import com.lovely4k.backend.member.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,11 +36,12 @@ public class SecurityConfig {
 
     private final OAuth2UserService oAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
-    private final TokenProvider tokenProvider;
-    private final UserDetailsServiceImpl userDetailsService;
-    private final AuthenticationEntryPointException authenticationEntryPointException;
-    private final AccessDeniedHandlerException accessDeniedHandlerException;
     private final JwtFilter jwtFilter;
+    private final AccessDeniedHandlerException accessDeniedHandlerException;
+    private final AuthenticationEntryPointException authenticationEntryPointException;
+
+    @Value("${love.met}")
+    private String love;
 
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
@@ -58,6 +60,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(
                 authorize -> authorize
                     .requestMatchers(
+                        antMatcher(love),
+                        antMatcher("/docs/**"),
                         antMatcher("/h2-console/**"),
                         antMatcher("/profile"),
                         antMatcher("/oauth2/**"),
@@ -69,7 +73,8 @@ public class SecurityConfig {
                     ).permitAll()
                     .requestMatchers(
                         antMatcher("/v1/**")
-                    ).hasAnyRole(Role.USER.name(), Role.ADMIN.name())
+                    )
+                    .hasAnyRole(Role.USER.name(), Role.ADMIN.name())
                     .anyRequest().authenticated()
             );
 
@@ -125,7 +130,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://wooisac.netlify.app"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://wooisac.netlify.app", "https://woisac.netlify.app"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
