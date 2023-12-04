@@ -374,4 +374,29 @@ class CoupleTest {
         // then
         assertThat(opponentId).isEqualTo(2L);
     }
+
+    @DisplayName("getCoupleRole 을 통해 커플에서 맡고 있는 성별 역할을 조회할 수 있다.")
+    @Test
+    void getCoupleRole() {
+        // given
+        Couple couple = Couple.builder()
+            .boyId(1L)
+            .girlId(2L)
+            .meetDay(LocalDate.of(2020, 10, 20))
+            .invitationCode("test-code")
+            .temperature(40.0f)
+            .coupleStatus(CoupleStatus.RELATIONSHIP)
+            .build();
+
+        // when
+        Sex coupleRole1 = couple.getCoupleRole(1L);
+        Sex coupleRole2 = couple.getCoupleRole(2L);
+
+        // then
+        assertAll(
+            () -> assertThat(coupleRole1).isEqualTo(Sex.MALE),
+            () -> assertThat(coupleRole2).isEqualTo(Sex.FEMALE)
+        );
+
+    }
 }

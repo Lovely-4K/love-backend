@@ -2,7 +2,7 @@ package com.lovely4k.backend.question.service;
 
 import com.lovely4k.backend.common.cache.CacheConstants;
 import com.lovely4k.backend.common.event.Events;
-import com.lovely4k.backend.couple.IncreaseTemperatureEvent;
+import com.lovely4k.backend.common.event.question.QuestionUpdatedEvent;
 import com.lovely4k.backend.question.Question;
 import com.lovely4k.backend.question.QuestionForm;
 import com.lovely4k.backend.question.QuestionFormType;
@@ -72,7 +72,7 @@ public class QuestionService {
             .orElseThrow(() -> new NoSuchElementException(notFoundEntityMessage("question", id)));  // NOSONAR
 
         question.updateAnswer(answer, questionServiceSupporter.getBoyId(coupleId), loginUserId);
-        Events.raise(new IncreaseTemperatureEvent(question.getCoupleId()));
+        Events.raise(new QuestionUpdatedEvent(question.getCoupleId()));
     }
 
     @CacheEvict(value = {CacheConstants.QUESTION_DETAILS, CacheConstants.DAILY_QUESTIONS, CacheConstants.ANSWERED_QUESTIONS}, allEntries = true)

@@ -94,7 +94,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
         ).willReturn(List.of("first-image-url", "second-image-url"));
 
         // when
-        Long diaryId = diaryService.createDiary(multipartFileList, diaryCreateRequest, member.getId());
+        Long diaryId = diaryService.createDiary(multipartFileList, diaryCreateRequest, member.getId(), member.getCoupleId());
 
         // then
         Diary findDiary = diaryRepository.findById(diaryId).orElseThrow();
@@ -111,13 +111,20 @@ class DiaryServiceTest extends IntegrationTestSupport {
 
     }
 
-    @DisplayName("유효하지 않은 Member Id로 다이어리 생성하려고 할 경우 EntityNotFoundException이 발생한다.")
+    @Transactional
+    @DisplayName("유효하지 않은 Couple Id로 다이어리 생성하려고 할 경우 EntityNotFoundException이 발생한다.")
     @Test
     void createDiaryInvalidMemberId() {
         // given
         Member member = buildMember();
         Member savedMember = memberRepository.save(member);
-        Long invalidMemberId = savedMember.getId() + 1;
+        Couple couple = Couple.create(savedMember.getId(), MALE, "test-code");
+        Couple savedCouple = coupleRepository.save(couple);
+
+        savedMember.registerProfileInfo(savedCouple.getId());
+        memberRepository.save(savedMember);
+
+
 
         MockMultipartFile firstImage = new MockMultipartFile("images", "image1.png", "image/png", "some-image".getBytes());
         MockMultipartFile secondImage = new MockMultipartFile("images", "image2.png", "image/png", "some-image".getBytes());
@@ -131,10 +138,13 @@ class DiaryServiceTest extends IntegrationTestSupport {
             new DiaryCreateRequest(1L, "경기도 일산", "starbucks", 4, LocalDate.of(2023, 10, 20), BigDecimal.ZERO, BigDecimal.ZERO, "ACCOMODATION", "테스트 다이어리");
 
         // when && then
+        Long memberId = member.getId();
+        long invalidCoupleId = savedCouple.getId() + 1;
+
         assertThatThrownBy(
-            () -> diaryService.createDiary(multipartFileList, diaryCreateRequest, invalidMemberId)
+            () -> diaryService.createDiary(multipartFileList, diaryCreateRequest, memberId, invalidCoupleId)
         ).isInstanceOf(EntityNotFoundException.class)
-            .hasMessage("invalid member id");
+            .hasMessage("invalid couple id");
     }
 
     @DisplayName("이미지가 없는 경우 이미지가 없는 채로 다이어리가 생성된다.")
@@ -142,7 +152,12 @@ class DiaryServiceTest extends IntegrationTestSupport {
     void createDiaryNoImage() throws InterruptedException {
         // given
         Member member = buildMember();
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
+        Couple couple = Couple.create(savedMember.getId(), MALE, "test-code");
+        Couple savedCouple = coupleRepository.save(couple);
+
+        savedMember.registerProfileInfo(savedCouple.getId());
+        memberRepository.save(savedMember);
 
         Long memberId = member.getId();
 
@@ -150,7 +165,7 @@ class DiaryServiceTest extends IntegrationTestSupport {
             new DiaryCreateRequest(1L, "경기도 일산", "starbucks", 4, LocalDate.of(2023, 10, 20), BigDecimal.ZERO, BigDecimal.ZERO, "ACCOMODATION", "테스트 다이어리");
 
         // when
-        Long savedDiaryId = diaryService.createDiary(Collections.emptyList(), diaryCreateRequest, memberId);
+        Long savedDiaryId = diaryService.createDiary(Collections.emptyList(), diaryCreateRequest, memberId, member.getCoupleId());
 
         // then
         Diary findDiary = diaryRepository.findById(savedDiaryId).orElseThrow();
@@ -162,7 +177,12 @@ class DiaryServiceTest extends IntegrationTestSupport {
     void createDiaryTooMuchImage() {
         // given
         Member member = buildMember();
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
+        Couple couple = Couple.create(savedMember.getId(), MALE, "test-code");
+        Couple savedCouple = coupleRepository.save(couple);
+
+        savedMember.registerProfileInfo(savedCouple.getId());
+        memberRepository.save(savedMember);
         Long memberId = member.getId();
 
         List<MultipartFile> multipartFileList = getMultipartFiles();
@@ -174,8 +194,9 @@ class DiaryServiceTest extends IntegrationTestSupport {
         DiaryCreateRequest diaryCreateRequest =
             new DiaryCreateRequest(1L, "경기도 일산", "starbucks", 4, LocalDate.of(2023, 10, 20), BigDecimal.ZERO, BigDecimal.ZERO, "ACCOMODATION", "테스트 다이어리");
         // when && then
+        Long coupleId = member.getCoupleId();
         assertThatThrownBy(
-            () -> diaryService.createDiary(multipartFileList, diaryCreateRequest, memberId)
+            () -> diaryService.createDiary(multipartFileList, diaryCreateRequest, memberId, coupleId)
         ).isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Image file can be uploaded maximum 5");
     }

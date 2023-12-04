@@ -27,7 +27,7 @@ class DiaryCreateRequestTest {
         DiaryCreateRequest diaryCreateRequest =
             new DiaryCreateRequest(1L, "경기도 고양시", "starbucks", 5, LocalDate.of(2023, 10, 20), BigDecimal.ZERO, BigDecimal.ZERO, "ACCOMODATION", "여기 되게 좋았어");
         // when
-        Diary diary = diaryCreateRequest.toEntity(member);
+        Diary diary = diaryCreateRequest.toEntity(member.getCoupleId(), member.getSex());
 
         // then
         assertAll(

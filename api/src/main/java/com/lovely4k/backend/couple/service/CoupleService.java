@@ -16,6 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -68,6 +69,7 @@ public class CoupleService {
         couple.update(request.meetDay());
     }
 
+    @CacheEvict(value = CacheConstants.LOVE_TEMPERATURE, key = "#coupleId")
     @Retryable(retryFor = ObjectOptimisticLockingFailureException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     @Transactional
     public void increaseTemperature(Long coupleId) {
@@ -77,6 +79,10 @@ public class CoupleService {
     }
 
     @Transactional
+    @Caching(evict = {
+        @CacheEvict(value = CacheConstants.COUPLE_PROFILE, allEntries = true),
+        @CacheEvict(value = CacheConstants.LOVE_TEMPERATURE, key = "#coupleId")
+    })
     public void deleteCouple(Long coupleId, Long memberId) {
         Couple couple = findCouple(coupleId);
         couple.checkAuthority(memberId);
@@ -84,6 +90,7 @@ public class CoupleService {
     }
 
     @Transactional
+    @CacheEvict(value = CacheConstants.COUPLE_PROFILE, allEntries = true)
     public void reCouple(LocalDate requestedDate, Long coupleId, Long memberId) {
         Couple couple = findDeletedCouple(coupleId);
         Long opponentId = couple.getOpponentId(memberId);
