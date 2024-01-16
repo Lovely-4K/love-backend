@@ -2,6 +2,17 @@
 - [서비스 링크](https://woisac.netlify.app/login)
 - [API 문서](https://love-back.kro.kr/docs/index.html)
 
+# Introduction
+
+--- 
+<div style="font-size: 20px;">
+서로 알아간 기간이 길면 길 수록 함께 공유하는 추억의 장소도 많아집니다.  
+
+하지만 특정 장소에 대해서 서로 어떠한 추억들을 가졌는지 되돌아 보려고 할 때 생각이 잘 나지 않습니다.
+
+우이삭을 통해 서로 추억이 쌓인 장소들을 기록하고 추억을 공유하세요.
+</div>
+
 # 개발일지
 - [ngrinder를 이용한 성능테스트](https://joyfulviper.tistory.com/92)
 - [인덱스 튜닝과 스케일 업](https://joyfulviper.tistory.com/93)
@@ -14,18 +25,7 @@
 - [jar 파일에 asciidoc.html 포함하기](https://tommykim.tistory.com/79)
 - [No thread-bound request found 예외 발생과 해결](https://tommykim.tistory.com/80)
 - [커플 재결합 코드 개선](https://tommykim.tistory.com/81)
-
-# Introduction
-
---- 
-<div style="font-size: 20px;">
-서로 알아간 기간이 길면 길 수록 함께 공유하는 추억의 장소도 많아집니다.  
-
-하지만 특정 장소에 대해서 서로 어떠한 추억들을 가졌는지 되돌아 보려고 할 때 생각이 잘 나지 않습니다.
-
-우이삭을 통해 서로 추억이 쌓인 장소들을 기록하고 추억을 공유하세요.
-</div>
-
+- 
 ---
 
 
