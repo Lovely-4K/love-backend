@@ -1,4 +1,19 @@
 # 우.이.삭 (우리 이거 삭제하지 말자) 
+- [서비스 링크](https://woisac.netlify.app/login)
+- [API 문서](https://love-back.kro.kr/docs/index.html)
+
+# 개발일지
+- [ngrinder를 이용한 성능테스트](https://joyfulviper.tistory.com/92)
+- [인덱스 튜닝과 스케일 업](https://joyfulviper.tistory.com/93)
+- [DB 복제와 로드밸런싱](https://joyfulviper.tistory.com/94)
+- [카페인 캐시](https://joyfulviper.tistory.com/95)
+- [ETag와 HTTP2](https://joyfulviper.tistory.com/97)
+- [loki와 grafana를 이용한 로그모니터링](https://joyfulviper.tistory.com/98)
+- [이미지 업로드 병렬처리](https://joyfulviper.tistory.com/99)
+- [Github Action에서의 Credential 설정](https://tommykim.tistory.com/78)
+- [jar 파일에 asciidoc.html 포함하기](https://tommykim.tistory.com/79)
+- [No thread-bound request found 예외 발생과 해결](https://tommykim.tistory.com/80)
+- [커플 재결합 코드 개선](https://tommykim.tistory.com/81)
 
 # Introduction
 
