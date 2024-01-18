@@ -43,3 +43,5 @@ message: "Login success"
 ----
 
 재결합을 요청하고자 한다면 `POST` 방식으로 상위 url에 요청을 주시면 됩니다.
+
+include::../login/login-trial.adoc[]

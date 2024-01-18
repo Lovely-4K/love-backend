@@ -1,5 +1,6 @@
 package com.lovely4k.backend.member.service;
 
+import com.lovely4k.backend.IntegrationTestSupport;
 import com.lovely4k.backend.common.imageuploader.ImageUploader;
 import com.lovely4k.backend.member.Member;
 import com.lovely4k.backend.member.Role;
@@ -10,7 +11,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +25,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-@SpringBootTest
 @Transactional
-class MemberServiceTest {
+class MemberServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private MemberService memberService;
@@ -40,7 +39,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원 정보를 조회한다.")
-    void getMemberProfile() throws Exception {
+    void getMemberProfile() {
         //given
         Member member = createMember();
 
@@ -57,7 +56,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("존재하지 않는 id로 프로필을 조회할 경우 예외가 발생한다.")
-    void getMemberProfileByWrongId() throws Exception {
+    void getMemberProfileByWrongId() {
         //given
         Member member = createMember();
 
@@ -70,7 +69,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원의 프로필 정보를 수정할 수 있다.")
-    void updateMemberProfile() throws Exception {
+    void updateMemberProfile() {
         //given
         Member member = createMember();
         Member savedMember = memberRepository.save(member);
@@ -101,7 +100,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("프로필 수정 시 두개 이상의 이미지를 요청하면 에러가 발생한다.")
-    void updateMemberProfileWithMoreThanOneImage() throws Exception {
+    void updateMemberProfileWithMoreThanOneImage() {
         //given
         Member member = createMember();
         Member savedMember = memberRepository.save(member);
@@ -125,7 +124,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("프로필 수정 시 이미지가 없는 경우 기존 imageUrl이 유지된다.")
-    void updateMemberProfileWithoutImage() throws Exception {
+    void updateMemberProfileWithoutImage() {
         //given
         Member member = createMember();
         Member savedMember = memberRepository.save(member);
