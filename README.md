@@ -1,4 +1,6 @@
 # 우.이.삭 (우리 이거 삭제하지 말자) 
+- [서비스 링크](https://woisac.netlify.app/login)
+- [API 문서](https://love-back.kro.kr/docs/index.html)
 
 # Introduction
 
@@ -10,9 +12,6 @@
 
 우이삭을 통해 서로 추억이 쌓인 장소들을 기록하고 추억을 공유하세요.
 </div>
-
----
-
 
 # Members
 |                                         Backend                                          |                                                                 Backend                                                                 |                                                              Backend                                                              |

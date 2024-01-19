@@ -1,0 +1,13 @@
+[[login-trial]]
+=== 체험용 계정 로그인
+
+해당 API를 통해 체험 계정에 로그인 할 수 있습니다.
+
+해당 문서에 있는 Response는 예시이며 실제 받는 토큰값은 상이할 수 있습니다.
+
+==== Http Request
+include::{snippets}/login-trial/http-request.adoc[]
+==== Http Response
+
+include::{snippets}/login-trial/http-response.adoc[]
+include::{snippets}/login-trial/response-fields.adoc[]

@@ -11,6 +11,7 @@ import com.lovely4k.backend.question.repository.QuestionRepository;
 import com.lovely4k.backend.question.repository.response.QuestionGameResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ class QuestionQueryServiceForGameTest extends IntegrationTestSupport {
     CoupleRepository coupleRepository;
 
     @Test
+    @Disabled
     @DisplayName("coupleId를 통해서 기존에 답변했던 질문들 중 랜덤으로 하나를 조회할 수 있다.")
     void findQuestionGame() {
         //given

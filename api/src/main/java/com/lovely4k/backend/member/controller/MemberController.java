@@ -1,13 +1,11 @@
 package com.lovely4k.backend.member.controller;
 
-import com.lovely4k.backend.authentication.token.UserDetailsImpl;
 import com.lovely4k.backend.common.ApiResponse;
 import com.lovely4k.backend.common.sessionuser.LoginUser;
 import com.lovely4k.backend.common.sessionuser.SessionUser;
 import com.lovely4k.backend.member.controller.request.MemberProfileEditRequest;
 import com.lovely4k.backend.member.service.MemberService;
 import com.lovely4k.backend.member.service.response.MemberProfileGetResponse;
-import com.nimbusds.jose.proc.SecurityContext;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -15,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
