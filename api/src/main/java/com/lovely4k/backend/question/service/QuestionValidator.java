@@ -18,16 +18,16 @@ public class QuestionValidator {
     @Transactional(readOnly = true)
     public void validateCreateQuestionForm(Long coupleId, long questionDay) {
         List<Question> questions = findQuestionWithLock(coupleId, questionDay);
-        validateDailyQuestionLimitAndAnswerCompletion(questions);
+        validateDailyQuestionLimitAndAnswerCompletion(questions, questionDay);
     }
 
-    private void validateDailyQuestionLimitAndAnswerCompletion(List<Question> questions) {
+    private void validateDailyQuestionLimitAndAnswerCompletion(List<Question> questions, Long questionDay) {
         if (questions.size() > 1) {
             throw new QuestionCreateCountExceedException();
         }
 
         if (questions.isEmpty()) {
-            throw new IllegalStateException("서버에서 제공하는 질문을 먼저 생성해 주세요.");
+            throw new IllegalStateException("다음 일차에 해당하는 서버에서 제공하는 질문을 먼저 생성해 주세요" + questionDay);
         }
 
         questions.get(0).validateAnswer();

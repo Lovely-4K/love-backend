@@ -99,3 +99,14 @@ include::{snippets}/delete-custom-questions-and-questionForm/http-request.adoc[]
 
 ==== Response
 include::{snippets}/delete-custom-questions-and-questionForm/http-response.adoc[]
+
+[[create-question-form-and-question-by-user]]
+=== 서버에서 제공하는 질문 생성 API
+서버에서 제공하는 질문을 생성하는 api 입니다. 오늘의 질문 받기가 오류가 발생한다면 해당 오류 메시지에 작성되어 있는 일차에 해당하는 질문을 생성해주세요
+
+==== Request
+include::{snippets}/create-question-form-and-question-by-user/http-request.adoc[]
+
+==== Response (Success)
+include::{snippets}/create-question-form-and-question-by-user/http-response.adoc[]
+include::{snippets}/create-question-form-and-question-by-user/response-fields.adoc[]

@@ -9,6 +9,7 @@ import com.lovely4k.backend.question.QuestionFormType;
 import com.lovely4k.backend.question.repository.QuestionFormRepository;
 import com.lovely4k.backend.question.repository.QuestionRepository;
 import com.lovely4k.backend.question.service.request.CreateQuestionFormServiceRequest;
+import com.lovely4k.backend.question.service.request.CreateServerQuestionFormServiceRequest;
 import com.lovely4k.backend.question.service.response.CreateQuestionFormResponse;
 import com.lovely4k.backend.question.service.response.CreateQuestionResponse;
 import jakarta.persistence.EntityNotFoundException;
@@ -80,6 +81,11 @@ public class QuestionService {
     public void deleteQuestion() {
         questionRepository.deleteAll();
         questionFormRepository.deleteAllByQuestionFormType(QuestionFormType.CUSTOM);
+    }
+
+    @Transactional
+    public Long createServerQuestion(CreateServerQuestionFormServiceRequest request) {
+        return questionFormRepository.save(request.toEntity()).getId();
     }
 
 }
