@@ -12,6 +12,4 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT q FROM Question q WHERE q.coupleId = :coupleId AND q.questionDay = :questionDay")
     List<Question> findQuestionByCoupleIdAndQuestionDayWithLock(Long coupleId, Long questionDay);
-
-    List<Question> findQuestionByCoupleIdAndQuestionDay(Long coupleId, Long questionDay);
 }

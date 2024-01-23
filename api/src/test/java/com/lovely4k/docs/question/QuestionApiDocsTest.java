@@ -4,6 +4,7 @@ import com.lovely4k.backend.question.QuestionFormType;
 import com.lovely4k.backend.question.controller.QuestionController;
 import com.lovely4k.backend.question.controller.request.AnswerQuestionRequest;
 import com.lovely4k.backend.question.controller.request.CreateQuestionFormRequest;
+import com.lovely4k.backend.question.controller.request.CreateServerQuestionFormRequest;
 import com.lovely4k.backend.question.repository.response.*;
 import com.lovely4k.backend.question.service.QuestionQueryService;
 import com.lovely4k.backend.question.service.QuestionService;
@@ -286,4 +287,42 @@ class QuestionApiDocsTest extends RestDocsSupport {
             .andDo(document("delete-custom-questions-and-questionForm"));
     }
 
+    @DisplayName("서버의 질문 양식을 생성하는 API")
+    @Test
+    void createServerQuestionForm() throws Exception {
+        CreateServerQuestionFormRequest request = new CreateServerQuestionFormRequest(
+            "테스트 질문",
+            "선택지 1",
+            "선택지 2",
+            "선택지 3",
+            "선택지 4",
+            1L
+        );
+
+        given(questionService.createServerQuestion(any()))
+            .willReturn(1L);
+
+        mockMvc.perform(post("/v1/questions/server")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isCreated())
+            .andDo(document("create-question-form-and-question-by-user",
+                responseHeaders(
+                    headerWithName("Location").description("리소스 저장 경로")
+                ),
+                requestFields(
+                    fieldWithPath("questionContent").type(STRING).description("질문 내용"),
+                    fieldWithPath("firstChoice").type(STRING).description("첫 번째 선택지"),
+                    fieldWithPath("secondChoice").type(STRING).description("두 번째 선택지"),
+                    fieldWithPath("thirdChoice").type(STRING).description("세 번째 선택지"),
+                    fieldWithPath("fourthChoice").type(STRING).description("네 번째 선택지"),
+                    fieldWithPath("questionDay").type(NUMBER).description("질문에 해당하는 날짜")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(NUMBER).description("코드"),
+                    fieldWithPath("body").type(NULL).description("응답 바디"),
+                    fieldWithPath("links").type(ARRAY).description("연결된 url")
+                )
+            ));
+    }
 }

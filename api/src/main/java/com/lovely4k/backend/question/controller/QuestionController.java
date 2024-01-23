@@ -6,6 +6,7 @@ import com.lovely4k.backend.common.sessionuser.SessionUser;
 import com.lovely4k.backend.question.controller.request.AnswerQuestionRequest;
 import com.lovely4k.backend.question.controller.request.AnsweredQuestionParamRequest;
 import com.lovely4k.backend.question.controller.request.CreateQuestionFormRequest;
+import com.lovely4k.backend.question.controller.request.CreateServerQuestionFormRequest;
 import com.lovely4k.backend.question.repository.response.AnsweredQuestionResponse;
 import com.lovely4k.backend.question.repository.response.DailyQuestionResponse;
 import com.lovely4k.backend.question.repository.response.QuestionDetailsResponse;
@@ -21,6 +22,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -112,5 +114,11 @@ public class QuestionController {
     public ResponseEntity<Void> init() {
         questionService.deleteQuestion();
         return ResponseEntity.noContent().build();
+    }
+
+    //관리자용 엔드포인트
+    @PostMapping("/server")
+    public ResponseEntity<ApiResponse<Void>> addServerQuest(@RequestBody @Valid CreateServerQuestionFormRequest request) {
+        return ApiResponse.created(questionService.createServerQuestion(request.toServiceRequest()));
     }
 }
